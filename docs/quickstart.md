@@ -104,7 +104,7 @@ generateText();
 Now that you've seen how to make basic calls with both the API and SDK, you can:
 
 - Explore the [API Reference](/docs/api) for all available endpoints
-- Check out the [SDK Reference](/docs/sdk) for detailed documentation on all methods
+- Check out the [SDK Reference](/docs/integration/backend) for detailed documentation on all methods
 - Learn how to integrate Captide with [Backend Applications](./integration/backend)
 - Learn how to integrate Captide with [Frontend Applications](./integration/frontend)
 

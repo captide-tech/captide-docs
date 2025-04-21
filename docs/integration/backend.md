@@ -172,4 +172,4 @@ app.post('/api/captide/generate', async (req, res) => {
 
 - Learn about [Frontend Integration](./frontend) to connect your backend with a frontend application
 - Check out the [API Reference](/docs/api) for detailed endpoint documentation
-- Explore advanced SDK features in the [SDK Reference](/docs/sdk) 
+- Explore advanced SDK features in the [SDK Reference](/docs/integration/backend) 

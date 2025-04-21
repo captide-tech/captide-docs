@@ -1,0 +1,78 @@
+---
+id: list-companies-api-v-1-companies-get
+title: "List Companies"
+description: "List all available companies, optionally filtered by name or ticker."
+sidebar_label: "List Companies"
+hide_title: true
+hide_table_of_contents: true
+api: eJztV1tvGkcU/iujzYuDABurqirekO2mbu04sp20lW05w+4BJp6d2czMEiPEf+85M3uFQIjzUFUqD8DOnvv5zmWWkeNTGw3vohOdZlwJsNFDN0rAxkZkTmgVDaMLYR3jUjI+50LysQQWl9Rdpj0Zvl6wiZAODCRsvGCKp8C0YU7ET2D69+pe9VinQ8edzpBdFVwFD5sgaRBasB7E3EJPKAvKCifmwDJunECOlLt49jqIC9K3CYRnHrvCAmYX6VgX3JvSC3lCxTJP4BQk+gwJCf5zBm6G/E6z4i1Litd1GAK3FKlwxHPJn0Wap0zl6RhZ9YQZiLVJLEkx4HKj2EECE55L588GR0evKUSdt9rBkI0w2L/fXL1FZ0AiV24x5BgVeYJmU3yEmqJyNQdFXvc7UTfSGRhOT+cJ5owMfKzMe+SZeJwPGgdTcMhjIc6NcAsEwDIaZeIPWIxyN8PHhxXCACOOSjGa1hNQXlC0/+lGgqDxOQezwAcDn3OBmY+GEy4toOR4BimPhssIM3o18fxukRG/dQbNj1bd6kTlUkarDdz9GjJZGV3B6qANBdTvhJMk6S3ZtnqxILKp8DKg5l/zcyt0G87eBhP3cne7vIbPa+j/EefHWkvgag/vz7cWVUSkvkYqjaXrBVPJsxmDHVIbDvuC/RE3hXIw9Tn4lpt7tISmv9gQam8vvJkbPu4jkgwxYDONrc6SC8dHR/TTlnSTxzFYO8kluy6I0RhsMA4bjHc8y6SIfXs5/GSJZ9kIS+E5N4ZTAIWD1OvKDDUlJ4LmEPP18tis3QBSz1JJWi+pdZXtkqAcR/Acz7iawvfWZinqrORHWbF42mX5Cb722SnQONwog5q2UVxtcK9qr/T4E8SuBcW7su2W0QlGNewNA3xBw7qRw7U8ixTziEMlYSUoWEhjawCTheih7Yd0BPmlUObXgWpdYDg22IdB4+ANjpbVitz56fh4E2sfuBSJRxI7M0ab7wFaG1AJONxHWjhpE0gdt97uAYOqoB+2g+xCBwMpOqmd7kLGJVYVDxgKJNtJfTDYLb39FhTIr6C6oGvAoA5viO52N05D+L6mrCT57fb23YbAkFvcC2aaNo2wSWSc1oboEBeNw/ngsNnDyyXjhtIYEtNcNer24Q/LbjwDnvj5W7Tqv3qjd+e9QNAGFJ6zJ1gwjuJoHwrJ6bMzRVNwoXPDShLc46DvPRZqor3usno4isN5cX12c0vkG1ruFcMPCaJKQZDhj1/DrkdvGGL55uyEVk8qmy7+UVzFtFgYyLRxeMRVwoAbRQS4y+GCh0Hl7ItwM2bRxhiw7NSTX+x4xscoimDcD3rD96tX3oCTavGzzbe9em0ksAAt7apR6I1dstOptslOp9wnD6A/7XfZx2ANAfEjPk2ERWvfgRE6oedEx3mK2s+Tj69Lve+vLxgBwGJspNRfUP4TjPm4FwcF9aZaKSmBYvj0EAtEuZ4fvz0sC+BpLfqUO6CI464yZOc3V+yXn48G7OBv/PQuL3unpxXlqJX+YZXzueCsAg8LsAo8mOM5ttKQ30H/qH9M1ZJp61Ku6okVtRveOjKWdfv6/6b0n7gpFf3GwbM7zCQXvpHnxk+S0MfuqBkRPAZ+OjVuxjNEB71fLseo4L2RqxUdh92RJksiLOW93h63guV7rjdfsxjBXd/G5lzmROJn2Y/ZsPPqsd2Q6sL0QlN23gN26N28tLzQgP029B2WlLeJWv8DPRhBBvg7dbcca4SUwDTCzTtrcm1sQCSlmrZvzm6Rlm9Mzic/GIs/jQ0Hu0RDdnOIBvX03Vh/2uTLZZjJiPGSPrzaylFN7TI3tEitVv8AYNVPtA==
+sidebar_class_name: "get api-method"
+info_path: docs/api/captide-rest-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"List Companies"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/api/v1/companies"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+List all available companies, optionally filtered by name or ticker.
+
+- **name**: Optional filter for company name (case-insensitive partial match)
+- **ticker**: Optional filter for exact ticker symbol match (case-insensitive)
+- **includeDelisted**: Whether to include delisted companies
+- **limit**: Maximum number of records to return (defaults to 100)
+
+*Note: All JSON fields use camelCase naming convention.*
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={[{"name":"name","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"description":"Filter companies by name (partial match)","title":"Name"},"description":"Filter companies by name (partial match)"},{"name":"ticker","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"description":"Filter companies by exact ticker symbol match","title":"Ticker"},"description":"Filter companies by exact ticker symbol match"},{"name":"includeDelisted","in":"query","required":false,"schema":{"anyOf":[{"type":"boolean"},{"type":"null"}],"description":"Include delisted companies","default":false,"title":"Includedelisted"},"description":"Include delisted companies"},{"name":"limit","in":"query","required":false,"schema":{"anyOf":[{"type":"integer"},{"type":"null"}],"description":"Maximum number of records to return","default":100,"title":"Limit"},"description":"Maximum number of records to return"}]}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={undefined}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"type":"array","items":{"properties":{"name":{"type":"string","title":"Name"},"tickers":{"items":{"type":"string"},"type":"array","title":"Tickers"},"exchange":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Exchange"},"cik":{"type":"string","title":"Cik"},"delisted":{"type":"boolean","title":"Delisted","default":false}},"type":"object","required":["name","tickers","cik"],"title":"CompanyListResponse","description":"Simplified response schema for company listings."},"title":"Response List Companies Api V1 Companies Get"}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"properties":{"detail":{"items":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,50 @@
+name: Mirror to Personal Repository
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    # Safety check to prevent infinite loops
+    if: github.repository == 'captide-tech/captide-docs'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup GitHub CLI
+        run: |
+          gh auth login --with-token <<< "${{ secrets.PAT_TOKEN }}"
+          
+      - name: Setup and Push to mirror
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          echo "Setting up git configuration..."
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+          # Remove ALL auth configs
+          echo "Debug: Removing existing auth config..."
+          git config --global --unset-all http.https://github.com/.extraheader || true
+          git config --unset-all http.https://github.com/.extraheader || true
+          
+          # Debug: Verify token format
+          echo "Debug: Token starts with: ${GH_TOKEN:0:4}..."
+          echo "Debug: Token length: ${#GH_TOKEN}"
+          
+          # Test authentication before pushing
+          echo "Debug: Testing mirror authentication..."
+          GIT_CURL_VERBOSE=1 GIT_TRACE=2 git -c credential.helper= ls-remote "https://${GH_TOKEN}@github.com/MauritsBrinkman/captide-docs.git"
+          
+          echo "Debug: Setting up mirror remote..."
+          git remote remove mirror || true
+          git remote add mirror "https://${GH_TOKEN}@github.com/MauritsBrinkman/captide-docs.git"
+          
+          echo "Debug: Pushing to mirror..."
+          git push mirror --all --force 

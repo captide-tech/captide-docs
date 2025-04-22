@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
     title: 'REST API',
     description: (
       <>
-        Access Captide's powerful AI capabilities through our HTTP API. Integrate with any programming language or platform.
+        Access Captide's AI agent for Q&A on over 750,000 SEC filings and earnings calls. Get document snippets or streaming answers with source citations.
       </>
     ),
     icon: <FileJson className={styles.featureIcon} />,
@@ -24,7 +24,7 @@ const FeatureList: FeatureItem[] = [
     title: 'JavaScript SDK',
     description: (
       <>
-        Use our TypeScript SDK for seamless integration with your JavaScript applications. Strongly typed for better developer experience.
+        Display source documents with our Captide.js React components. Embed the document viewer in your app for direct access to financial information with source linking.
       </>
     ),
     icon: <Code className={styles.featureIcon} />,
@@ -33,7 +33,7 @@ const FeatureList: FeatureItem[] = [
     title: 'Comprehensive Documentation',
     description: (
       <>
-        Detailed guides and API references to help you quickly integrate Captide's features into your applications.
+        Integrate financial document intelligence into your applications with our detailed guides, API references, and code examples.
       </>
     ),
     icon: <FileText className={styles.featureIcon} />,

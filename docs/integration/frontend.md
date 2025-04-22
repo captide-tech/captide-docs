@@ -4,297 +4,293 @@ sidebar_position: 2
 
 # Frontend Integration
 
-This guide explains how to integrate Captide with frontend applications using React, Vue, or vanilla JavaScript.
+This guide explains how to integrate Captide's document viewer and SEC Q&A capabilities into your React frontend application.
 
 ## Important Security Note
 
-**Never expose your Captide API key in frontend code!** The API key should always be kept on the server side. For frontend applications, you should create a backend API that acts as a proxy to the Captide API.
+**Never expose your Captide API key in frontend code!** Always use a backend proxy as shown in the [Backend Integration](./backend) guide.
 
 ## React Integration
 
-### Setup with Create React App
+### Basic Document Viewer Setup
 
-Here's how to set up Captide in a React application:
+Here's how to set up the Captide document viewer component in a React application:
 
-```tsx
-// src/services/captideService.ts
-export async function generateText(prompt: string, maxTokens = 100, temperature = 0.7) {
-  try {
-    const response = await fetch('/api/generate-text', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        maxTokens,
-        temperature,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate text');
-    }
-
-    const data = await response.json();
-    return data.result;
-  } catch (error) {
-    console.error('Error generating text:', error);
-    throw error;
-  }
-}
-```
-
-```tsx
-// src/components/TextGenerator.tsx
+```jsx
 import React, { useState } from 'react';
-import { generateText } from '../services/captideService';
+import { DocumentViewer, DocumentViewerProvider } from 'captide';
 
-const TextGenerator: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+function App() {
+  // Function to fetch document through your backend API
+  const fetchDocument = async (sourceLink) => {
+    const response = await fetch('/api/document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source_link: sourceLink })
+    });
     
-    try {
-      const generatedText = await generateText(prompt);
-      setResult(generatedText);
-    } catch (err) {
-      setError('Failed to generate text. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    return response.json();
   };
 
   return (
+    <div className="app">
+      <h1>Captide Document Explorer</h1>
+      
+      <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
+        <DocumentExplorerDemo />
+      </DocumentViewerProvider>
+    </div>
+  );
+}
+
+function DocumentExplorerDemo() {
+  const [answer, setAnswer] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState('');
+  
+  // Create a simple form for asking questions
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      // Call your backend API that proxies to Captide
+      const response = await fetch('/api/document-snippets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      
+      const data = await response.json();
+      // Process and display the response
+      // This is a simplified example - you'd typically render the snippets
+      setAnswer(JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  return (
     <div>
-      <h2>AI Text Generator</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="prompt">Enter prompt:</label>
-          <textarea
-            id="prompt"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            rows={4}
-            cols={50}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Generating...' : 'Generate Text'}
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Ask about SEC filings (e.g., What's AAPL's revenue?)"
+        />
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Ask'}
         </button>
       </form>
       
-      {error && <div className="error">{error}</div>}
-      
-      {result && (
-        <div className="result">
-          <h3>Generated Text:</h3>
-          <p>{result}</p>
-        </div>
+      {answer && (
+        <pre>{answer}</pre>
       )}
+      
+      {/* The DocumentViewer needs to be sized explicitly */}
+      <div style={{ height: '600px', marginTop: '20px', border: '1px solid #ccc' }}>
+        <DocumentViewer />
+      </div>
     </div>
   );
-};
+}
 
-export default TextGenerator;
+export default App;
 ```
 
-## Vue.js Integration
+### Streaming Response Example
 
-Here's an example with Vue 3 and Composition API:
+For handling streaming responses from the AI agent:
 
-```vue
-<!-- TextGenerator.vue -->
-<template>
-  <div class="text-generator">
-    <h2>AI Text Generator</h2>
-    <form @submit.prevent="generateText">
-      <div>
-        <label for="prompt">Enter prompt:</label>
-        <textarea
-          id="prompt"
-          v-model="prompt"
-          rows="4"
-          cols="50"
-          required
-        ></textarea>
-      </div>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Generating...' : 'Generate Text' }}
-      </button>
-    </form>
-    
-    <div v-if="error" class="error">{{ error }}</div>
-    
-    <div v-if="result" class="result">
-      <h3>Generated Text:</h3>
-      <p>{{ result }}</p>
-    </div>
-  </div>
-</template>
+```jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { DocumentViewer, DocumentViewerProvider, useDocumentViewer } from 'captide';
 
-<script setup>
-import { ref } from 'vue';
-
-const prompt = ref('');
-const result = ref('');
-const loading = ref(false);
-const error = ref(null);
-
-async function generateText() {
-  loading.value = true;
-  error.value = null;
+function StreamingDemo() {
+  const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [streamedText, setStreamedText] = useState('');
+  const [idMapping, setIdMapping] = useState({});
+  const { loadDocument } = useDocumentViewer();
   
-  try {
-    const response = await fetch('/api/generate-text', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt.value,
-        maxTokens: 100,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to generate text');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setStreamedText('');
+    
+    try {
+      // Call your backend API that proxies the streaming endpoint
+      const response = await fetch('/api/query-stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      
+      // Create a reader for the stream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        
+        const text = decoder.decode(value);
+        // Process the SSE data
+        const lines = text.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.substring(6));
+              
+              // Handle different event types
+              if (data.type === 'id_mapping') {
+                setIdMapping(data.mapping);
+              } else if (data.type === 'markdown_chunk') {
+                setStreamedText(prev => prev + data.content);
+              } else if (data.type === 'full_answer') {
+                setStreamedText(data.content);
+              }
+            } catch (e) {
+              console.error('Error parsing SSE data:', e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error with streaming:', error);
+    } finally {
+      setIsLoading(false);
     }
-
-    const data = await response.json();
-    result.value = data.result;
-  } catch (err) {
-    error.value = 'Failed to generate text. Please try again.';
-  } finally {
-    loading.value = false;
-  }
+  };
+  
+  // Function to handle source link clicks
+  const handleSourceClick = async (sourceId) => {
+    // Extract source info from the mapping
+    const sourceInfo = idMapping[sourceId];
+    if (sourceInfo && sourceInfo.sourceLink) {
+      await loadDocument(sourceInfo.sourceLink, sourceId);
+    }
+  };
+  
+  // Simple regex to detect source references like [#123abc]
+  const renderWithSourceLinks = (text) => {
+    if (!text) return '';
+    
+    // Split by references [#id] and render as clickable spans
+    const parts = text.split(/(\[#[a-z0-9]+\])/g);
+    
+    return parts.map((part, index) => {
+      // Check if this part is a reference
+      const match = part.match(/\[#([a-z0-9]+)\]/);
+      
+      if (match) {
+        const sourceId = `#${match[1]}`;
+        return (
+          <span 
+            key={index}
+            className="source-link"
+            onClick={() => handleSourceClick(sourceId)}
+            style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+          >
+            [{index + 1}]
+          </span>
+        );
+      }
+      
+      // Regular text
+      return <span key={index}>{part}</span>;
+    });
+  };
+  
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Ask about SEC filings (e.g., What's AAPL's revenue?)"
+          style={{ width: '400px' }}
+        />
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Ask'}
+        </button>
+      </form>
+      
+      <div className="answer-container">
+        {renderWithSourceLinks(streamedText)}
+      </div>
+      
+      <div style={{ height: '600px', marginTop: '20px', border: '1px solid #ccc' }}>
+        <DocumentViewer />
+      </div>
+    </div>
+  );
 }
-</script>
 
-<style scoped>
-.error {
-  color: red;
-  margin-top: 1rem;
+function App() {
+  const fetchDocument = async (sourceLink) => {
+    const response = await fetch('/api/document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source_link: sourceLink })
+    });
+    
+    return response.json();
+  };
+
+  return (
+    <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
+      <StreamingDemo />
+    </DocumentViewerProvider>
+  );
 }
 
-.result {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-</style>
+export default App;
 ```
 
-## Next.js Example
+## Next.js Integration
 
-Next.js allows you to create API routes that can securely communicate with the Captide API:
+If you're using Next.js, you can create API routes to proxy requests to Captide:
 
-```typescript
-// pages/api/generate-text.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { Captide } from 'captide';
-
-const captide = new Captide({
-  apiKey: process.env.CAPTIDE_API_KEY,
-});
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+```javascript
+// pages/api/document.js
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { prompt, maxTokens, temperature } = req.body;
+    const { source_link } = req.body;
     
-    const response = await captide.generate({
-      prompt,
-      maxTokens: maxTokens || 100,
-      temperature: temperature || 0.7,
+    const response = await fetch(source_link, {
+      headers: {
+        'Authorization': `Bearer ${process.env.CAPTIDE_API_KEY}`
+      }
     });
     
-    res.status(200).json({ result: response.text });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to generate text' });
-  }
-}
-```
-
-Then use it in your component:
-
-```tsx
-// pages/index.tsx
-import { useState } from 'react';
-
-export default function Home() {
-  const [prompt, setPrompt] = useState('');
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      const response = await fetch('/api/generate-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
-      
-      const data = await response.json();
-      setResult(data.result);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
     }
+    
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching document:', error);
+    res.status(500).json({ error: 'Failed to fetch document' });
   }
-
-  return (
-    <div>
-      <h1>Text Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <textarea 
-          value={prompt} 
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter your prompt here"
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Generating...' : 'Generate'}
-        </button>
-      </form>
-      
-      {result && (
-        <div>
-          <h2>Result:</h2>
-          <p>{result}</p>
-        </div>
-      )}
-    </div>
-  );
 }
 ```
 
-## Browser Support and Polyfills
+## Live Example
 
-The Captide JavaScript SDK is compatible with modern browsers. If you need to support older browsers, consider adding polyfills for features like fetch and Promises.
+To see a complete implementation of Captide's capabilities, visit [app.captide.co/chat](https://app.captide.co/chat).
 
 ## Next Steps
 
-- Implement proper [error handling and user feedback](https://ui.dev/react-error-handling)
-- Add [loading states and animations](https://www.joshwcomeau.com/react/animated-loading-skeletons/)
-- Explore [streaming responses](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API) for real-time text generation
-- Check the [API Reference](/docs/api) for all available options 
+- For production use, obtain a license by [contacting our team](https://www.captide.co/demo)
+- Access in-depth API documentation in the [API Reference](/docs/api) 

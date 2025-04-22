@@ -25,10 +25,12 @@ function HomepageHeader() {
             Get Started
           </Link>
           <Link
-            className="button button--secondary button--lg"
-            style={{marginLeft: '10px'}}
-            to="/docs/api/captide-rest-api">
-            API Reference
+            className="button button--outline button--lg"
+            style={{marginLeft: '10px', color: 'white', borderColor: 'white'}}
+            to="https://app.captide.co/chat"
+            target="_blank"
+            rel="noopener noreferrer">
+            Try Live Demo <span style={{verticalAlign: 'middle', marginLeft: '4px'}}>↗</span>
           </Link>
         </div>
       </div>

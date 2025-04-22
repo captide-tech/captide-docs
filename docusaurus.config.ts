@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Captide Documentation',
-  tagline: 'API and SDK Documentation for Captide',
+  tagline: 'AI-powered Q&A for SEC filings',
   favicon: 'img/captide-icon.svg',
 
   // Set the production url of your site here
@@ -98,6 +98,16 @@ const config: Config = {
           label: 'API',
         },
         {
+          href: 'https://www.captide.co/demo',
+          label: 'Obtain a License',
+          position: 'right',
+        },
+        {
+          href: 'https://app.captide.co/chat',
+          label: 'Live Demo',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/captide/captide-docs',
           label: 'GitHub',
           position: 'right',
@@ -121,11 +131,19 @@ const config: Config = {
           ],
         },
         {
-          title: 'Community',
+          title: 'Resources',
           items: [
             {
-              label: 'GitHub',
-              href: 'https://github.com/captide',
+              label: 'Live Demo',
+              href: 'https://app.captide.co/chat',
+            },
+            {
+              label: 'Contact Us',
+              href: 'https://www.captide.co/demo',
+            },
+            {
+              label: 'API Dashboard',
+              href: 'https://app.captide.co/api-dashboard',
             },
           ],
         },
@@ -135,6 +153,10 @@ const config: Config = {
             {
               label: 'Website',
               href: 'https://captide.co',
+            },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/captide-tech/captidejs',
             },
           ],
         },

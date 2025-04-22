@@ -68,7 +68,7 @@ const config = {
         logo: {
           alt: "Captide Logo",
           src: "img/captide-logo.svg",
-          srcDark: "img/captide-logo.svg",
+          srcDark: "img/captide-logo-white.svg",
           width: 120,
         },
         items: [

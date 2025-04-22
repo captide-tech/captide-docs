@@ -1,8 +1,3 @@
-import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
-import apiSidebar from './docs/api/sidebar';
-
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 /**
  * Creating a sidebar enables you to:
  - create an ordered group of docs
@@ -13,7 +8,11 @@ import apiSidebar from './docs/api/sidebar';
 
  Create as many sidebars as you want.
  */
-const sidebars: SidebarsConfig = {
+
+// @ts-check
+
+/** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
+const sidebars = {
   // Main documentation sidebar
   tutorialSidebar: [
     {
@@ -30,9 +29,6 @@ const sidebars: SidebarsConfig = {
       ],
     },
   ],
-  
-  // API documentation sidebar (generated from OpenAPI)
-  apiSidebar,
 };
 
-export default sidebars;
+module.exports = sidebars; 

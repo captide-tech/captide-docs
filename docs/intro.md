@@ -8,7 +8,7 @@ Captide allows developers to integrate powerful Q&A capabilities on over 750,000
 
 ## What is Captide?
 
-Captide provides an AI agent that will spit through thousands of financial documents for you. Currently, we handle SEC-related questions and international companies listed with the SEC, with rapidly expanding coverage planned for additional regions and document types.
+Captide is both a platform used by financial analysts from major companies like J.P. Morgan, Goldman Sachs, and UBS, as well as an AI-agent-as-a-service (AaaS). Our specialized AI agent sifts through thousands of financial documents for you. Currently, we handle SEC-related questions and international companies listed with the SEC, with rapidly expanding coverage planned for additional regions and document types.
 
 ## Core Features
 

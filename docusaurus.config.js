@@ -78,7 +78,7 @@ const config = {
             position: "left",
             label: "Docs",
           },
-          { to: "/api", label: "API", position: "left" },
+          { to: "/api", label: "API Reference", position: "left" },
           {
             href: "https://www.captide.co/demo",
             label: "Obtain a License",
@@ -87,11 +87,6 @@ const config = {
           {
             href: "https://app.captide.co/chat",
             label: "Live Demo",
-            position: "right",
-          },
-          {
-            href: "https://github.com/captide/captide-docs",
-            label: "GitHub",
             position: "right",
           },
         ],
@@ -137,7 +132,11 @@ const config = {
                 href: "https://captide.co",
               },
               {
-                label: "GitHub",
+                label: "Docs GitHub",
+                href: "https://github.com/captide-tech/captide-docs",
+              },
+              {
+                label: "Captide.js GitHub",
                 href: "https://github.com/captide-tech/captidejs",
               },
             ],

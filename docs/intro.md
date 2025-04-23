@@ -4,40 +4,46 @@ sidebar_position: 1
 
 # Introduction to Captide
 
-Captide allows developers to integrate powerful Q&A capabilities on over 750,000 SEC filings and earnings calls into their applications. With our specialized AI agent, you can provide your users with accurate, document-grounded financial insights through a simple API integration.
+Captide enables precise querying across over 750,000 SEC filings and earnings calls, offering best-in-class accuracy for financial analysis. It streamlines data extraction, investment research, and document review—accessible through a user-friendly interface at app.captide.co or directly via API.
 
-## What is Captide?
+This documentation is your guide to integrating the Captide API and leveraging our specialized AI agent, built to deliver accurate, document-grounded financial insights in response to natural language queries. The AI scans thousands of filings to surface the most relevant answers, currently supporting SEC-related content and international companies listed with the SEC. Our coverage is rapidly expanding to new regions and document types.
 
-Captide is both a platform used by financial analysts from major companies like J.P. Morgan, Goldman Sachs, and UBS, as well as an AI-agent-as-a-service (AaaS). Our specialized AI agent sifts through thousands of financial documents for you. Currently, we handle SEC-related questions and international companies listed with the SEC, with rapidly expanding coverage planned for additional regions and document types.
+## Core Functionalities
 
-## Core Features
+- Extract structured or unstructured insights from disclosures of publicly listed companies.
+- Seamlessly compare and consolidate information across multiple sources and entities.
+- Audit any metric or insight with traceable source links for full transparency and context.
+- Build custom datasets, peer benchmarks, insight trackers, and more.
 
-- **REST API**: Two main endpoints to fit your needs:
-  - Document snippets endpoint: Receive an array of relevant document snippets with metadata to answer user questions
-  - Streaming endpoint: Get real-time AI-generated answers via SSE (Server Sent Events)
-  
-- **Source Linking**: Enable citations that link directly to the relevant parts of source documents
+## Core Components
 
-- **JavaScript/TypeScript SDK**: Easily embed document viewers and other components into your application's frontend
+- **REST API**:
+  - **Document Snippets Endpoint**: Retrieve relevant document excerpts and metadata tailored to user queries.
+  - **Streaming Endpoint**: Receive real-time, AI-generated answers via Server-Sent Events (SSE).
+
+- **Source Linking**: Automatically generate citations that link directly to original document passages.
+
+- **JavaScript/TypeScript SDK**: Quickly integrate Captide components—like document viewers—into your frontend application.
 
 ## Getting Started
 
-To start using Captide, you'll need to:
+To begin using Captide:
 
-1. Obtain an API key from [our dashboard](https://app.captide.co/api-dashboard)
+1. [Get your API key](https://app.captide.co/api-dashboard)
 2. Follow our [Quickstart Guide](./quickstart)
+3. For production deployment, [contact our sales team](mailto:sales@captide.co) to obtain a license
 
 ## Contact Us
 
-**Ready to enhance your application with financial document intelligence?**
+**Looking to enhance your application with cutting-edge financial document intelligence?**
 
-[Book a demo with our team](https://www.captide.co/demo) to discuss your specific needs and use cases.
+[Book a demo](https://www.captide.co/demo) to explore how Captide can support your unique workflows and goals.
 
 ## Coming Soon
 
-- **Self-hosting solution**: Our agentic backend will be available for self-hosting (currently in private beta)
-- **International coverage**: Expanding beyond SEC documents (currently in private beta)
-- **MCP Integration**: Connect via Model Context Protocol
-- **A2A Protocol**: Support for Agent to Agent Protocol
+- **Self-Hosting**: Deploy Captide’s agentic backend in your own infrastructure (currently in private beta)
+- **International Expansion**: Extended support beyond SEC filings (currently in private beta)
+- **MCP Integration**: Connect via the Model Context Protocol
+- **A2A Protocol**: Inter-agent communication support through Agent-to-Agent Protocol
 
-Interested in our upcoming features? [Contact our sales team](https://www.captide.co/demo) for early access.
+Want early access to upcoming features? [Get in touch with our team](https://www.captide.co/demo).

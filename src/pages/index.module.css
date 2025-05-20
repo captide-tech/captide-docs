@@ -42,6 +42,7 @@
   color: #475569; /* Tailwind's slate-800 */
   font-size: 1.2rem;
   font-weight: 500;
+  max-width: 800px;
 }
 
 .heroTitle {
@@ -88,4 +89,7 @@
 .heroContainer {
   max-width: 800px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

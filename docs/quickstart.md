@@ -157,5 +157,5 @@ For a live example of Captide in action, visit [app.captide.co/chat](https://app
 
 ## Next Steps
 
-- Explore the [API Reference](/docs/api) for detailed documentation
+- Explore the [API Reference](/api) for detailed documentation
 - Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.co/demo) 

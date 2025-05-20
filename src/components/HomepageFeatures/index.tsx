@@ -18,7 +18,7 @@ const FeatureList: FeatureItem[] = [
         Access Captide's AI agent for Q&A on over 750,000 SEC filings and earnings calls. Get document snippets or streaming answers with source citations.
       </>
     ),
-    icon: <FileJson className={styles.featureIcon} />,
+    icon: <FileJson className={styles.featureIcon} strokeWidth={1.5} />,
   },
   {
     title: 'JavaScript SDK',
@@ -27,7 +27,7 @@ const FeatureList: FeatureItem[] = [
         Display source documents with our Captide.js React components. Embed the document viewer in your app for direct access to financial information with source linking.
       </>
     ),
-    icon: <Code className={styles.featureIcon} />,
+    icon: <Code className={styles.featureIcon} strokeWidth={1.5} />,
   },
   {
     title: 'Comprehensive Documentation',
@@ -36,7 +36,7 @@ const FeatureList: FeatureItem[] = [
         Integrate financial document intelligence into your applications with our detailed guides, API references, and code examples.
       </>
     ),
-    icon: <FileText className={styles.featureIcon} />,
+    icon: <FileText className={styles.featureIcon} strokeWidth={1.5} />,
   },
 ];
 
@@ -45,8 +45,10 @@ function Feature({title, description, icon}: FeatureItem) {
     <div className={clsx('col col--4')}>
       <div className="text--center padding-horiz--md">
         <div className={styles.featureIconWrapper}>{icon}</div>
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
+        <Heading as="h3" className={styles.featureTitle}>
+          {title}
+        </Heading>
+        <p className={styles.featureDescription}>{description}</p>
       </div>
     </div>
   );

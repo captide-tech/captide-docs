@@ -1,13 +1,15 @@
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 3rem 0;
   width: 100%;
+  background-color: #f3f4f6;
 }
 
 .featureSvg {
   height: 200px;
   width: 200px;
+  color: #475569;
 }
 
 .featureIconWrapper {
@@ -17,7 +19,17 @@
 }
 
 .featureIcon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   color: var(--ifm-color-primary);
+}
+
+.featureTitle {
+  color: #1e293b; /* Tailwind's slate-800 */
+  font-weight: 600;
+}
+
+.featureDescription {
+  color: #475569; /* Tailwind's slate-600 */
+  font-weight: 400;
 }

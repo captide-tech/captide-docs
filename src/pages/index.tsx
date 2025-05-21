@@ -34,7 +34,7 @@ function HomepageHeader() {
             rel="noopener noreferrer"
           >
             Try Live Demo
-            <ExternalLink size={18} />
+            <ExternalLink size={16} />
           </Link>
         </div>
       </div>

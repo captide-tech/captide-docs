@@ -38,7 +38,6 @@ const config = {
         },
         docs: {
           sidebarPath: "./sidebars.js",
-          editUrl: "https://github.com/captide/captide-docs/tree/main/",
           routeBasePath: "docs",
         },
         blog: false,
@@ -136,6 +135,9 @@ const config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
       additionalLanguages: ["bash", "json", "typescript"],
+    },
+    colorMode: {
+      disableSwitch: true,
     },
   },
 

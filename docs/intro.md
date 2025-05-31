@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction to Captide
 
-Captide enables precise querying across over 750,000 SEC filings and earnings calls, offering best-in-class accuracy for financial analysis. It streamlines data extraction, investment research, and document review—accessible through a user-friendly interface at app.captide.co or directly via API.
+Captide enables organisations to deploy multi-agent architectures, embed AI across their financial workflows, and distil insights from millions of corporate filings—all without the complexity of designing or maintaining RAG infrastructure. It streamlines data extraction, investment research, and document review—accessible through a user-friendly interface at [app.captide.co](www.captide.co) or directly via API.
 
 This documentation is your guide to integrating the Captide API and leveraging our specialized AI agent, built to deliver accurate, document-grounded financial insights in response to natural language queries. The AI scans thousands of filings to surface the most relevant answers, currently supporting SEC-related content and international companies listed with the SEC. Our coverage is rapidly expanding to new regions and document types.
 

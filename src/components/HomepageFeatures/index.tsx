@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
     title: 'REST API',
     description: (
       <>
-        Access Captide's AI agent for Q&A on over 750,000 SEC filings and earnings calls. Get document snippets or streaming answers with source citations.
+        Embed insights and data from financial disclosures into your investment models, research platforms, and AI assistants without the infrastructure overhead.
       </>
     ),
     icon: <FileJson className={styles.featureIcon} strokeWidth={1.5} />,
@@ -30,7 +30,7 @@ const FeatureList: FeatureItem[] = [
     icon: <Code className={styles.featureIcon} strokeWidth={1.5} />,
   },
   {
-    title: 'Comprehensive Documentation',
+    title: 'Documentation',
     description: (
       <>
         Integrate financial document intelligence into your applications with our detailed guides, API references, and code examples.

@@ -29,11 +29,11 @@ function HomepageHeader() {
           <Link
             className={clsx('button button--lg', styles.secondaryButton)}
             style={{ marginLeft: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}
-            to="https://app.captide.co/chat"
+            to="https://www.captide.co/demo"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Try Live Demo
+            Book a Demo
             <ExternalLink size={16} />
           </Link>
         </div>

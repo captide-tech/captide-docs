@@ -71,11 +71,6 @@ const config = {
           label: "Obtain a License",
           position: "right",
         },
-        {
-          href: "https://app.captide.co/chat",
-          label: "Live Demo",
-          position: "right",
-        },
       ],
     },
     footer: {
@@ -98,12 +93,12 @@ const config = {
           title: "Resources",
           items: [
             {
-              label: "Live Demo",
-              href: "https://app.captide.co/chat",
+              label: "Book a Demo",
+              href: "https://www.captide.co/demo",
             },
             {
-              label: "Contact Us",
-              href: "https://www.captide.co/demo",
+              label: "Case Studies",
+              href: "https://github.com/captide-tech/captide-case-studies",
             },
             {
               label: "API Dashboard",

@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction to Captide
 
-Captide aggregates and processes global corporate disclosures from publicly listed companies, optimizing them for AI applications. Built on top of a database containing millions of filings from global equities, Captide's agentic RAG system provides the most intricate and accurate agentic workflow for financial document analysis.
+**Captide aggregates and processes global corporate disclosures** from publicly listed companies, optimizing them for AI applications. Built on top of a database containing millions of filings from global equities, Captide's agentic RAG system provides the most intricate and accurate **agentic workflow for financial document analysis**.
 
 With Captide’s APIs, asset managers, investment banks, and software companies can embed AI across their financial workflows—extracting insights from millions of authoritative documents without the complexity of building or maintaining agentic RAG infrastructure.
 

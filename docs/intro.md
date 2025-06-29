@@ -39,8 +39,6 @@ To begin using Captide:
 2. Follow our [Quickstart Guide](./quickstart)
 3. Monitor your API usage and costs in the [Captide API dashboard](https://app.captide.co/api-dashboard)
 
-## Contact Us
-
 [Book a demo](https://www.captide.ai/contact/api-request) to explore how Captide can support your unique workflows and goals.
 
 ## Coming Soon

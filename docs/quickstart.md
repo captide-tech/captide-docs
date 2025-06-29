@@ -10,7 +10,7 @@ This guide will help you get started with Captide quickly, showing you how to se
 
 Before you begin, make sure you have:
 
-- A Captide API key (obtain one at [app.captide.co/api-dashboard](https://app.captide.co/api-dashboard))
+- A Captide API key (request one at [app.captide.co/api-dashboard](https://www.captide.ai/contact/api-request))
 
 ## Using the REST API
 
@@ -158,4 +158,4 @@ For a live example of Captide in action, visit [app.captide.co/chat](https://app
 ## Next Steps
 
 - Explore the [API Reference](/api) for detailed documentation
-- Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.co/demo) 
+- Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.ai/contact/api-request) 

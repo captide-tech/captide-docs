@@ -12,39 +12,39 @@ Captide is designed to augment investment research, enable alternative data extr
 
 This documentation is your guide to integrating Captide's APIs and leveraging our agentic AI systems.
 
-## Core Functionalities
+## Core Use Cases
 
-- Extract structured or unstructured insights from disclosures of publicly listed companies.
-- Seamlessly compare and consolidate information across multiple sources and entities.
-- Audit any metric or insight with traceable source links for full transparency and context.
-- Build custom datasets, peer benchmarks, insight trackers, and more.
+- **Build multi-agent systems** able to analyze and reason from authorative company reports.
+- **Power internal RAG systems** with Captide's LLM-ready library of global corporate disclosures.
+- Continuously monitor company disclosures to **detect material changes and surface early signals** of potential inflection points or shifts in outlook.
+- **Screen companies** using changing disclosure signals to spot potential outliers or themes worth deeper analysis.
+- **Extract and standardize hard-to-access data** to power investment models, enable faster benchmarking, and support investment thesis validation.
+- Compare metrics, forward-looking guidance, risk language, and tone sentiment to **uncover divergences, outliers, or consensus shifts across custom peer sets.**
+- Link key entities across disclosures to **synthesize key information and uncover dependencies across companies.**
 
 ## Core Components
 
 - **REST API**:
-  - **Document Snippets Endpoint**: Retrieve relevant document excerpts and metadata tailored to user queries.
-  - **Streaming Endpoint**: Receive real-time, AI-generated answers via Server-Sent Events (SSE).
+  - **Document Access Endpoint**: Access corporate disclosures from companies across the world optimized for LLM ingestion.
+  - **Chunk Retrieval Endpoint**: Retrieve relevant document excerpts and metadata tailored to user queries.
+  - **Agent Response Endpoint**: Receive real-time, AI-generated answers via Server-Sent Events (SSE) with citations that link directly to original document passages.
 
-- **Source Linking**: Automatically generate citations that link directly to original document passages.
-
-- **JavaScript/TypeScript SDK**: Quickly integrate Captide components—like document viewers—into your frontend application.
+- **JavaScript/TypeScript SDK**: Quickly integrate Captide components—like document viewers—into your frontend app for streamlined source auditing.
 
 ## Getting Started
 
 To begin using Captide:
 
-1. [Get your API key](https://app.captide.co/api-dashboard)
+1. [Request a test API key](https://www.captide.ai/contact/api-request)
 2. Follow our [Quickstart Guide](./quickstart)
-3. For production deployment, [contact our sales team](mailto:sales@captide.co) to obtain a license
+3. Monitor your API usage and costs in the [Captide API dashboard](https://app.captide.co/api-dashboard)
 
 ## Contact Us
 
-[Book a demo](https://www.captide.co/demo) to explore how Captide can support your unique workflows and goals.
+[Book a demo](https://www.captide.ai/contact/api-request) to explore how Captide can support your unique workflows and goals.
 
 ## Coming Soon
 
 - **Self-Hosting**: Deploy Captide’s agentic backend in your own infrastructure (currently in private beta)
 - **MCP Integration**: Connect via the Model Context Protocol
 - **A2A Protocol**: Inter-agent communication support through Agent-to-Agent Protocol
-
-Want early access to upcoming features? [Get in touch with our team](https://www.captide.co/demo).

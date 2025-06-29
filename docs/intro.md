@@ -4,9 +4,13 @@ sidebar_position: 1
 
 # Introduction to Captide
 
-Captide enables organisations to deploy multi-agent architectures, embed AI across their financial workflows, and distil insights from millions of corporate filings—all without the complexity of designing or maintaining RAG infrastructure. It streamlines data extraction, investment research, and document review—accessible through a user-friendly interface at [app.captide.co](www.captide.co) or directly via API.
+Captide aggregates and processes global corporate disclosures from publicly listed companies, optimizing them for AI applications. Built on top of a database containing millions of filings from global equities, Captide's agentic RAG system provides the most intricate and accurate agentic workflow for financial document analysis.
 
-This documentation is your guide to integrating the Captide API and leveraging our specialized AI agent, built to deliver accurate, document-grounded financial insights in response to natural language queries. The AI scans millions of filings to surface the most relevant answers, currently supporting SEC-related content and international companies listed with the SEC. Our coverage is rapidly expanding to new regions and document types.
+With Captide’s APIs, asset managers, investment banks, and software companies can embed AI across their financial workflows—extracting insights from millions of authoritative documents without the complexity of building or maintaining agentic RAG infrastructure.
+
+Captide is designed to augment investment research, enable alternative data extraction, and facilitate feature discovery–while ensuring the highest levels of confidence and auditability in every output.
+
+This documentation is your guide to integrating Captide's APIs and leveraging our agentic AI systems.
 
 ## Core Functionalities
 
@@ -35,14 +39,11 @@ To begin using Captide:
 
 ## Contact Us
 
-**Looking to enhance your application with cutting-edge financial document intelligence?**
-
 [Book a demo](https://www.captide.co/demo) to explore how Captide can support your unique workflows and goals.
 
 ## Coming Soon
 
 - **Self-Hosting**: Deploy Captide’s agentic backend in your own infrastructure (currently in private beta)
-- **International Expansion**: Extended support beyond SEC filings (currently in private beta)
 - **MCP Integration**: Connect via the Model Context Protocol
 - **A2A Protocol**: Inter-agent communication support through Agent-to-Agent Protocol
 

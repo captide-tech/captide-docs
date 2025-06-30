@@ -19,14 +19,13 @@ const sidebars = {
       type: 'category',
       label: 'Getting Started',
       items: ['intro', 'quickstart', 'coverage'],
+      collapsible: false,  // Keeps section always expanded
     },
     {
       type: 'category',
       label: 'Integration Guides',
-      items: [
-        'integration/backend',
-        'integration/frontend',
-      ],
+      items: ['integration/api', 'integration/sdk'],
+      collapsible: false,
     },
   ],
 };

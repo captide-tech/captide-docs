@@ -73,6 +73,12 @@ const config = {
         },
       ],
     },
+    docs: {
+      sidebar: {
+        autoCollapseCategories: false,
+        hideable: false,
+      },
+    },
     footer: {
       style: "dark",
       links: [

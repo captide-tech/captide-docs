@@ -1,0 +1,87 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Captide API",
+  "colors": {
+    "primary": "#478ef8",
+    "light": "#478ef8",
+    "dark": "#478ef8"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "index",
+              "quickstart",
+              "coverage"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "integration/backend",
+              "integration/frontend"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "API documentation",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Companies",
+            "pages": [
+              "api-reference/endpoint/companies"
+            ]
+          },
+          {
+            "group": "Documents",
+            "pages": [
+              "api-reference/endpoint/documents"
+            ]
+          },
+          {
+            "group": "Agentic RAG",
+            "pages": [
+              "api-reference/endpoint/chunks",
+              "api-reference/endpoint/agent"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": []
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@captide.co"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/captideai",
+      "github": "https://github.com/captide-tech",
+      "linkedin": "https://linkedin.com/company/captide"
+    }
+  }
+}

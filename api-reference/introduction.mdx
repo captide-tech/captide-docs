@@ -1,0 +1,10 @@
+---
+title: 'Introduction'
+description: 'API for performing RAG on SEC filings, financial reports, and earnings call data with source linking capabilities.'
+---
+
+## API Conventions
+- All JSON request and response fields use **camelCase** naming (e.g., `sourceType`, `fiscalPeriod`, `documentId`)
+- URL paths follow **kebab-case** convention (e.g., `/api/v1/rag/agent-query-stream`)
+- Date format: ISO 8601 (YYYY-MM-DD)
+- Authentication: API key via X-API-Key header

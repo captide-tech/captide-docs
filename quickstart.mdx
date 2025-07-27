@@ -4,11 +4,9 @@ title: "Quickstart Guide"
 
 This guide will help you get started with Captide quickly, showing you how to set up both the REST API and the JavaScript SDK to integrate financial document Q&A into your application.
 
-## Prerequisites
-
-Before you begin, make sure you have:
-
-- A Captide API key (request one at [app.captide.co/api-dashboard](https://www.captide.ai/contact/api-request))
+<Info>
+  Before you begin, make sure you [request a Captide test API key](https://www.captide.ai/contact/api-request).
+</Info>
 
 ## Using the REST API
 
@@ -27,7 +25,7 @@ curl -X POST "https://rest-api-captide.co/api/v1/rag/agent-query-stream" \
 
 ### Example 1: Streaming Agent Response
 
-Use this endpoint when you want to receive a complete AI-generated answer based on SEC documents:
+Use this endpoint when you want to receive a complete AI-generated answer based on global corporate disclosures:
 
 ```bash
 curl -X POST "https://rest-api-captide.co/api/v1/rag/agent-query-stream" \
@@ -151,9 +149,9 @@ function DocumentViewerDemo() {
 export default App;
 ```
 
-## Live Example
-
-For a live example of Captide in action, visit [app.captide.co/chat](https://app.captide.co/chat).
+<Info>
+  For a live example of Captide in action, visit [app.captide.co/chat](https://app.captide.co/chat).
+</Info>
 
 ## Next Steps
 

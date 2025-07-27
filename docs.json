@@ -48,14 +48,16 @@
           {
             "group": "Documents",
             "pages": [
-              "api-reference/endpoint/documents"
+              "api-reference/endpoint/documents",
+              "api-reference/endpoint/get_document"
             ]
           },
           {
             "group": "Agentic RAG",
             "pages": [
               "api-reference/endpoint/chunks",
-              "api-reference/endpoint/agent"
+              "api-reference/endpoint/agent",
+              "api-reference/endpoint/agent_stream"
             ]
           }
         ]

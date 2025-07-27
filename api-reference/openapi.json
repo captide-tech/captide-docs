@@ -5,164 +5,69 @@
     "description": "\n    API for performing RAG on SEC filings, financial reports, and earnings call data with source linking capabilities.\n    \n    ## API Conventions\n    \n    - All JSON request and response fields use **camelCase** naming (e.g., `sourceType`, `fiscalPeriod`, `documentId`)\n    - URL paths follow **kebab-case** convention (e.g., `/api/v1/rag/agent-query-stream`)\n    - Date format: ISO 8601 (YYYY-MM-DD)\n    - Authentication: API key via X-API-Key header\n    ",
     "version": "1.0.2"
   },
-  "servers": [
-    {
-      "url": "https://rest-api.captide.co",
-      "description": "Production API"
-    }
-  ],
   "paths": {
-    "/api/v1/companies/search": {
+    "/api/v1/companies/list": {
       "get": {
         "tags": [
           "Companies"
         ],
-        "summary": "Search Companies",
-        "description": "Search companies by name or ticker symbol.\n\nDesigned for typeahead search as users type in a search field. Returns a list of matching companies\nwith their names, ticker symbols, exchange, and CIK.\n\n- **query**: Text to search for in company names or tickers (case-insensitive partial match)\n- **includeDelisted**: Whether to include delisted companies in search results\n- **limit**: Maximum number of results to return (defaults to 10)\n\n*Note: All JSON fields use camelCase naming convention.*",
-        "operationId": "search_companies_api_v1_companies_search_get",
+        "summary": "List companies",
+        "description": "List all available companies with optional filtering.\n    \n    This endpoint supports various filters to narrow down the results based on ticker symbols,\n    country, SEC filing status, and specific company ID.",
+        "operationId": "list_companies_api_v1_companies_list_get",
         "security": [
           {
-            "ApiKeyAuth": []
+            "APIKeyHeader": []
           }
         ],
         "parameters": [
           {
-            "name": "query",
+            "name": "companyTickers",
             "in": "query",
             "required": false,
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Search by company name or ticker (partial match)",
-              "title": "Query"
-            },
-            "description": "Search by company name or ticker (partial match)"
-          },
-          {
-            "name": "includeDelisted",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Include delisted companies in results",
-              "default": false,
-              "title": "Includedelisted"
-            },
-            "description": "Include delisted companies in results"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Maximum number of records to return",
-              "default": 10,
-              "title": "Limit"
-            },
-            "description": "Maximum number of records to return"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CompanyListResponse"
-                  },
-                  "title": "Response Search Companies Api V1 Companies Search Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/companies": {
-      "get": {
-        "tags": [
-          "Companies"
-        ],
-        "summary": "List Companies",
-        "description": "List all available companies, optionally filtered by name or ticker.\n\n- **name**: Optional filter for company name (case-insensitive partial match)\n- **ticker**: Optional filter for exact ticker symbol match (case-insensitive)\n- **includeDelisted**: Whether to include delisted companies\n- **limit**: Maximum number of records to return (defaults to 100)\n\n*Note: All JSON fields use camelCase naming convention.*",
-        "operationId": "list_companies_api_v1_companies_get",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
+                    "type": "string"
+                  }
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter companies by name (partial match)",
-              "title": "Name"
+              "description": "Filter companies by ticker symbols",
+              "title": "Companytickers"
             },
-            "description": "Filter companies by name (partial match)"
+            "description": "Filter companies by ticker symbols",
+            "example": [
+              "AAPL",
+              "MSFT"
+            ]
           },
           {
-            "name": "ticker",
+            "name": "companyCountry",
             "in": "query",
             "required": false,
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter companies by exact ticker symbol match",
-              "title": "Ticker"
+              "description": "Filter companies by country ISO2 code",
+              "title": "Companycountry"
             },
-            "description": "Filter companies by exact ticker symbol match"
+            "description": "Filter companies by country ISO2 code",
+            "example": "US"
           },
           {
-            "name": "includeDelisted",
+            "name": "filesWithSec",
             "in": "query",
             "required": false,
             "schema": {
@@ -174,11 +79,30 @@
                   "type": "null"
                 }
               ],
-              "description": "Include delisted companies",
-              "default": false,
-              "title": "Includedelisted"
+              "description": "Filter companies by SEC filing status",
+              "title": "Fileswithsec"
             },
-            "description": "Include delisted companies"
+            "description": "Filter companies by SEC filing status",
+            "example": true
+          },
+          {
+            "name": "companyId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by specific company ID",
+              "title": "Companyid"
+            },
+            "description": "Filter by specific company ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           },
           {
             "name": "limit",
@@ -187,7 +111,9 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "integer"
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
                 },
                 {
                   "type": "null"
@@ -197,12 +123,13 @@
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return"
+            "description": "Maximum number of records to return",
+            "example": 100
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful list results",
             "content": {
               "application/json": {
                 "schema": {
@@ -210,156 +137,35 @@
                   "items": {
                     "$ref": "#/components/schemas/CompanyListResponse"
                   },
-                  "title": "Response List Companies Api V1 Companies Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/companies/ticker/{ticker}/documents/search": {
-      "get": {
-        "tags": [
-          "Companies"
-        ],
-        "summary": "Search Company Documents By Ticker",
-        "description": "Search for documents related to a company by ticker symbol.\n\nIdeal for building a document selector interface where users can search for specific documents\nto analyze, and then pass the document IDs to the RAG API for focused analysis.\n\n- **ticker**: Ticker symbol of the company\n- **query**: Optional text to search for in document metadata or to detect document type\n  Examples:\n  - \"10k\" or \"annual\" to find 10-K reports\n  - \"quarterly\" or \"10q\" to find 10-Q reports  \n  - \"transcript\" or \"call\" to find earnings call transcripts\n  - \"8k\" to find 8-K filings\n  - \"proxy\" or \"14a\" to find proxy statements\n- **documentTypes**: Optional explicit filter for specific document types\n- **startDate**: Optional start date filter (YYYY-MM-DD)\n- **endDate**: Optional end date filter (YYYY-MM-DD)\n- **limit**: Maximum number of results to return (default: 50)\n\n*Note: All JSON fields use camelCase naming convention.*",
-        "operationId": "search_company_documents_by_ticker_api_v1_companies_ticker__ticker__documents_search_get",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Ticker"
-            }
-          },
-          {
-            "name": "query",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
+                  "title": "Response List Companies Api V1 Companies List Get"
                 },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Text to search for in document metadata",
-              "title": "Query"
-            },
-            "description": "Text to search for in document metadata"
-          },
-          {
-            "name": "documentTypes",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                "example": [
+                  {
+                    "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                    "name": "Apple Inc.",
+                    "tickers": [
+                      {
+                        "symbol": "AAPL",
+                        "exchange": "NASDAQ"
+                      }
+                    ],
+                    "countries": [
+                      "US"
+                    ],
+                    "filesWithSec": true
                   }
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter by document types: '10-K', '10-Q', '8-K', 'transcript', 'DEF 14A'",
-              "title": "Documenttypes"
-            },
-            "description": "Filter by document types: '10-K', '10-Q', '8-K', 'transcript', 'DEF 14A'"
-          },
-          {
-            "name": "startDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter documents after this date (YYYY-MM-DD)",
-              "title": "Startdate"
-            },
-            "description": "Filter documents after this date (YYYY-MM-DD)"
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter documents before this date (YYYY-MM-DD)",
-              "title": "Enddate"
-            },
-            "description": "Filter documents before this date (YYYY-MM-DD)"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Maximum number of records to return",
-              "default": 50,
-              "title": "Limit"
-            },
-            "description": "Maximum number of records to return"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SourceDocument"
-                  },
-                  "title": "Response Search Company Documents By Ticker Api V1 Companies Ticker  Ticker  Documents Search Get"
-                }
+                ]
               }
             }
+          },
+          "400": {
+            "description": "Invalid filter parameters"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error"
           },
           "422": {
             "description": "Validation Error",
@@ -374,181 +180,258 @@
         }
       }
     },
-    "/api/v1/companies/ticker/{ticker}/documents": {
-      "get": {
-        "tags": [
-          "Companies"
-        ],
-        "summary": "List Company Documents By Ticker",
-        "description": "List all documents for a company identified by ticker symbol.\n\nReturns documents in chronological order (newest first).\n\n- **ticker**: Ticker symbol of the company\n- **documentTypes**: Optional filter for specific document types\n- **startDate**: Optional start date filter (YYYY-MM-DD)\n- **endDate**: Optional end date filter (YYYY-MM-DD)\n- **limit**: Maximum number of results to return (default: 50)\n\n*Note: All JSON fields use camelCase naming convention.*",
-        "operationId": "list_company_documents_by_ticker_api_v1_companies_ticker__ticker__documents_get",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "ticker",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Ticker"
-            }
-          },
-          {
-            "name": "documentTypes",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter by document types: '10-K', '10-Q', '8-K', 'transcript', 'DEF 14A'",
-              "title": "Documenttypes"
-            },
-            "description": "Filter by document types: '10-K', '10-Q', '8-K', 'transcript', 'DEF 14A'"
-          },
-          {
-            "name": "startDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter documents after this date (YYYY-MM-DD)",
-              "title": "Startdate"
-            },
-            "description": "Filter documents after this date (YYYY-MM-DD)"
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter documents before this date (YYYY-MM-DD)",
-              "title": "Enddate"
-            },
-            "description": "Filter documents before this date (YYYY-MM-DD)"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Maximum number of records to return",
-              "default": 50,
-              "title": "Limit"
-            },
-            "description": "Maximum number of records to return"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SourceDocument"
-                  },
-                  "title": "Response List Company Documents By Ticker Api V1 Companies Ticker  Ticker  Documents Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/document": {
+    "/api/v1/documents/list": {
       "get": {
         "tags": [
           "Documents"
         ],
-        "summary": "Get Document",
-        "description": "Retrieves a source document for display in the frontend.\n\nNOTE: Consuming applications should NOT use this endpoint directly. Instead, they should \nuse the `sourceLink` URLs returned by other endpoints (like `/rag/agent-query-stream` or `/rag/chunks`).\nThis endpoint is documented here purely for reference purposes.\n\nThis endpoint is designed to be called when a consuming application has received\na response containing a `sourceLink` from other endpoints (like `/rag/agent-query-stream` \nor `/rag/chunks`). It returns the full HTML content and metadata of the referenced \ndocument for display and highlighting in the frontend.\n\nSupported document types:\n- SEC filings (10-K, 10-Q)\n- International SEC filings (20-F, 40-F, 6-K)\n- 8-K documents (with embedded images)\n- Earnings call transcripts\n- Proxy statements (DEF 14A, DEFM14A, DEF 14C, DEFM14C, etc.)\n\n*Note: All JSON fields use camelCase naming convention.*",
-        "operationId": "get_document_api_v1_document_get",
+        "summary": "List documents",
+        "description": "List all documents with optional filtering.\n    \n    This endpoint returns a paginated list of documents with various filtering options\n    including ticker, document category, form type, and date ranges.",
+        "operationId": "list_documents_api_v1_documents_list_get",
         "security": [
           {
-            "ApiKeyAuth": []
+            "APIKeyHeader": []
           }
         ],
         "parameters": [
           {
-            "name": "sourceType",
+            "name": "ticker",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, etc.)",
-              "title": "Sourcetype"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by company ticker",
+              "title": "Ticker"
             },
-            "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, etc.)"
+            "description": "Filter by company ticker",
+            "example": "AAPL"
           },
           {
-            "name": "documentId",
+            "name": "documentCategory",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "description": "UUID of the document",
-              "title": "Documentid"
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/DocumentCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by document category",
+              "title": "Documentcategory"
             },
-            "description": "UUID of the document"
+            "description": "Filter by document category",
+            "example": "annual-report"
+          },
+          {
+            "name": "formType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by form type",
+              "title": "Formtype"
+            },
+            "description": "Filter by form type",
+            "example": "10-K"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter documents after this date (YYYY-MM-DD)",
+              "title": "Startdate"
+            },
+            "description": "Filter documents after this date (YYYY-MM-DD)",
+            "example": "2023-01-01"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter documents before this date (YYYY-MM-DD)",
+              "title": "Enddate"
+            },
+            "description": "Filter documents before this date (YYYY-MM-DD)",
+            "example": "2023-12-31"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of records to return",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return",
+            "example": 100
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Document list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListResponse"
+                  },
+                  "title": "Response List Documents Api V1 Documents List Get"
+                },
+                "example": [
+                  {
+                    "id": "0de9728d-f353-43f3-8605-e546a7bfcb8a",
+                    "documentCategory": "current-report",
+                    "tickers": [
+                      {
+                        "symbol": "AD8",
+                        "exchange": "ASX"
+                      }
+                    ],
+                    "companyName": "Audinate Group",
+                    "date": "2022-02-14",
+                    "fiscalQuarter": 2,
+                    "fiscalYear": 2022,
+                    "originalFileUrl": "https://files.captide.co/original-docs/0009b057-7acc-4bfd-93df-bf3fcf65ad84/0de9728d-f353-43f3-8605-e546a7bfcb8a.pdf",
+                    "markdownFileUrl": "https://files.captide.co/markdown-docs/0009b057-7acc-4bfd-93df-bf3fcf65ad84/0de9728d-f353-43f3-8605-e546a7bfcb8a.md"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter parameters"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{document_id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get document by ID",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This endpoint returns complete document details including metadata, file URLs,\n    and associated company information.",
+        "operationId": "get_document_by_id_api_v1_documents__document_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Document ID",
+              "title": "Document Id"
+            },
+            "description": "Document ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document found successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DocumentResponse"
+                },
+                "example": {
+                  "id": "0de9728d-f353-43f3-8605-e546a7bfcb8a",
+                  "documentCategory": "current-report",
+                  "tickers": [
+                    {
+                      "symbol": "AD8",
+                      "exchange": "ASX"
+                    }
+                  ],
+                  "companyName": "Audinate Group",
+                  "date": "2022-02-14",
+                  "fiscalQuarter": 2,
+                  "fiscalYear": 2022,
+                  "originalFileUrl": "https://files.captide.co/original-docs/0009b057-7acc-4bfd-93df-bf3fcf65ad84/0de9728d-f353-43f3-8605-e546a7bfcb8a.pdf",
+                  "markdownFileUrl": "https://files.captide.co/markdown-docs/0009b057-7acc-4bfd-93df-bf3fcf65ad84/0de9728d-f353-43f3-8605-e546a7bfcb8a.md"
                 }
               }
             }
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error"
           },
           "422": {
             "description": "Validation Error",
@@ -566,28 +449,434 @@
     "/api/v1/rag/chunks": {
       "post": {
         "tags": [
-          "RAG"
+          "Retrieval Augmented Generation"
         ],
-        "summary": "Search Chunks",
-        "description": "Search for chunks based on a query.\n\nRequest body:\n- **query**: The search query (required)\n- **tickers**: Optional list of ticker symbols to filter documents by. If unsure about available tickers, \n             you can use the `/companies` endpoint to retrieve a list of all available companies and their tickers,\n             or just filter by a single ticker to see if it's available.\n- **sourceType**: Optional source type(s) to include (available options: '10-K', '10-Q', '8-K', '20-F', '40-F', '6-K', 'transcript', 'DEF 14A', etc.). \n                Can be a single string or a list of strings.\n- **startDate**: Optional start date for document filtering (format: YYYY-MM-DD)\n- **endDate**: Optional end date for document filtering (format: YYYY-MM-DD)\n- **sourceLink**: Optional source link(s) to search within. Can be a single string or a list of strings. \n                No other documents will be queried by the agent but these. Use to restrict the search to \n                user-selected documents.\n\nReturns chunks that are most relevant to the query.\n\nNote: This endpoint returns the same chunks that are used internally by the `/agent-query` endpoint.\nEach chunk contains metadata including `id` and `sourceLink` which should be preserved and returned\nwhen implementing custom answer generation based on these chunks. These fields are essential for \nproper source linking in the frontend using the Captide.js library (https://github.com/captide-tech/captidejs#readme),\nwhich allows users to view and highlight the original document sources.\n\n*Note: All JSON fields use camelCase naming convention.*",
+        "summary": "Search document chunks",
+        "description": "Search for relevant document chunks based on a query.\n    Returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.",
         "operationId": "search_chunks_api_v1_rag_chunks_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AgentRequest"
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The natural language query",
+              "title": "Query"
+            },
+            "description": "The natural language query",
+            "example": "What was Apple's revenue in 2023?"
+          },
+          {
+            "name": "documentType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+              "title": "Documenttype"
+            },
+            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+            "example": [
+              "10-K",
+              "current-report"
+            ]
+          },
+          {
+            "name": "documentDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+              "title": "Documentdate"
+            },
+            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+            "example": "2023-01-01:2023-12-31"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chunks found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunksResponse"
+                },
+                "example": {
+                  "relevantChunks": [
+                    {
+                      "content": "Apple Inc. reported revenue of $94.8 billion for Q2 2023...",
+                      "pageNumber": 4,
+                      "excerpt": "Apple Inc. reported revenue of $94.8 billion",
+                      "documentMetadata": {
+                        "documentId": "f548de12-6eb6-4742-84a8-8297fa096ce5",
+                        "documentCategory": "interim-report",
+                        "formType": "10-Q",
+                        "date": "2023-05-05",
+                        "description": "Apple Inc.'s Form 10-K quarterly report for the fiscal quarter ended April 1, 2023",
+                        "fiscalQuarter": 2,
+                        "fiscalYear": 2023,
+                        "companyName": "Apple Inc.",
+                        "tickers": [
+                          "AAPL"
+                        ],
+                        "metadata": {}
+                      }
+                    }
+                  ]
+                }
               }
             }
           },
-          "required": true
-        },
+          "400": {
+            "description": "Invalid request parameters"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error or LangGraph service unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/agent-response": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Get agent response",
+        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.",
+        "operationId": "agent_response_api_v1_rag_agent_response_post",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The natural language query",
+              "title": "Query"
+            },
+            "description": "The natural language query",
+            "example": "What was Apple's revenue in 2023?"
+          },
+          {
+            "name": "documentType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+              "title": "Documenttype"
+            },
+            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+            "example": [
+              "10-K",
+              "current-report"
+            ]
+          },
+          {
+            "name": "documentDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+              "title": "Documentdate"
+            },
+            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+            "example": "2023-01-01:2023-12-31"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent response generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponse"
+                },
+                "example": {
+                  "content": "According to Apple's 10-K filing for fiscal year 2023, the company reported revenue of **$394.3 billion**, representing a 3% decrease from the previous year.",
+                  "sourceMap": {
+                    "#cf870026": {
+                      "content": "# Apple Inc. | 2023 Form 10-K | 20...",
+                      "pageNumber": 26,
+                      "excerpt": "The Company's total net sales were $383.3 billion...",
+                      "documentMetadata": {
+                        "documentId": "cf87ec22-1003-4b38-acb8-007cf90538cf",
+                        "documentCategory": "annual-report",
+                        "formType": "10-K",
+                        "date": "2023-11-03",
+                        "description": "This document is the Annual Report on Form 10-K filed by Apple Inc. for the fiscal year 2023.",
+                        "fiscalQuarter": 4,
+                        "fiscalYear": 2023,
+                        "companyName": "Apple Inc.",
+                        "tickers": [
+                          "AAPL"
+                        ],
+                        "metadata": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error or LangGraph service unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/agent-response-stream": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Stream agent response",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.",
+        "operationId": "agent_response_stream_api_v1_rag_agent_response_stream_post",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The natural language query",
+              "title": "Query"
+            },
+            "description": "The natural language query",
+            "example": "What was Apple's revenue in 2023?"
+          },
+          {
+            "name": "documentType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+              "title": "Documenttype"
+            },
+            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
+            "example": [
+              "10-K",
+              "current-report"
+            ]
+          },
+          {
+            "name": "documentDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+              "title": "Documentdate"
+            },
+            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
+            "example": "2023-01-01:2023-12-31"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stream started successfully",
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "text/plain": {
+                "example": "event: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from NVIDIA CORP...\", \"stage\": \"search\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from NVIDIA CORP\", \"stage\": \"analyzing\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"N\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"VIDIA\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2023 was **$26.97 billion**.\"}\n\nevent: metadata\ndata: {\"type\": \"metadata\", \"sourceMap\": {\"#9e540033\": {\"content\": \"# Gross Margin...\", \"pageNumber\": 33, \"excerpt\": \"$6,704\", \"documentMetadata\": {\"documentId\": \"9e54f11c-3347-4bcc-9e65-fb5904afbbe2\", \"documentCategory\": \"interim-report\", \"formType\": null, \"date\": \"2023-08-28\", \"description\": \"This document is the Form 10-Q quarterly report filed by NVIDIA Corporation\", \"fiscalQuarter\": 2, \"fiscalYear\": 2024, \"companyName\": \"NVIDIA CORP\", \"tickers\": [\"NVDA\"], \"metadata\": {}}}}}\n\nevent: done\ndata: {}\n\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error or LangGraph service unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get Document",
+        "description": "**DEPRECATED**: This endpoint is deprecated and should not be used directly.\n\nRetrieves a source document for display in the frontend.\n\nNOTE: Consuming applications should NOT use this endpoint directly. Instead, they should \nuse the `sourceLink` URLs returned by other endpoints (like `/rag/agent-query-stream` or `/rag/chunks`).\nThis endpoint is documented here purely for reference purposes.\n\nThis endpoint is designed to be called when a consuming application has received\na response containing a `sourceLink` from other endpoints (like `/rag/agent-query-stream` \nor `/rag/chunks`). It returns the full HTML content and metadata of the referenced \ndocument for display and highlighting in the frontend.\n\nSupported document types:\n- SEC filings (10-K, 10-Q)\n- International SEC filings (20-F, 40-F, 6-K)\n- 8-K documents (with embedded images)\n- Earnings call transcripts\n- Proxy statements (DEF 14A, DEFM14A, DEF 14C, DEFM14C, etc.)\n- Investor relations (IR) documents (PDF and XLSX files)",
+        "operationId": "get_document_api_v1_documents_get",
+        "deprecated": true,
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sourceType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, ir)",
+              "title": "Sourcetype"
+            },
+            "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, ir)"
+          },
+          {
+            "name": "documentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "UUID of the document",
+              "title": "Documentid"
+            },
+            "description": "UUID of the document"
+          },
+          {
+            "name": "fileType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "For IR documents: file type (pdf, xlsx) - optional, will be retrieved from database if not provided",
+              "title": "Filetype"
+            },
+            "description": "For IR documents: file type (pdf, xlsx) - optional, will be retrieved from database if not provided"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChunkSearchResponse"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/HTMLDocumentResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BlobDocumentResponse"
+                    }
+                  ],
+                  "title": "Response Get Document Api V1 Documents Get"
                 }
               }
             }
@@ -602,21 +891,16 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        }
       }
     },
     "/api/v1/rag/agent-query-stream": {
       "post": {
         "tags": [
-          "RAG"
+          "Retrieval Augmented Generation"
         ],
         "summary": "Agent Query Stream",
-        "description": "Stream a response to a query in a simple markdown format.\n\nThis endpoint provides a simplified streaming response:\n1. First, it streams the ID mapping for source linking\n2. Then it streams raw markdown content as it comes from the LLM\n\nThe client only needs to concatenate the markdown chunks to get the full document,\nand can use the ID mapping to resolve citations to their sources.\n\nRequest body:\n- **query**: The query to ask the agent (required)\n- **tickers**: Optional list of ticker symbols to filter documents by\n- **sourceType**: Optional source type(s) to include (available options: '10-K', '10-Q', '8-K', '20-F', '40-F', '6-K', 'transcript', 'DEF 14A', etc.).\n                 Can be a single string or a list of strings.\n- **startDate**: Optional start date for document filtering (format: YYYY-MM-DD)\n- **endDate**: Optional end date for document filtering (format: YYYY-MM-DD)\n- **sourceLink**: Optional source link(s) to search within. Can be a single string or a list of strings.\n                 No other documents will be queried by the agent but these. Use to \n                 restrict the search to user-selected documents.\n\nReturns a streaming response with these event types:\n- 'id_mapping': A mapping of IDs to source links for citation resolution\n  ```\n  {\n    \"type\": \"id_mapping\",\n    \"mapping\": {\n      \"#uuid1234\": {\n        \"sourceLink\": \"http://rest-api.captide.co/document?id=12345678\",\n        \"sourceMetadata\": {\n          \"sourceType\": \"10-K\",\n          \"ticker\": \"AAPL\",\n          \"date\": \"2024-01-01\",\n          \"fiscalPeriod\": \"FY 2023\",\n          \"documentId\": \"12345678\"\n        }\n      }\n    }\n  }\n  ```\n\n- 'markdown_chunk': A chunk of markdown text\n  ```\n  {\n    \"type\": \"markdown_chunk\",\n    \"content\": \"This is a part of the markdown response with a citation [#uuid1234].\"\n  }\n  ```\n\n- 'warning': Notification when requested information is not found\n  ```\n  {\n    \"type\": \"warning\",\n    \"message\": \"Could not find information about X in the provided documents.\"\n  }\n  ```\n\n- 'done': Signals the end of the stream\n  ```\n  {\n    \"type\": \"done\"\n  }\n  ```\n\n- 'error': Error information if something goes wrong\n  ```\n  {\n    \"type\": \"error\",\n    \"detail\": \"An error occurred while processing the request.\"\n  }\n  ```\n\nClient implementation recommendations:\n1. First process the 'id_mapping' event to obtain source information for citations\n2. Then accumulate all 'markdown_chunk' events to build the complete response\n3. Display warnings to the user when 'warning' events are received\n4. When a 'done' event is received, the response is complete\n5. Use the ID mapping to create clickable citations in the rendered markdown\n\nIntegration with document search:\nThe 'sourceLink' parameter can be used in conjunction with the document search endpoint to:\n1. Let users search and select specific documents they want to analyze\n2. Then pass those document IDs to this endpoint to ensure the AI only references those selected documents\n3. This creates a more user-controlled research experience where they can direct the AI to specific filings\n\n*Note: All JSON fields use camelCase naming convention.*",
+        "description": "Stream a response to a query in a simple markdown format.\n\nThis endpoint provides a simplified streaming response:\n1. First, it streams the ID mapping for source linking\n2. Then it streams raw markdown content as it comes from the LLM\n\nThe client only needs to concatenate the markdown chunks to get the full document,\nand can use the ID mapping to resolve citations to their sources.\n\nRequest body:\n- **query**: The query to ask the agent (required)\n- **tickers**: Optional list of ticker symbols to filter documents by\n- **sourceType**: Optional source type(s) to include (available options: '10-K', '10-Q', '8-K', '20-F', '40-F', '6-K', 'transcript', 'DEF 14A', etc.).\n                 Can be a single string or a list of strings.\n- **startDate**: Optional start date for document filtering (format: YYYY-MM-DD)\n- **endDate**: Optional end date for document filtering (format: YYYY-MM-DD)\n- **sourceLink**: Optional source link(s) to search within. Can be a single string or a list of strings.\n                 No other documents will be queried by the agent but these. Use to \n                 restrict the search to user-selected documents.\n\nReturns a streaming response with these event types:\n- 'id_mapping': A mapping of IDs to source links for citation resolution\n  ```\n  {\n    \"type\": \"id_mapping\",\n    \"mapping\": {\n      \"#uuid1234\": {\n        \"sourceLink\": \"http://rest-api.captide.co/document?id=12345678\",\n        \"sourceMetadata\": {\n          \"sourceType\": \"10-K\",\n          \"ticker\": \"AAPL\",\n          \"date\": \"2024-01-01\",\n          \"fiscalPeriod\": \"FY 2023\",\n          \"documentId\": \"12345678\"\n        }\n      }\n    }\n  }\n  ```\n\n- 'markdown_chunk': A chunk of markdown text\n  ```\n  {\n    \"type\": \"markdown_chunk\",\n    \"content\": \"This is a part of the markdown response with a citation [#uuid1234].\"\n  }\n  ```\n\n- 'warning': Notification when requested information is not found\n  ```\n  {\n    \"type\": \"warning\",\n    \"message\": \"Could not find information about X in the provided documents.\"\n  }\n  ```\n\n- 'done': Signals the end of the stream\n  ```\n  {\n    \"type\": \"done\"\n  }\n  ```\n\n- 'error': Error information if something goes wrong\n  ```\n  {\n    \"type\": \"error\",\n    \"detail\": \"An error occurred while processing the request.\"\n  }\n  ```\n\nClient implementation recommendations:\n1. First process the 'id_mapping' event to obtain source information for citations\n2. Then accumulate all 'markdown_chunk' events to build the complete response\n3. Display warnings to the user when 'warning' events are received\n4. When a 'done' event is received, the response is complete\n5. Use the ID mapping to create clickable citations in the rendered markdown\n\nIntegration with document search:\nThe 'sourceLink' parameter can be used in conjunction with the document search endpoint to:\n1. Let users search and select specific documents they want to analyze\n2. Then pass those document IDs to this endpoint to ensure the AI only references those selected documents\n3. This creates a more user-controlled research experience where they can direct the AI to specific filings",
         "operationId": "agent_query_stream_api_v1_rag_agent_query_stream_post",
         "requestBody": {
           "content": {
@@ -648,9 +932,10 @@
             }
           }
         },
+        "deprecated": true,
         "security": [
           {
-            "ApiKeyAuth": []
+            "APIKeyHeader": []
           }
         ]
       }
@@ -661,7 +946,7 @@
           "Health"
         ],
         "summary": "Root",
-        "description": "Health check endpoint.\n\n*Note: All JSON fields use camelCase naming convention.*",
+        "description": "Health check endpoint.",
         "operationId": "root__get",
         "responses": {
           "200": {
@@ -672,12 +957,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ]
+        }
       }
     }
   },
@@ -688,8 +968,7 @@
           "query": {
             "type": "string",
             "title": "Query",
-            "description": "The query to ask the agent",
-            "example": "What are the key risks mentioned in the latest 10-K?"
+            "description": "The natural language query"
           },
           "tickers": {
             "anyOf": [
@@ -704,17 +983,34 @@
               }
             ],
             "title": "Tickers",
-            "description": "List of ticker symbols to filter documents by (e.g., ['AAPL', 'MSFT']). Check the '/companies' endpoint for available tickers.",
-            "example": [
-              "AAPL",
-              "MSFT"
-            ]
+            "description": "List of ticker symbols to filter by"
           },
-          "sourceType": {
+          "startDate": {
             "anyOf": [
               {
                 "type": "string"
               },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate",
+            "description": "Start date for filtering (YYYY-MM-DD)"
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate",
+            "description": "End date for filtering (YYYY-MM-DD)"
+          },
+          "sourceTypes": {
+            "anyOf": [
               {
                 "items": {
                   "type": "string"
@@ -725,46 +1021,11 @@
                 "type": "null"
               }
             ],
-            "title": "Sourcetype",
-            "description": "Source type(s) to include. Available options: 10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, DEFM14C. Can be a single string or a list of strings.",
-            "example": [
-              "10-K",
-              "10-Q"
-            ]
+            "title": "Sourcetypes",
+            "description": "List of source types to filter by"
           },
-          "start_date": {
+          "sourceLinks": {
             "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Start Date",
-            "description": "Start date for document filtering (format: YYYY-MM-DD)",
-            "example": "2022-01-01"
-          },
-          "end_date": {
-            "anyOf": [
-              {
-                "type": "string",
-                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "End Date",
-            "description": "End date for document filtering (format: YYYY-MM-DD)",
-            "example": "2023-12-31"
-          },
-          "sourceLink": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
               {
                 "items": {
                   "type": "string"
@@ -775,224 +1036,100 @@
                 "type": "null"
               }
             ],
-            "title": "Sourcelink",
-            "description": "Source link(s) to search within. No other documents will be queried by the agent but these. Can be a single string or a list of strings. Use to restrict the search to user-selected documents."
+            "title": "Sourcelinks",
+            "description": "List of specific source links to use"
+          },
+          "secOnly": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconly",
+            "description": "Whether to use only SEC documents",
+            "default": false
           }
         },
-        "additionalProperties": true,
         "type": "object",
         "required": [
           "query"
         ],
         "title": "AgentRequest",
-        "description": "Request schema for streaming RAG queries."
+        "description": "Request model for agent queries."
       },
-      "ApiKeyCreate": {
+      "AgentResponse": {
         "properties": {
-          "name": {
+          "content": {
             "type": "string",
-            "title": "Name",
-            "description": "Name of the API key"
+            "title": "Content",
+            "description": "The agent's response in markdown format"
           },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description",
-            "description": "Description of the API key's purpose"
-          },
-          "organization_id": {
-            "type": "string",
-            "format": "uuid4",
-            "title": "Organization Id",
-            "description": "ID of the organization this API key belongs to"
-          },
-          "expires_in_days": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expires In Days",
-            "description": "Number of days until the API key expires. Empty string or None for no expiration."
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "organization_id"
-        ],
-        "title": "ApiKeyCreate",
-        "description": "Schema for creating a new API key."
-      },
-      "ApiKeyDeactivate": {
-        "properties": {
-          "is_active": {
-            "type": "boolean",
-            "title": "Is Active",
-            "description": "Set to false to deactivate the API key",
-            "default": false
-          }
-        },
-        "type": "object",
-        "title": "ApiKeyDeactivate",
-        "description": "Schema for deactivating an API key."
-      },
-      "ApiKeyResponse": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name",
-            "description": "Name of the API key"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description",
-            "description": "Description of the API key's purpose"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid4",
-            "title": "Id"
-          },
-          "key": {
-            "type": "string",
-            "title": "Key"
-          },
-          "is_active": {
-            "type": "boolean",
-            "title": "Is Active"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Created At"
-          },
-          "last_used_at": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Last Used At"
-          },
-          "expires_at": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expires At"
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "id",
-          "key",
-          "is_active",
-          "created_at"
-        ],
-        "title": "ApiKeyResponse",
-        "description": "Schema for API key response."
-      },
-      "ChunkSearchResponse": {
-        "properties": {
-          "source_chunks": {
-            "items": {
-              "$ref": "#/components/schemas/SourceChunk"
+          "sourceMap": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Chunk"
             },
-            "type": "array",
-            "title": "Source Chunks"
+            "type": "object",
+            "title": "Sourcemap",
+            "description": "Mapping of citation reference IDs to chunk metadata"
           }
         },
         "type": "object",
         "required": [
-          "source_chunks"
+          "content",
+          "sourceMap"
         ],
-        "title": "ChunkSearchResponse",
-        "description": "Response schema for chunk search results."
+        "title": "AgentResponse",
+        "description": "Response model for agent queries."
       },
-      "CompanyListResponse": {
+      "BlobDocumentResponse": {
         "properties": {
-          "name": {
+          "ticker": {
             "type": "string",
-            "title": "Name"
+            "title": "Ticker",
+            "description": "Company ticker symbol"
           },
-          "tickers": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Tickers"
+          "companyName": {
+            "type": "string",
+            "title": "Companyname",
+            "description": "Name of the company"
           },
-          "exchange": {
+          "metadata": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "object"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Exchange"
-          },
-          "cik": {
-            "type": "string",
-            "title": "Cik"
-          },
-          "delisted": {
-            "type": "boolean",
-            "title": "Delisted",
-            "default": false
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "tickers",
-          "cik"
-        ],
-        "title": "CompanyListResponse",
-        "description": "Simplified response schema for company listings."
-      },
-      "DocumentResponse": {
-        "properties": {
-          "htmlContent": {
-            "type": "string",
-            "title": "Htmlcontent",
-            "description": "HTML content of the document"
+            "title": "Metadata",
+            "description": "Additional document metadata"
           },
           "sourceType": {
+            "$ref": "#/components/schemas/BlobDocumentType",
+            "description": "Type of blob document"
+          },
+          "sasUrl": {
             "type": "string",
-            "title": "Sourcetype",
-            "description": "Type of document (10-K, 10-Q, 8-K, transcript)"
+            "title": "Sasurl",
+            "description": "SAS URL for direct access to the document in blob storage"
+          },
+          "fileType": {
+            "$ref": "#/components/schemas/IRFileType",
+            "description": "File type (pdf, xlsx)"
+          },
+          "fileName": {
+            "type": "string",
+            "title": "Filename",
+            "description": "File name of the document"
+          },
+          "contentType": {
+            "type": "string",
+            "title": "Contenttype",
+            "description": "MIME type of the document"
           },
           "date": {
             "anyOf": [
@@ -1017,8 +1154,41 @@
             ],
             "title": "Fiscalperiod",
             "description": "Fiscal period of the document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "companyName",
+          "sourceType",
+          "sasUrl",
+          "fileType",
+          "fileName",
+          "contentType"
+        ],
+        "title": "BlobDocumentResponse",
+        "description": "Response model for blob storage documents (PDFs, XLSX files, etc.)."
+      },
+      "BlobDocumentType": {
+        "type": "string",
+        "enum": [
+          "ir"
+        ],
+        "title": "BlobDocumentType"
+      },
+      "Chunk": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Plain text content of the entire chunk"
           },
-          "ticker": {
+          "pageNumber": {
+            "type": "integer",
+            "title": "Pagenumber",
+            "description": "Page number in the document"
+          },
+          "excerpt": {
             "anyOf": [
               {
                 "type": "string"
@@ -1027,8 +1197,140 @@
                 "type": "null"
               }
             ],
-            "title": "Ticker",
-            "description": "Company ticker symbol"
+            "title": "Excerpt",
+            "description": "Specific part of the chunk that the agent used to answer the user's question. Used for source linking and highlighting."
+          },
+          "documentMetadata": {
+            "$ref": "#/components/schemas/SourceDocument",
+            "description": "Metadata for the chunk's document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content",
+          "pageNumber",
+          "documentMetadata"
+        ],
+        "title": "Chunk",
+        "description": "A chunk of document content with metadata."
+      },
+      "ChunksResponse": {
+        "properties": {
+          "relevantChunks": {
+            "items": {
+              "$ref": "#/components/schemas/Chunk"
+            },
+            "type": "array",
+            "title": "Relevantchunks",
+            "description": "List of relevant document chunks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "relevantChunks"
+        ],
+        "title": "ChunksResponse",
+        "description": "Response model for chunk search results."
+      },
+      "CompanyListResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Company ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Company name"
+          },
+          "tickers": {
+            "items": {
+              "$ref": "#/components/schemas/TickerExchangeResponse"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "List of ticker symbols and their exchanges"
+          },
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Countries",
+            "description": "List of country ISO2 codes"
+          },
+          "filesWithSec": {
+            "type": "boolean",
+            "title": "Fileswithsec",
+            "description": "Whether company files with SEC"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "tickers",
+          "countries",
+          "filesWithSec"
+        ],
+        "title": "CompanyListResponse",
+        "description": "Response model for company list results."
+      },
+      "DocumentCategory": {
+        "type": "string",
+        "enum": [
+          "annual-report",
+          "interim-report",
+          "supplemental-financial-information",
+          "earnings-release",
+          "current-report",
+          "shareholder-meetings-notice",
+          "earnings-call-slides",
+          "special-events-slides",
+          "earnings-call-transcript",
+          "sustainability-report",
+          "initial-registration-statement",
+          "follow-on-registration-statement",
+          "merger-registration-statement",
+          "compensation-registration-statement",
+          "tender-offer-statement",
+          "going-private-statement",
+          "insider-shares-transactions",
+          "other"
+        ],
+        "title": "DocumentCategory",
+        "description": "Enum for document categories with their descriptions."
+      },
+      "DocumentListResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Document ID"
+          },
+          "documentCategory": {
+            "$ref": "#/components/schemas/DocumentCategory",
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+          },
+          "formType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FormType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Form type for SEC filings"
+          },
+          "tickers": {
+            "items": {
+              "$ref": "#/components/schemas/TickerExchangeResponse"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "List of ticker symbols and their exchanges"
           },
           "companyName": {
             "anyOf": [
@@ -1040,16 +1342,283 @@
               }
             ],
             "title": "Companyname",
-            "description": "Name of the company"
+            "description": "Company name"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Document date"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter (1-4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Document description"
           }
         },
         "type": "object",
         "required": [
-          "htmlContent",
-          "sourceType"
+          "id",
+          "documentCategory",
+          "tickers"
+        ],
+        "title": "DocumentListResponse",
+        "description": "Response model for document list results."
+      },
+      "DocumentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Document ID"
+          },
+          "documentCategory": {
+            "$ref": "#/components/schemas/DocumentCategory",
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+          },
+          "formType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FormType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Form type in the case the documents is an SEC filing (e.g., 10-K, 10-Q)"
+          },
+          "tickers": {
+            "items": {
+              "$ref": "#/components/schemas/TickerExchangeResponse"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "List of ticker symbols and their exchanges"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Company name"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Document date"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter (1-4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year"
+          },
+          "originalFileUrl": {
+            "type": "string",
+            "title": "Originalfileurl",
+            "description": "URL to the original document file"
+          },
+          "markdownFileUrl": {
+            "type": "string",
+            "title": "Markdownfileurl",
+            "description": "URL to the markdown version of the document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "documentCategory",
+          "tickers",
+          "originalFileUrl",
+          "markdownFileUrl"
         ],
         "title": "DocumentResponse",
-        "description": "Schema for document responses.\n\nThis represents the structure of the document data returned by various document retrieval endpoints."
+        "description": "Response model for document retrieval by ID."
+      },
+      "FormType": {
+        "type": "string",
+        "enum": [
+          "10-K",
+          "10-Q",
+          "8-K",
+          "6-K",
+          "20-F",
+          "40-F",
+          "S-1",
+          "F-1",
+          "S-3",
+          "F-3",
+          "S-4",
+          "F-4",
+          "S-8",
+          "F-8",
+          "DEF 14A",
+          "DEFA14A",
+          "DEFM14A",
+          "DEF 14C",
+          "DEFM14C",
+          "DEFA14C"
+        ],
+        "title": "FormType"
+      },
+      "HTMLDocumentResponse": {
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "title": "Ticker",
+            "description": "Company ticker symbol"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "Companyname",
+            "description": "Name of the company"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Additional document metadata"
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/HTMLDocumentType",
+            "description": "Type of HTML document"
+          },
+          "htmlContent": {
+            "type": "string",
+            "title": "Htmlcontent",
+            "description": "HTML content of the document for display"
+          },
+          "date": {
+            "type": "string",
+            "title": "Date",
+            "description": "Document date (filing date or transcript date)"
+          },
+          "fiscalPeriod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalperiod",
+            "description": "Fiscal period of the document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ticker",
+          "companyName",
+          "sourceType",
+          "htmlContent",
+          "date"
+        ],
+        "title": "HTMLDocumentResponse",
+        "description": "Response model for HTML-based documents (SEC filings, transcripts, etc.)."
+      },
+      "HTMLDocumentType": {
+        "type": "string",
+        "enum": [
+          "10-K",
+          "10-Q",
+          "8-K",
+          "20-F",
+          "40-F",
+          "6-K",
+          "S-1",
+          "DEF 14A",
+          "DEFM14A",
+          "DEF 14C",
+          "DEFM14C",
+          "transcript"
+        ],
+        "title": "HTMLDocumentType"
       },
       "HTTPValidationError": {
         "properties": {
@@ -1064,49 +1633,116 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "SourceChunk": {
-        "properties": {
-          "text": {
-            "type": "string",
-            "title": "Text"
-          },
-          "text_with_ids": {
-            "type": "string",
-            "title": "Text With Ids"
-          },
-          "metadata": {
-            "type": "object",
-            "title": "Metadata"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "text",
-          "text_with_ids",
-          "metadata"
+      "IRFileType": {
+        "type": "string",
+        "enum": [
+          "pdf",
+          "xlsx"
         ],
-        "title": "SourceChunk",
-        "description": "Schema for individual chunk response."
+        "title": "IRFileType"
       },
       "SourceDocument": {
         "properties": {
-          "sourceType": {
+          "documentId": {
             "type": "string",
-            "title": "Sourcetype",
-            "description": "Type of document: One of 10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, DEFM14C"
+            "title": "Documentid",
+            "description": "Unique identifier for the document in the database"
           },
-          "ticker": {
-            "type": "string",
-            "title": "Ticker",
-            "description": "Company ticker symbol"
+          "documentCategory": {
+            "$ref": "#/components/schemas/DocumentCategory",
+            "description": "Document category code (e.g. annual-report, earnings-call-transcript, etc.)"
+          },
+          "formType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FormType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "SEC form type (e.g. 10-K, 10-Q, 8-K, etc.)"
           },
           "date": {
             "type": "string",
             "title": "Date",
             "description": "Document date (filing_date or transcript_date)"
           },
-          "fiscalPeriod": {
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Description of the document"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter of the document"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year of the document"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "Companyname",
+            "description": "Company name"
+          },
+          "tickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "Ticker for the company"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Additional metadata for the document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "documentId",
+          "documentCategory",
+          "date",
+          "description",
+          "companyName",
+          "tickers"
+        ],
+        "title": "SourceDocument",
+        "description": "Source document metadata model."
+      },
+      "TickerExchangeResponse": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol",
+            "description": "Ticker symbol"
+          },
+          "exchange": {
             "anyOf": [
               {
                 "type": "string"
@@ -1115,35 +1751,15 @@
                 "type": "null"
               }
             ],
-            "title": "Fiscalperiod",
-            "description": "Fiscal period of the document"
-          },
-          "documentId": {
-            "type": "string",
-            "title": "Documentid",
-            "description": "Unique identifier for the document in the database"
-          },
-          "sourceLink": {
-            "type": "string",
-            "title": "Sourcelink",
-            "description": "Direct link to access this document via the API"
-          },
-          "additionalKwargs": {
-            "type": "object",
-            "title": "Additionalkwargs",
-            "description": "Additional chunk metadata like similarity_score"
+            "title": "Exchange",
+            "description": "Exchange name"
           }
         },
         "type": "object",
         "required": [
-          "sourceType",
-          "ticker",
-          "date",
-          "documentId",
-          "sourceLink"
+          "symbol"
         ],
-        "title": "SourceDocument",
-        "description": "Unified representation of a document source (filing, transcript, etc.)."
+        "title": "TickerExchangeResponse"
       },
       "ValidationError": {
         "properties": {
@@ -1180,17 +1796,11 @@
       }
     },
     "securitySchemes": {
-      "ApiKeyAuth": {
+      "APIKeyHeader": {
         "type": "apiKey",
         "in": "header",
-        "name": "X-API-Key",
-        "description": "API key authentication. Enter your API key here."
+        "name": "X-API-Key"
       }
     }
-  },
-  "security": [
-    {
-      "ApiKeyAuth": []
-    }
-  ]
+  }
 }

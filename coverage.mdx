@@ -2,49 +2,135 @@
 title: "Document Coverage"
 ---
 
-Captide provides direct and AI access to a wide range of global financial disclosures published by publicly listed companies. These documents are essential for investors, analysts, and financial professionals seeking timely, reliable, and comprehensive insights into corporate performance, governance, and strategic direction.
+Captide provides direct and AI access to a wide range of global financial disclosures published by publicly listed companies worldwide. These documents are essential for investors, analysts, and financial professionals seeking timely, reliable, and comprehensive insights into corporate performance, governance, and strategic direction.
 
-Our coverage spans multiple categories of disclosures, from periodic financial statements and event-driven filings to ESG reports and shareholder communications. All documents are sourced from official regulatory filings and investor relations channels across major global markets. We currently offer comprehensive coverage of companies listed in the United States, Canada, Europe, and Australia.
+Our coverage spans multiple categories of disclosures, from periodic financial statements and event-driven filings to ESG reports and shareholder communications. All documents are sourced from official regulatory filings and investor relations channels across major global markets.
 
-The sections below outline the types of documents available through the API, along with descriptions of their content and typical use cases.
+The sections below detail the types of documents available through the Captide API and the geographic regions covered.
 
-### Document Categories
+### Available Document Categories
 
 <AccordionGroup>
-  <Accordion title="Annual Financial Reports">
-    Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD\\&A), risks, and governance.
+  <Accordion title="Annual Financial Reports (10-K equivalent)">
+    **What it is**\
+    A comprehensive yearly report that provides a full picture of a company’s financial performance and operations over a 12-month period. It is typically filed with regulators and prepared in accordance with formal financial reporting standards.
+
+    **What’s inside**\
+    Audited financial statements (income statement, balance sheet, cash flows), management’s discussion and analysis (MD&A), business overview, risk disclosures, and corporate governance details.
+
+    **When to expect it**\
+    Annually, shortly after the end of the company’s fiscal year.
   </Accordion>
-  <Accordion title="Interim Financial Reports">
-    Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.
+  <Accordion title="Interim Financial Reports (10-Q equivalent)">
+    **What it is**\
+    A formal financial report that covers part of the fiscal year—either quarterly or half-yearly—providing an update on the company’s financial status between annual reports.
+
+    **What’s inside**\
+    Complete financial statements with detailed notes, regulatory disclosures, segment analysis, and key metrics. These reports follow standard accounting principles and include detailed tables and footnotes.
+
+    **When to expect it**\
+    Quarterly or semiannually, depending on the company’s reporting schedule.
   </Accordion>
-  <Accordion title="Earnings Releases">
-    Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.
+  <Accordion title="Earnings Releases (8-K Item 2.02 equivalent)">
+    **What it is**\
+    A press release or brief report offering an early look at a company’s quarterly or annual financial performance before full filings are published.
+
+    **What’s inside**\
+    Unaudited key financial highlights such as revenue, net income, EPS (earnings per share), and forward-looking guidance. Often includes management commentary and business highlights.
+
+    **When to expect it**\
+    Shortly after the fiscal period ends, and before interim or annual reports are released.
   </Accordion>
-  <Accordion title="Current Reports">
-    Time-sensitive updates on material events like M\\&A, leadership changes, legal issues, or strategic decisions.
+  <Accordion title="Current Reports (8-K equivalent)">
+    **What it is**\
+    A timely update issued to inform the market of recent material events that may affect the company’s operations, financial condition, or share price.
+
+    **What’s inside**\
+    Announcements about mergers, acquisitions, executive changes, major contracts, regulatory decisions, or litigation. Does not include full financial results.
+
+    **When to expect it**\
+    As needed, whenever significant corporate developments occur.
   </Accordion>
   <Accordion title="Earnings Call Transcripts">
-    Written transcripts of earnings calls with executive commentary and analyst Q\\&A sessions.
+    **What it is**\
+    A full written record of what was said during an earnings call, including executive presentations and analyst Q&A.
+
+    **What’s inside**\
+    Narrative commentary on financial performance, outlook, operational updates, and insights from Q&A sessions.
+
+    **When to expect it**\
+    Usually published within a few hours after the earnings call.
   </Accordion>
   <Accordion title="Earnings Call Slides">
-    Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.
+    **What it is**\
+    A visual presentation used by management during quarterly or annual earnings calls to summarize financial results and business performance.
+
+    **What’s inside**\
+    Key financial metrics (revenue, margins, EPS), operational highlights, segment results, and strategic updates aligned with the reporting period.
+
+    **When to expect it**\
+    Released alongside or just before scheduled earnings calls.
   </Accordion>
   <Accordion title="Special Events Slides">
-    Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.
+    **What it is**\
+    Slide presentations from special investor-facing events not tied to regular earnings calls.
+
+    **What’s inside**\
+    Information on long-term strategy, business model evolution, product roadmaps, capital allocation, or future growth plans. Common at events like Investor Day or Capital Markets Day.
+
+    **When to expect it**\
+    Occasionally throughout the year, based on company scheduling of major briefings or events.
   </Accordion>
   <Accordion title="Supplemental Financial Information">
-    Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons—without replacing formal filings.
+    **What it is**\
+    A supporting document that provides additional financial data and metrics to complement formal financial statements, often tailored for investors and analysts.
+
+    **What’s inside**\
+    Breakdowns of segment performance, non-GAAP/IFRS measures, historical comparisons, reconciliations, KPIs (key performance indicators), and other data visualizations.
+
+    **When to expect it**\
+    Typically released alongside or shortly after earnings announcements or formal financial filings.
   </Accordion>
-  <Accordion title="Shareholder Meeting Notices">
-    Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.
+  <Accordion title="Shareholder Meeting Notices (DEF 14A equivalent)">
+    **What it is**\
+    An official communication to shareholders about upcoming or past shareholder meetings.
+
+    **What’s inside**\
+    Meeting agendas, proposals up for vote (e.g., board elections, executive compensation), proxy materials, and instructions for shareholder participation.
+
+    **When to expect it**\
+    Typically sent in advance of annual general meetings (AGMs) or special shareholder meetings.
   </Accordion>
-  <Accordion title="Initial Registration Statements">
-    Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.
+  <Accordion title="Initial Registration Statements (S-1 equivalent)">
+    **What it is**\
+    A regulatory filing made when a company plans to go public or issue securities for the first time.
+
+    **What’s inside**\
+    Extensive disclosures including business description, financial history, risk factors, executive compensation, and use of proceeds. Equivalent to Form S-1 (US domestic) or F-1 (foreign issuers).
+
+    **When to expect it**\
+    Prior to an initial public offering (IPO) or first-time security issuance.
   </Accordion>
-  <Accordion title="Follow-On Registration Statements">
-    Streamlined filings for public companies issuing additional securities, often under a shelf registration.
+  <Accordion title="Follow-On Registration Statements (S-3 equivalent)">
+    **What it is**\
+    A filing that allows a public company to register additional securities for sale after its IPO, typically using a simplified disclosure process.
+
+    **What’s inside**\
+    Summarized financial and business information, leveraging existing public filings. Often used for secondary offerings or shelf registrations.
+
+    **When to expect it**\
+    Filed when a company needs to raise additional capital post-IPO.
   </Accordion>
   <Accordion title="Corporate Sustainability Reports">
-    Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.
+    **What it is**\
+    A dedicated report on a company’s environmental, social, and governance (ESG) performance and commitments.
+
+    **What’s inside**\
+    Details on climate initiatives, sustainability goals, carbon emissions, diversity and inclusion programs, governance practices, and social impact metrics.
+
+    **When to expect it**\
+    Annually, often published separately from financial reports, though sometimes aligned with the fiscal year-end.
   </Accordion>
 </AccordionGroup>
+
+### Available Geographical Coverage

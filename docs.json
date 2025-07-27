@@ -7,21 +7,6 @@
     "light": "#478ef8",
     "dark": "#478ef8"
   },
-  {
-    "head": [
-      {
-        "tag": "script",
-        "attributes": {
-          "async": true,
-          "src": "https://www.googletagmanager.com/gtag/js?id=G-S25SS09G77"
-        }
-      },
-      {
-        "tag": "script",
-        "content": "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-S25SS09G77');"
-      }
-    ]
-  }
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
@@ -101,5 +86,18 @@
       "github": "https://github.com/captide-tech",
       "linkedin": "https://linkedin.com/company/captide"
     }
-  }
+  },
+  "head": [
+    {
+      "tag": "script",
+      "attributes": {
+        "async": true,
+        "src": "https://www.googletagmanager.com/gtag/js?id=G-S25SS09G77"
+      }
+    },
+    {
+      "tag": "script",
+      "content": "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-S25SS09G77');"
+    }
+  ]
 }

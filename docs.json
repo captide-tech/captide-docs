@@ -2,8 +2,10 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Captide API",
-  "analytics": {
-    "googleAnalytics": "G-S25SS09G77"
+  "integrations": {
+    "ga4": {
+      "measurementId": "G‑S25SS09G77"
+    }
   },
   "colors": {
     "primary": "#478ef8",

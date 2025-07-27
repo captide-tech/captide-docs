@@ -18,12 +18,13 @@
             "pages": [
               "index",
               "coverage",
-              "quickstart"
+              "faqs"
             ]
           },
           {
             "group": "Integration",
             "pages": [
+              "integration/quickstart",
               "integration/backend",
               "integration/frontend"
             ]

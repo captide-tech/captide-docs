@@ -3,13 +3,44 @@ title: "FAQs"
 icon: "question"
 ---
 
-### Dates and Availability Lag
+### Company Identification
+
+<AccordionGroup>
+  <Accordion title="What defines a company in Captide?">
+    We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide—provided they refer to the same underlying corporation.
+  </Accordion>
+  <Accordion title="Which company identifiers does Captide use?">
+    Captide assigns proprietary company identifiers (`companyId`) to uniquely identify each entity. Ticker symbols, when paired with their respective exchanges, also serve as reliable identifiers. Users can retrieve the full list of available companies—along with their `companyId` and `tickers` via the `/api/v1/companies/list` endpoint.
+  </Accordion>
+</AccordionGroup>
+
+### Document Access
 
 <AccordionGroup>
   <Accordion title="When are new documents available?">
     
   </Accordion>
-  <Accordion title="New Accordion" icon="sparkles">
+  <Accordion title="Are all document types available for every company?">
+    
+  </Accordion>
+  <Accordion title="How do available document dates differ? Is point-in-time data available?">
+    
+  </Accordion>
+  <Accordion title="What is the use case of Markdown versions of documents?">
+    
+  </Accordion>
+</AccordionGroup>
+
+### Agentic RAG
+
+<AccordionGroup>
+  <Accordion title="What is different between the agent-response and agent-response-stream endpoints?">
+    
+  </Accordion>
+  <Accordion title="What is the use case of the chunk-retrieval endpoint?">
+    
+  </Accordion>
+  <Accordion title="How can I verify the source of AI generated answers?">
     
   </Accordion>
 </AccordionGroup>

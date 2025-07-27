@@ -1,9 +1,43 @@
 ---
-title: 'Introduction'
-description: 'API for performing RAG on SEC filings, financial reports, and earnings call data with source linking capabilities.'
+title: "Introduction"
 ---
 
+The Captide API offers access to a vast, machine-readable corporate disclosure database, empowering hedge funds, investment banks, and developers to build RAG-based applications with source attribution.
+
+## API Structure
+
+<AccordionGroup>
+  <Accordion title="Companies" icon="building-columns">
+    Endpoints to access Captide’s company database and perform metadata-based screening.
+
+    `/api/v1/companies/list`\
+    Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s), country of domicile, SEC filing status, delisting status, and the unique company ID assigned by Captide.
+  </Accordion>
+  <Accordion title="Documents" icon="file-contract">
+    Endpoints to access company disclosures in either PDF or LLM-optimized Markdown format.
+
+    `/api/v1/document/list`\
+    Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company’s ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, the associated company ID, and the document URLs. Results are sorted by `documentDate` in descending order.
+
+    `/api/v1/documents/{document_id}`\
+    Fetches a document by its ID from the database. The response includes document metadata, file URLs, and associated company information.
+  </Accordion>
+  <Accordion title="Agentic RAG" icon="robot">
+    Endpoints for leveraging Captide’s agentic AI workflows to programmatically extract insights and data from the document corpus.
+
+    `/api/v1/rag/chunk-retrieval`\
+    Returns the most relevant document excerpts in response to natural language queries.
+
+    `/api/v1/rag/agent-response`\
+    Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.
+
+    `/api/v1/rag/agent-response-stream`\
+    Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries.
+  </Accordion>
+</AccordionGroup>
+
 ## API Conventions
+
 - All JSON request and response fields use **camelCase** naming (e.g., `sourceType`, `fiscalPeriod`, `documentId`)
 - URL paths follow **kebab-case** convention (e.g., `/api/v1/rag/agent-query-stream`)
 - Date format: ISO 8601 (YYYY-MM-DD)

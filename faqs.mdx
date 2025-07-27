@@ -35,7 +35,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     - `updatedAt`: The most recent date and time the document was updated in Captide.
   </Accordion>
   <Accordion title="What is the use case of Markdown versions of documents?">
-    gg
+    Captide transforms original corporate disclosures into LLM-optimized Markdown files that preserve all information and data points from the source documents in a machine-readable format. This enables efficient and interpretable downstream analysis or AI applications, where documents must be chunked and ingested by large language models.
   </Accordion>
 </AccordionGroup>
 
@@ -43,12 +43,16 @@ Explore our frequently asked questions below. If your question isn’t covered, 
 
 <AccordionGroup>
   <Accordion title="What is different between the agent-response and agent-response-stream endpoints?">
-    gg
+    The only difference between the two endpoints is how they deliver AI-generated responses. The `agent-response` endpoint is optimized for use cases where the full response is only needed after generation is complete (e.g., data extraction or alert systems). In contrast, the `agent-response-stream` endpoint streams the response in real time via server-sent events, making it more suitable for chat interfaces and interactive applications.
   </Accordion>
   <Accordion title="What is the use case of the chunk-retrieval endpoint?">
-    gg
+    The `chunk-retrieval` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts—without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
   </Accordion>
   <Accordion title="How can I verify the source of AI generated answers?">
-    gg
+    Every API response from the agentic RAG endpoints includes metadata about the sources and document excerpts used to generate the answer. The `agent-response` and `agent-response-stream` endpoints provide sentence-level attribution to excerpts from corporate disclosures. Clients can programmatically access these excerpts and metadata, or use the Captide SDK to easily display sources within a document viewer.
+
+    <Info>
+      Refer to the Captide [Frontend Integration guide](/integration/frontend) for details on integrating our document viewer for seamless source auditing.
+    </Info>
   </Accordion>
 </AccordionGroup>

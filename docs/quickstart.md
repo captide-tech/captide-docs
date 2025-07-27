@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: "2"
 ---
 
 # Quickstart Guide
@@ -47,6 +47,7 @@ This endpoint returns a Server-Sent Events (SSE) stream with:
 3. A final `full_answer` event with the complete response
 
 Example response (simplified):
+
 ```
 data: {"type":"id_mapping","mapping":{"#a060daba":{"sourceLink":"...","sourceMetadata":{...}},...}}
 
@@ -73,6 +74,7 @@ curl -X POST "https://rest-api-captide.co/api/v1/rag/chunks" \
 ```
 
 This returns JSON with an array of document snippets including:
+
 - Full text content with HTML element IDs
 - Document metadata (filing type, date, ticker, etc.)
 - Source links for retrieving the full document
@@ -157,5 +159,5 @@ For a live example of Captide in action, visit [app.captide.co/chat](https://app
 
 ## Next Steps
 
-- Explore the [API Reference](/api) for detailed documentation
-- Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.ai/contact/api-request) 
+- Explore the [API Reference](/api) for detailed documentation.
+- Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.ai/contact/api-request).

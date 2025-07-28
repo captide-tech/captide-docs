@@ -5,6 +5,11 @@
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
     "version": "1.1.0"
   },
+  "servers": [
+    {
+      "url": "https://rest-apidev.captide.co"
+    }
+  ],
   "paths": {
     "/api/v1/companies/list": {
       "get": {

@@ -48,7 +48,8 @@
           {
             "group": "Companies",
             "pages": [
-              "api-reference/endpoint/companies"
+              "api-reference/endpoint/companies",
+              "api-reference/endpoint/get_company"
             ]
           },
           {

@@ -7,16 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://rest-api.captide.co",
-      "description": "Production server"
-    },
-    {
       "url": "https://rest-apidev.captide.co",
       "description": "Development server"
-    },
-    {
-      "url": "http://localhost:8001",
-      "description": "Local development server"
     }
   ],
   "paths": {

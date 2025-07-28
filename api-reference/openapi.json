@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Captide REST API",
-    "description": "\n    API for performing RAG on SEC filings, financial reports, and earnings call data with source linking capabilities.\n    \n    ## API Conventions\n    \n    - All JSON request and response fields use **camelCase** naming (e.g., `sourceType`, `fiscalPeriod`, `documentId`)\n    - URL paths follow **kebab-case** convention (e.g., `/api/v1/rag/agent-query-stream`)\n    - Date format: ISO 8601 (YYYY-MM-DD)\n    - Authentication: API key via X-API-Key header\n    ",
-    "version": "1.0.2"
+    "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
+    "version": "1.1.0"
   },
   "paths": {
     "/api/v1/companies/list": {
@@ -12,7 +12,7 @@
           "Companies"
         ],
         "summary": "List companies",
-        "description": "List all available companies with optional filtering.\n    \n    This endpoint supports various filters to narrow down the results based on ticker symbols,\n    country, SEC filing status, and specific company ID.",
+        "description": "Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, SEC filing status, and the unique company ID assigned by Captide.",
         "operationId": "list_companies_api_v1_companies_list_get",
         "security": [
           {
@@ -21,50 +21,42 @@
         ],
         "parameters": [
           {
-            "name": "companyTickers",
+            "name": "tickers",
             "in": "query",
             "required": false,
             "schema": {
               "anyOf": [
                 {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter companies by ticker symbols",
-              "title": "Companytickers"
+              "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "title": "Tickers"
             },
-            "description": "Filter companies by ticker symbols",
-            "example": [
-              "AAPL",
-              "MSFT"
-            ]
+            "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+            "example": "AAPL,ITX.MC"
           },
           {
-            "name": "companyCountry",
+            "name": "countries",
             "in": "query",
             "required": false,
             "schema": {
               "anyOf": [
                 {
-                  "type": "string",
-                  "minLength": 2,
-                  "maxLength": 2
+                  "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter companies by country ISO2 code",
-              "title": "Companycountry"
+              "description": "Comma-separated list of country codes (ISO 3166-1 alpha-2)",
+              "title": "Countries"
             },
-            "description": "Filter companies by country ISO2 code",
-            "example": "US"
+            "description": "Comma-separated list of country codes (ISO 3166-1 alpha-2)",
+            "example": "US,CA"
           },
           {
             "name": "filesWithSec",
@@ -86,7 +78,7 @@
             "example": true
           },
           {
-            "name": "companyId",
+            "name": "ids",
             "in": "query",
             "required": false,
             "schema": {
@@ -98,11 +90,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by specific company ID",
-              "title": "Companyid"
+              "description": "Comma-separated list of company IDs",
+              "title": "Ids"
             },
-            "description": "Filter by specific company ID",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
+            "description": "Comma-separated list of company IDs",
+            "example": "123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d1-b789-123456789abc"
           },
           {
             "name": "limit",
@@ -144,10 +136,8 @@
                     "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
                     "name": "Apple Inc.",
                     "tickers": [
-                      {
-                        "symbol": "AAPL",
-                        "exchange": "NASDAQ"
-                      }
+                      "AAPL",
+                      "AAPL.NASDAQ"
                     ],
                     "countries": [
                       "US"
@@ -180,13 +170,82 @@
         }
       }
     },
+    "/api/v1/companies/{id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get company by ID",
+        "description": "Retrieves a single company from the Captide database by its unique ID. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, and SEC filing status.",
+        "operationId": "get_company_api_v1_companies__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful company retrieval",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyListResponse"
+                },
+                "example": {
+                  "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                  "name": "Apple Inc.",
+                  "tickers": [
+                    "AAPL",
+                    "AAPL.NASDAQ"
+                  ],
+                  "countries": [
+                    "US"
+                  ],
+                  "filesWithSec": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found"
+          },
+          "401": {
+            "description": "Invalid or missing API key"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/documents/list": {
       "get": {
         "tags": [
           "Documents"
         ],
         "summary": "List documents",
-        "description": "List all documents with optional filtering.\n    \n    This endpoint returns a paginated list of documents with various filtering options\n    including ticker, document category, form type, and date ranges.",
+        "description": "Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company's ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, and the associated company ID.",
         "operationId": "list_documents_api_v1_documents_list_get",
         "security": [
           {
@@ -195,7 +254,7 @@
         ],
         "parameters": [
           {
-            "name": "ticker",
+            "name": "tickers",
             "in": "query",
             "required": false,
             "schema": {
@@ -207,33 +266,14 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by company ticker",
-              "title": "Ticker"
+              "description": "Comma-separated list of company tickers",
+              "title": "Tickers"
             },
-            "description": "Filter by company ticker",
-            "example": "AAPL"
+            "description": "Comma-separated list of company tickers",
+            "example": "AAPL,AMZN"
           },
           {
-            "name": "documentCategory",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/DocumentCategory"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter by document category",
-              "title": "Documentcategory"
-            },
-            "description": "Filter by document category",
-            "example": "annual-report"
-          },
-          {
-            "name": "formType",
+            "name": "documentCategories",
             "in": "query",
             "required": false,
             "schema": {
@@ -245,11 +285,30 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by form type",
-              "title": "Formtype"
+              "description": "Comma-separated list of document categories",
+              "title": "Documentcategories"
             },
-            "description": "Filter by form type",
-            "example": "10-K"
+            "description": "Comma-separated list of document categories",
+            "example": "annual-report,interim-report"
+          },
+          {
+            "name": "formTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of form types",
+              "title": "Formtypes"
+            },
+            "description": "Comma-separated list of form types",
+            "example": "10-K,10-Q"
           },
           {
             "name": "startDate",
@@ -258,18 +317,17 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string",
-                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter documents after this date (YYYY-MM-DD)",
+              "description": "The start date (ISO 8601)",
               "title": "Startdate"
             },
-            "description": "Filter documents after this date (YYYY-MM-DD)",
-            "example": "2023-01-01"
+            "description": "The start date (ISO 8601)",
+            "example": "2024-12-12T15:00:00Z"
           },
           {
             "name": "endDate",
@@ -278,18 +336,36 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string",
-                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Filter documents before this date (YYYY-MM-DD)",
+              "description": "The end date (ISO 8601)",
               "title": "Enddate"
             },
-            "description": "Filter documents before this date (YYYY-MM-DD)",
-            "example": "2023-12-31"
+            "description": "The end date (ISO 8601)",
+            "example": "2025-01-10T13:00:00Z"
+          },
+          {
+            "name": "companyIds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of company IDs",
+              "title": "Companyids"
+            },
+            "description": "Comma-separated list of company IDs",
+            "example": "123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d1-b567-537725285111"
           },
           {
             "name": "limit",
@@ -331,10 +407,8 @@
                     "id": "0de9728d-f353-43f3-8605-e546a7bfcb8a",
                     "documentCategory": "current-report",
                     "tickers": [
-                      {
-                        "symbol": "AD8",
-                        "exchange": "ASX"
-                      }
+                      "AD8",
+                      "AD8.AX"
                     ],
                     "companyName": "Audinate Group",
                     "date": "2022-02-14",
@@ -369,14 +443,14 @@
         }
       }
     },
-    "/api/v1/documents/{document_id}": {
+    "/api/v1/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
         ],
         "summary": "Get document by ID",
         "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This endpoint returns complete document details including metadata, file URLs,\n    and associated company information.",
-        "operationId": "get_document_by_id_api_v1_documents__document_id__get",
+        "operationId": "get_document_by_id_api_v1_documents__id__get",
         "security": [
           {
             "APIKeyHeader": []
@@ -384,14 +458,14 @@
         ],
         "parameters": [
           {
-            "name": "document_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid",
               "description": "Document ID",
-              "title": "Document Id"
+              "title": "Id"
             },
             "description": "Document ID",
             "example": "123e4567-e89b-12d3-a456-426614174000"
@@ -409,10 +483,8 @@
                   "id": "0de9728d-f353-43f3-8605-e546a7bfcb8a",
                   "documentCategory": "current-report",
                   "tickers": [
-                    {
-                      "symbol": "AD8",
-                      "exchange": "ASX"
-                    }
+                    "AD8",
+                    "AD8.AX"
                   ],
                   "companyName": "Audinate Group",
                   "date": "2022-02-14",
@@ -452,7 +524,7 @@
           "Retrieval Augmented Generation"
         ],
         "summary": "Search document chunks",
-        "description": "Search for relevant document chunks based on a query.\n    Returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.",
+        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.",
         "operationId": "search_chunks_api_v1_rag_chunks_post",
         "security": [
           {
@@ -471,50 +543,6 @@
             },
             "description": "The natural language query",
             "example": "What was Apple's revenue in 2023?"
-          },
-          {
-            "name": "documentType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-              "title": "Documenttype"
-            },
-            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-            "example": [
-              "10-K",
-              "current-report"
-            ]
-          },
-          {
-            "name": "documentDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-              "title": "Documentdate"
-            },
-            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-            "example": "2023-01-01:2023-12-31"
           }
         ],
         "responses": {
@@ -542,8 +570,7 @@
                         "companyName": "Apple Inc.",
                         "tickers": [
                           "AAPL"
-                        ],
-                        "metadata": {}
+                        ]
                       }
                     }
                   ]
@@ -598,50 +625,6 @@
             },
             "description": "The natural language query",
             "example": "What was Apple's revenue in 2023?"
-          },
-          {
-            "name": "documentType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-              "title": "Documenttype"
-            },
-            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-            "example": [
-              "10-K",
-              "current-report"
-            ]
-          },
-          {
-            "name": "documentDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-              "title": "Documentdate"
-            },
-            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-            "example": "2023-01-01:2023-12-31"
           }
         ],
         "responses": {
@@ -670,8 +653,7 @@
                         "companyName": "Apple Inc.",
                         "tickers": [
                           "AAPL"
-                        ],
-                        "metadata": {}
+                        ]
                       }
                     }
                   }
@@ -726,50 +708,6 @@
             },
             "description": "The natural language query",
             "example": "What was Apple's revenue in 2023?"
-          },
-          {
-            "name": "documentType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-              "title": "Documenttype"
-            },
-            "description": "Document type(s) to filter by. Accepts values from DocumentCategory or FormType, e.g. '10-K', 'current-report', or a list.",
-            "example": [
-              "10-K",
-              "current-report"
-            ]
-          },
-          {
-            "name": "documentDate",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-              "title": "Documentdate"
-            },
-            "description": "Document date or range (YYYY-MM-DD or YYYY-MM-DD:YYYY-MM-DD)",
-            "example": "2023-01-01:2023-12-31"
           }
         ],
         "responses": {
@@ -777,10 +715,12 @@
             "description": "Stream started successfully",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               },
               "text/plain": {
-                "example": "event: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from NVIDIA CORP...\", \"stage\": \"search\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from NVIDIA CORP\", \"stage\": \"analyzing\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"N\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"VIDIA\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2023 was **$26.97 billion**.\"}\n\nevent: metadata\ndata: {\"type\": \"metadata\", \"sourceMap\": {\"#9e540033\": {\"content\": \"# Gross Margin...\", \"pageNumber\": 33, \"excerpt\": \"$6,704\", \"documentMetadata\": {\"documentId\": \"9e54f11c-3347-4bcc-9e65-fb5904afbbe2\", \"documentCategory\": \"interim-report\", \"formType\": null, \"date\": \"2023-08-28\", \"description\": \"This document is the Form 10-Q quarterly report filed by NVIDIA Corporation\", \"fiscalQuarter\": 2, \"fiscalYear\": 2024, \"companyName\": \"NVIDIA CORP\", \"tickers\": [\"NVDA\"], \"metadata\": {}}}}}\n\nevent: done\ndata: {}\n\n"
+                "example": "event: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from NVIDIA CORP...\", \"stage\": \"search\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from NVIDIA CORP\", \"stage\": \"analyzing\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"N\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"VIDIA\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2023 was **$26.97 billion**.\"}\n\nevent: metadata\ndata: {\"type\": \"metadata\", \"sourceMap\": {\"#9e540033\": {\"content\": \"# Gross Margin...\", \"pageNumber\": 33, \"excerpt\": \"$6,704\", \"documentMetadata\": {\"documentId\": \"9e54f11c-3347-4bcc-9e65-fb5904afbbe2\", \"documentCategory\": \"interim-report\", \"formType\": null, \"date\": \"2023-08-28\", \"description\": \"This document is the Form 10-Q quarterly report filed by NVIDIA Corporation\", \"fiscalQuarter\": 2, \"fiscalYear\": 2024, \"companyName\": \"NVIDIA CORP\", \"tickers\": [\"NVDA\"]}}}}\n\nevent: done\ndata: {}\n\n"
               }
             }
           },
@@ -917,7 +857,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           },
@@ -953,7 +895,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           }
@@ -1099,6 +1043,7 @@
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -1246,11 +1191,11 @@
           },
           "tickers": {
             "items": {
-              "$ref": "#/components/schemas/TickerExchangeResponse"
+              "type": "string"
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols and their exchanges"
+            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
           },
           "countries": {
             "items": {
@@ -1311,7 +1256,7 @@
           },
           "documentCategory": {
             "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons—without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
           },
           "formType": {
             "anyOf": [
@@ -1326,11 +1271,11 @@
           },
           "tickers": {
             "items": {
-              "$ref": "#/components/schemas/TickerExchangeResponse"
+              "type": "string"
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols and their exchanges"
+            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
           },
           "companyName": {
             "anyOf": [
@@ -1423,7 +1368,7 @@
           },
           "documentCategory": {
             "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons—without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
           },
           "formType": {
             "anyOf": [
@@ -1438,11 +1383,11 @@
           },
           "tickers": {
             "items": {
-              "$ref": "#/components/schemas/TickerExchangeResponse"
+              "type": "string"
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols and their exchanges"
+            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
           },
           "companyName": {
             "anyOf": [
@@ -1555,6 +1500,7 @@
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -1713,6 +1659,7 @@
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -1734,32 +1681,6 @@
         ],
         "title": "SourceDocument",
         "description": "Source document metadata model."
-      },
-      "TickerExchangeResponse": {
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "title": "Symbol",
-            "description": "Ticker symbol"
-          },
-          "exchange": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Exchange",
-            "description": "Exchange name"
-          }
-        },
-        "type": "object",
-        "required": [
-          "symbol"
-        ],
-        "title": "TickerExchangeResponse"
       },
       "ValidationError": {
         "properties": {

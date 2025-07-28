@@ -20,10 +20,10 @@ The Captide API unlocks **structured access to a rich corporate disclosure datab
     Endpoints to access company disclosures in either PDF or LLM-optimized Markdown format.
 
     `/api/v1/document/list`\
-    Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company’s ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, the associated company ID, and the document URLs. Results are sorted by `documentDate` in descending order.
+    Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company’s ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, and the associated company ID. Results are sorted by `documentDate` in descending order.
 
     `/api/v1/documents/{id}`\
-    Fetches a document by its ID from the database. The response includes document metadata, file URLs, and associated company information.
+    Fetches a document by its ID from the database. The response includes document metadata, associated company information, and the file URLs to access the original file and the pre-processed Markdown file.
   </Accordion>
   <Accordion title="Agentic RAG" icon="robot">
     Endpoints for leveraging Captide’s agentic AI workflows to programmatically extract insights and data from the document corpus.

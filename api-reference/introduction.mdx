@@ -12,6 +12,9 @@ The Captide API offers access to a vast, machine-readable corporate disclosure d
 
     `/api/v1/companies/list`\
     Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s), country of domicile, SEC filing status, delisting status, and the unique company ID assigned by Captide.
+
+    `/api/v1/companies/{id}`\
+    Fetches a document by its ID from the database. The response includes key company information such as name, ticker symbol(s), country of domicile, SEC filing status, and delisting status.
   </Accordion>
   <Accordion title="Documents" icon="file-contract">
     Endpoints to access company disclosures in either PDF or LLM-optimized Markdown format.
@@ -19,7 +22,7 @@ The Captide API offers access to a vast, machine-readable corporate disclosure d
     `/api/v1/document/list`\
     Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company’s ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, the associated company ID, and the document URLs. Results are sorted by `documentDate` in descending order.
 
-    `/api/v1/documents/{document_id}`\
+    `/api/v1/documents/{id}`\
     Fetches a document by its ID from the database. The response includes document metadata, file URLs, and associated company information.
   </Accordion>
   <Accordion title="Agentic RAG" icon="robot">

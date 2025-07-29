@@ -151,17 +151,6 @@
                           "US"
                         ],
                         "filesWithSec": true
-                      },
-                      {
-                        "id": "22222222-3333-4444-5555-666677778888",
-                        "name": "Microsoft Corporation",
-                        "tickers": [
-                          "MSFT"
-                        ],
-                        "countries": [
-                          "US"
-                        ],
-                        "filesWithSec": true
                       }
                     ]
                   }

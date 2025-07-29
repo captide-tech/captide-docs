@@ -137,19 +137,35 @@
                   },
                   "title": "Response List Companies Api V1 Companies List Get"
                 },
-                "example": [
-                  {
-                    "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
-                    "name": "Apple Inc.",
-                    "tickers": [
-                      "AAPL"
-                    ],
-                    "countries": [
-                      "US"
-                    ],
-                    "filesWithSec": true
+                "examples": {
+                  "example": {
+                    "summary": "List of companies",
+                    "value": [
+                      {
+                        "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                        "name": "Apple Inc.",
+                        "tickers": [
+                          "AAPL"
+                        ],
+                        "countries": [
+                          "US"
+                        ],
+                        "filesWithSec": true
+                      },
+                      {
+                        "id": "22222222-3333-4444-5555-666677778888",
+                        "name": "Microsoft Corporation",
+                        "tickers": [
+                          "MSFT"
+                        ],
+                        "countries": [
+                          "US"
+                        ],
+                        "filesWithSec": true
+                      }
+                    ]
                   }
-                ]
+                }
               }
             }
           },
@@ -205,18 +221,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyListResponse"
+                  "$ref": "#/components/schemas/CompanyResponse"
                 },
-                "example": {
-                  "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
-                  "name": "Apple Inc.",
-                  "tickers": [
-                    "AAPL"
-                  ],
-                  "countries": [
-                    "US"
-                  ],
-                  "filesWithSec": true
+                "examples": {
+                  "example": {
+                    "summary": "A single company response",
+                    "value": {
+                      "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                      "name": "Apple Inc.",
+                      "tickers": [
+                        "AAPL"
+                      ],
+                      "countries": [
+                        "US"
+                      ],
+                      "filesWithSec": true
+                    }
+                  }
                 }
               }
             }
@@ -406,22 +427,27 @@
                   },
                   "title": "Response List Documents Api V1 Documents List Get"
                 },
-                "example": [
-                  {
-                    "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
-                    "documentCategory": "interim-report",
-                    "secFormType": null,
-                    "tickers": [
-                      "STO.AX"
-                    ],
-                    "companyName": "Santos",
-                    "documentDate": "2025-04-17",
-                    "fiscalQuarter": 1,
-                    "fiscalYear": 2025,
-                    "title": "First Quarter Report for period ending 31 March 2025",
-                    "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
+                "examples": {
+                  "example": {
+                    "summary": "List of documents for a company",
+                    "value": [
+                      {
+                        "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                        "documentCategory": "interim-report",
+                        "secFormType": null,
+                        "tickers": [
+                          "STO.AX"
+                        ],
+                        "companyName": "Santos",
+                        "documentDate": "2025-04-17",
+                        "fiscalQuarter": 1,
+                        "fiscalYear": 2025,
+                        "title": "First Quarter Report for period ending 31 March 2025",
+                        "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
+                      }
+                    ]
                   }
-                ]
+                }
               }
             }
           },

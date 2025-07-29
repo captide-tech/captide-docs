@@ -509,19 +509,24 @@
                 "schema": {
                   "$ref": "#/components/schemas/DocumentResponse"
                 },
-                "example": {
-                  "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
-                  "documentCategory": "interim-report",
-                  "secFormType": null,
-                  "tickers": [
-                    "STO.AX"
-                  ],
-                  "companyName": "Santos",
-                  "documentDate": "2025-04-17",
-                  "fiscalQuarter": 1,
-                  "fiscalYear": 2025,
-                  "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
-                  "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
+                "examples": {
+                  "example": {
+                    "summary": "A single document response",
+                    "value": {
+                      "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                      "documentCategory": "interim-report",
+                      "secFormType": null,
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "companyName": "Santos",
+                      "documentDate": "2025-04-17",
+                      "fiscalQuarter": 1,
+                      "fiscalYear": 2025,
+                      "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
+                      "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
+                    }
+                  }
                 }
               }
             }

@@ -9,6 +9,14 @@
     {
       "url": "https://rest-apidev.captide.co",
       "description": "Development server"
+    },
+    {
+      "url": "https://rest-api.captide.co",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:8001",
+      "description": "Local development server"
     }
   ],
   "paths": {
@@ -43,7 +51,7 @@
               "title": "Tickers"
             },
             "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
-            "example": "AAPL,ITX.MC"
+            "example": "STO.AX,ASML.AS"
           },
           {
             "name": "countries",
@@ -58,11 +66,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of country codes (ISO 3166-1 alpha-2)",
+              "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)",
               "title": "Countries"
             },
-            "description": "Comma-separated list of country codes (ISO 3166-1 alpha-2)",
-            "example": "US,CA"
+            "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)",
+            "example": "AU,NL"
           },
           {
             "name": "filesWithSec",
@@ -77,11 +85,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter companies by SEC filing status",
+              "description": "Whether the companies file reports with the SEC",
               "title": "Fileswithsec"
             },
-            "description": "Filter companies by SEC filing status",
-            "example": true
+            "description": "Whether the companies file reports with the SEC",
+            "example": false
           },
           {
             "name": "ids",
@@ -96,11 +104,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of company IDs",
+              "description": "Comma-separated list of unique company IDs",
               "title": "Ids"
             },
-            "description": "Comma-separated list of company IDs",
-            "example": "123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d1-b789-123456789abc"
+            "description": "Comma-separated list of unique company IDs",
+            "example": "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
           },
           {
             "name": "limit",
@@ -117,11 +125,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return",
+              "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return",
+            "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
             "example": 100
           }
         ],
@@ -137,24 +145,19 @@
                   },
                   "title": "Response List Companies Api V1 Companies List Get"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "List of companies",
-                    "value": [
-                      {
-                        "companyId": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
-                        "companyName": "Apple Inc.",
-                        "companyTickers": [
-                          "AAPL"
-                        ],
-                        "companyCountry": [
-                          "US"
-                        ],
-                        "filesWithSec": true
-                      }
-                    ]
+                "example": [
+                  {
+                    "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                    "name": "Santos",
+                    "tickers": [
+                      "STO.AX"
+                    ],
+                    "countries": [
+                      "AU"
+                    ],
+                    "filesWithSec": false
                   }
-                }
+                ]
               }
             }
           },
@@ -210,22 +213,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyResponse"
+                  "$ref": "#/components/schemas/CompanyListResponse"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "A single company response",
-                    "value": {
-                      "companyName": "Apple Inc.",
-                      "companyTickers": [
-                        "AAPL"
-                      ],
-                      "companyCountries": [
-                        "US"
-                      ],
-                      "filesWithSec": true
-                    }
-                  }
+                "example": {
+                  "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                  "name": "Santos",
+                  "tickers": [
+                    "STO.AX"
+                  ],
+                  "countries": [
+                    "AU"
+                  ],
+                  "filesWithSec": false
                 }
               }
             }
@@ -279,11 +278,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of company tickers",
+              "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
               "title": "Tickers"
             },
-            "description": "Comma-separated list of company tickers",
-            "example": "AAPL,AMZN"
+            "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+            "example": "STO.AX,ASML.AS"
           },
           {
             "name": "documentCategories",
@@ -298,10 +297,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of document categories",
+              "description": "Comma-separated list of document categories. Supported categories are: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement. For detailed descriptions, please refer to [this page](/coverage)",
               "title": "Documentcategories"
             },
-            "description": "Comma-separated list of document categories",
+            "description": "Comma-separated list of document categories. Supported categories are: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement. For detailed descriptions, please refer to [this page](/coverage)",
             "example": "annual-report,interim-report"
           },
           {
@@ -317,10 +316,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of form types",
+              "description": "Comma-separated list of SEC form types to retrieve. Supported form types are: 10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, DEF14A, DEFM14A, DEF14C, DEFM14C, S-1, F-1. This parameter is only applicable to companies that file with the SEC. To check if a company files with the SEC, use the filesWithSec field from the /api/v1/companies/list endpoint",
               "title": "Formtypes"
             },
-            "description": "Comma-separated list of form types",
+            "description": "Comma-separated list of SEC form types to retrieve. Supported form types are: 10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, DEF14A, DEFM14A, DEF14C, DEFM14C, S-1, F-1. This parameter is only applicable to companies that file with the SEC. To check if a company files with the SEC, use the filesWithSec field from the /api/v1/companies/list endpoint",
             "example": "10-K,10-Q"
           },
           {
@@ -336,11 +335,11 @@
                   "type": "null"
                 }
               ],
-              "description": "The start date (ISO 8601)",
+              "description": "Start date for filtering documents (ISO 8601 format)",
               "title": "Startdate"
             },
-            "description": "The start date (ISO 8601)",
-            "example": "2024-12-12T15:00:00Z"
+            "description": "Start date for filtering documents (ISO 8601 format)",
+            "example": "2025-01-01"
           },
           {
             "name": "endDate",
@@ -355,11 +354,11 @@
                   "type": "null"
                 }
               ],
-              "description": "The end date (ISO 8601)",
+              "description": "End date for filtering documents (ISO 8601 format)",
               "title": "Enddate"
             },
-            "description": "The end date (ISO 8601)",
-            "example": "2025-01-10T13:00:00Z"
+            "description": "End date for filtering documents (ISO 8601 format)",
+            "example": "2025-12-31"
           },
           {
             "name": "companyIds",
@@ -374,11 +373,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of company IDs",
+              "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID",
               "title": "Companyids"
             },
-            "description": "Comma-separated list of company IDs",
-            "example": "123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d1-b567-537725285111"
+            "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID",
+            "example": "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
           },
           {
             "name": "limit",
@@ -395,11 +394,11 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return",
+              "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return",
+            "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
             "example": 100
           }
         ],
@@ -415,28 +414,21 @@
                   },
                   "title": "Response List Documents Api V1 Documents List Get"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "List of documents for a company",
-                    "value": [
-                      {
-                        "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
-                        "documentCategory": "interim-report",
-                        "secFormType": null,
-                        "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
-                        "companyTickers": [
-                          "STO.AX"
-                        ],
-                        "companyName": "Santos",
-                        "documentDate": "2025-04-17",
-                        "fiscalQuarter": 1,
-                        "fiscalYear": 2025,
-                        "title": "First Quarter Report for period ending 31 March 2025",
-                        "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
-                      }
-                    ]
+                "example": [
+                  {
+                    "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                    "documentCategory": "interim-report",
+                    "tickers": [
+                      "STO.AX"
+                    ],
+                    "companyName": "Santos",
+                    "date": "2025-04-17",
+                    "fiscalQuarter": 1,
+                    "fiscalYear": 2025,
+                    "title": "First Quarter Report for period ending 31 March 2025",
+                    "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
                   }
-                }
+                ]
               }
             }
           },
@@ -498,26 +490,20 @@
                 "schema": {
                   "$ref": "#/components/schemas/DocumentResponse"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "A single document response",
-                    "value": {
-                      "documentCategory": "interim-report",
-                      "secFormType": null,
-                      "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
-                      "companyTickers": [
-                        "STO.AX"
-                      ],
-                      "companyName": "Santos",
-                      "documentDate": "2025-04-17",
-                      "fiscalQuarter": 1,
-                      "fiscalYear": 2025,
-                      "title": "First Quarter Report for period ending 31 March 2025",
-                      "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025.",
-                      "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
-                      "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
-                    }
-                  }
+                "example": {
+                  "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                  "documentCategory": "interim-report",
+                  "tickers": [
+                    "STO.AX"
+                  ],
+                  "companyName": "Santos",
+                  "date": "2025-04-17",
+                  "fiscalQuarter": 1,
+                  "fiscalYear": 2025,
+                  "title": "First Quarter Report for period ending 31 March 2025",
+                  "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025.",
+                  "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
+                  "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
                 }
               }
             }
@@ -568,7 +554,7 @@
               "title": "Query"
             },
             "description": "The natural language query",
-            "example": "What was Apple's revenue in 2023?"
+            "example": "What is Zscaler's net dollar retention rate?"
           }
         ],
         "responses": {
@@ -579,34 +565,26 @@
                 "schema": {
                   "$ref": "#/components/schemas/ChunksResponse"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "List of relevant document chunks",
-                    "value": {
-                      "relevantChunks": [
-                        {
-                          "content": "# Comprehensive Income\n\n| USGAAP | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 |\n| --- | --- | --- | --- |\n| Please note: The content of this file is qualified in its entirety by reference to the electronic version of the ASML 2024 Annual Report based on US GAAP and therefore: (i) your local (browser and/or mobile device) settings can influence the way this table and its content is being displayed and (ii) (foot)notes have been deleted for reader's convenience. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Always refer to the electronic version of the ASML 2024 Annual Report based on US GAAP for the full and official financial information. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Consolidated Statements of Comprehensive Income for the years ended December 31, 2022, 2023 and 2024 | nan | nan | nan |\n| nan | nan | nan | nan |\n| Year ended December 31 (€, in millions) | 2022.0 | 2023.0 | 2024.0 |\n| Net income | 5624.2 | 7839.0 | 7571.6 |\n| nan | nan | nan | nan |\n| Other comprehensive income (OCI): | nan | nan | nan |\n| Proportionate share of OCI from equity method investments | 37.7 | 0.2 | -12.1 |\n| nan | nan | nan | nan |\n| Foreign currency translation, net of taxes: | nan | nan | nan |\n| Gain (loss) on foreign currency translation | 66.0 | -68.3 | 91.9 |\n| nan | nan | nan | nan |\n| Financial instruments, net of taxes: | nan | nan | nan |\n| Gain (loss) on derivative financial instruments | 57.6 | -15.8 | 38.2 |\n| Transfers to net income | -66.5 | 0.6 | -8.9 |\n| Other comprehensive income, net of taxes | 94.8 | -83.3 | 109.1 |\n| nan | nan | nan | nan |\n| Total comprehensive income, net of taxes | 5719.0 | 7755.7 | 7680.7 |\n| Attributable to equity holders | 5719.0 | 7755.7 | 7680.7 |",
-                          "pageNumber": 2,
-                          "excerpt": null,
-                          "documentMetadata": {
-                            "documentId": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
-                            "documentCategory": "annual-report",
-                            "formType": null,
-                            "date": "2024-12-31",
-                            "description": "This document contains the consolidated financial statements of ASML for the years ended December 31, 2022, 2023, and 2024, including statements of operations, comprehensive income, balance sheets, shareholders' equity, and cash flow statements prepared under US GAAP.",
-                            "fiscalQuarter": 4,
-                            "fiscalYear": 2024,
-                            "companyName": "ASML HOLDING NV",
-                            "tickers": [
-                              "ASML",
-                              "ASML.AS"
-                            ],
-                            "metadata": null
-                          }
-                        }
-                      ]
+                "example": {
+                  "relevantChunks": [
+                    {
+                      "content": "# Comprehensive Income\n\n| USGAAP | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 |\n| --- | --- | --- | --- |\n| Please note: The content of this file is qualified in its entirety by reference to the electronic version of the ASML 2024 Annual Report based on US GAAP and therefore: (i) your local (browser and/or mobile device) settings can influence the way this table and its content is being displayed and (ii) (foot)notes have been deleted for reader's convenience. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Always refer to the electronic version of the ASML 2024 Annual Report based on US GAAP for the full and official financial information. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Consolidated Statements of Comprehensive Income for the years ended December 31, 2022, 2023 and 2024 | nan | nan | nan |\n| nan | nan | nan | nan |\n| Year ended December 31 (€, in millions) | 2022.0 | 2023.0 | 2024.0 |\n| Net income | 5624.2 | 7839.0 | 7571.6 |\n| nan | nan | nan | nan |\n| Other comprehensive income (OCI): | nan | nan | nan |\n| Proportionate share of OCI from equity method investments | 37.7 | 0.2 | -12.1 |\n| nan | nan | nan | nan |\n| Foreign currency translation, net of taxes: | nan | nan | nan |\n| Gain (loss) on foreign currency translation | 66.0 | -68.3 | 91.9 |\n| nan | nan | nan | nan |\n| Financial instruments, net of taxes: | nan | nan | nan |\n| Gain (loss) on derivative financial instruments | 57.6 | -15.8 | 38.2 |\n| Transfers to net income | -66.5 | 0.6 | -8.9 |\n| Other comprehensive income, net of taxes | 94.8 | -83.3 | 109.1 |\n| nan | nan | nan | nan |\n| Total comprehensive income, net of taxes | 5719.0 | 7755.7 | 7680.7 |\n| Attributable to equity holders | 5719.0 | 7755.7 | 7680.7 |",
+                      "pageNumber": 2,
+                      "documentMetadata": {
+                        "documentId": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
+                        "documentCategory": "annual-report",
+                        "date": "2024-12-31",
+                        "description": "This document contains the consolidated financial statements of ASML for the years ended December 31, 2022, 2023, and 2024, including statements of operations, comprehensive income, balance sheets, shareholders' equity, and cash flow statements prepared under US GAAP.",
+                        "fiscalQuarter": 4,
+                        "fiscalYear": 2024,
+                        "companyName": "ASML HOLDING NV",
+                        "tickers": [
+                          "ASML",
+                          "ASML.AS"
+                        ]
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -688,7 +666,7 @@
               "title": "Query"
             },
             "description": "The natural language query",
-            "example": "What was Apple's revenue in 2023?"
+            "example": "What is Zscaler's net dollar retention rate?"
           }
         ],
         "responses": {
@@ -699,29 +677,24 @@
                 "schema": {
                   "$ref": "#/components/schemas/AgentResponse"
                 },
-                "examples": {
-                  "example": {
-                    "summary": "Example agent answer with source map",
-                    "value": {
-                      "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
-                      "sourceMap": {
-                        "#eaf60040": {
-                          "content": "### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator.",
-                          "pageNumber": 41,
-                          "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
-                          "documentMetadata": {
-                            "documentId": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
-                            "documentCategory": "interim-report",
-                            "formType": null,
-                            "date": "2025-03-10",
-                            "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.",
-                            "fiscalQuarter": 2,
-                            "fiscalYear": 2025,
-                            "companyName": "Zscaler, Inc.",
-                            "tickers": ["ZS"],
-                            "metadata": null
-                          }
-                        }
+                "example": {
+                  "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
+                  "sourceMap": {
+                    "#eaf60040": {
+                      "content": "### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator.",
+                      "pageNumber": 41,
+                      "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
+                      "documentMetadata": {
+                        "documentId": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
+                        "documentCategory": "interim-report",
+                        "date": "2025-03-10",
+                        "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.",
+                        "fiscalQuarter": 2,
+                        "fiscalYear": 2025,
+                        "companyName": "Zscaler, Inc.",
+                        "tickers": [
+                          "ZS"
+                        ]
                       }
                     }
                   }
@@ -806,24 +779,20 @@
               "title": "Query"
             },
             "description": "The natural language query",
-            "example": "What was Apple's revenue in 2023?"
+            "example": "What is Zscaler's net dollar retention rate?"
           }
         ],
         "responses": {
           "200": {
             "description": "Stream started successfully",
             "content": {
-              "text/event-stream": {
-                "examples": {
-                  "streamExample": {
-                    "summary": "Streaming SSE example",
-                    "value": "event: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm going to look through 2 documents from Zscaler, Inc.: To determine ZScaler's net dollar retention for the last two quarters, we need to consult the most recent interim reports, as these documents typically contain detailed financial metrics including net dollar retention. The last two quarters correspond to Q2 and Q3 of fiscal year 2025, which are covered by documents 3 and 6 respectively.\", \"stage\": \"search\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm now analyzing 2 documents to find the most relevant information...\", \"stage\": \"document_inspection\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I found 5 relevant pages from Zscaler, Inc.\", \"stage\": \"document_inspection\"}\n\nevent: message/partial\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"Z\"}\n\nevent: message/partial\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"sc\"}\n\nevent: message/partial\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"aler\"}\n\nevent: message/partial\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s\"}\n\nevent: message/partial\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"].\"}\n\nevent: metadata\ndata: {\"type\": \"sources\", \"content\": {\"#207d0044\": {\"content\": \"### We calculate our dollar-based net retention rate as follows:\\n\\nTable of Contents\\nInvesting in Business Growth\\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\\nmatters and related accruals, as further described in Note 11, Commitments and Contingencies, of the unaudited condensed\\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\\nactivities with our channel partners and strategic partners.\\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\\noperations.\\nKey Business Metrics and Other Financial Measures\\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\\nidentify trends, formulate business plans and make strategic decisions.\\nDollar-Based Net Retention Rate\\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\\nprior fiscal year. For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and\\n116%, respectively.\\nWe calculate our dollar-based net retention rate as follows:\\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\\nreporting period in the prior fiscal year.\\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\\ncustomer orders booked by us as of the end of the reporting period.\\nDollar-based net retention rate is obtained by dividing the numerator by the denominator.\", \"pageNumber\": 45, \"excerpt\": \"For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and 116%, respectively.\", \"documentMetadata\": {\"documentId\": \"207db5da-c2bb-42b8-a0d3-1a5d508e723c\", \"documentCategory\": \"interim-report\", \"formType\": null, \"tickers\": [\"ZS\"], \"companyName\": \"Zscaler, Inc.\", \"date\": \"2025-05-29\", \"fiscalQuarter\": 3, \"fiscalYear\": 2025}}}}\n\nevent: done\ndata: {}"
-                  }
-                },
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "event-stream"
+
                 }
+              },
+              "text/plain": {
+                "example": "event: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from NVIDIA CORP...\", \"stage\": \"search\"}\n\nevent: thinking\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from NVIDIA CORP\", \"stage\": \"analyzing\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"N\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"VIDIA\"}\n\nevent: message\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2023 was **$26.97 billion**.\"}\n\nevent: metadata\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"content\": \"### ®\\n\\nRevenue (Tables)\\n3 Months Ended\\nDec. 28, 2024\\nRevenue from Contract with\\nCustomer [Abstract]\\n\\nNet Sales Disaggregated by Significant\\nProducts and Services\\nNet sales disaggregated by significant products and services for the three\\nmonths ended December 28, 2024 and December 30, 2023 were as follows\\n(in millions):\\nThree Months Ended\\nDecember\\n28,\\n2024\\nDecember\\n30,\\n2023\\niPhone\\n$\\n69,138\\n$\\n69,702\\nMac\\n8,987\\n7,780\\niPad\\n8,088\\n7,023\\nWearables, Home and Accessories\\n11,747\\n11,953\\nServices\\n26,340\\n23,117\\nTotal net sales\\n$ 124,300\\n$ 119,575\\n®\\n®\\n®\", \"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"documentId\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}, \"#2d6e0187\": {\"content\": \"Revenue (Tables)\\n12 Months Ended\\nSep. 28, 2024\\nRevenue from Contract with\\nCustomer [Abstract]\\n\\nNet Sales Disaggregated by Significant\\nProducts and Services\\nNet sales disaggregated by significant products and services for 2024, 2023\\nand 2022 were as follows (in millions):\\n2024\\n2023\\n2022\\niPhone\\n$201,183\\n$200,583\\n$205,489\\nMac\\n29,984\\n29,357\\n40,177\\niPad\\n26,694\\n28,300\\n29,292\\nWearables, Home and\\nAccessories\\n37,005\\n39,845\\n41,241\\nServices \\n96,169\\n85,200\\n78,129\\nTotal net sales\\n$391,035\\n$383,285\\n$394,328\\n(1)\\nServices net sales include amortization of the deferred value of\\nservices bundled in the sales price of certain products.\\n(1)\", \"pageNumber\": 188, \"excerpt\": \"Total net sales $391,035\", \"documentMetadata\": {\"documentId\": \"2d6e24a5-080d-4ad4-a1d3-2975143c1e4b\", \"documentCategory\": \"annual-report\", \"formType\": \"10-K\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2024-11-01\", \"fiscalQuarter\": 4, \"fiscalYear\": 2024}}, \"#76550003\": {\"content\": \"# Apple Inc. | Q2 2025 Form 10-Q | 1\\n\\n# See accompanying Notes to Condensed Consolidated Financial Statements.\\n\\n# Shares used in computing earnings per share:\\n\\n# Basic\\n$\\n1.65\\n$\\n1.53\\n$\\n4.06\\n$\\n3.72\\nDiluted\\n$\\n1.65\\n$\\n1.53\\n$\\n4.05\\n$\\n3.71\\n\\n## Earnings per share:\\n\\nPART I — FINANCIAL INFORMATION\\nItem 1. Financial Statements\\nApple Inc.\\nCONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited)\\n(In millions, except number of shares, which are reflected in thousands, and per-share amounts)\\nThree Months Ended\\nSix Months Ended\\nMarch 29,\\n2025\\nMarch 30,\\n2024\\nMarch 29,\\n2025\\nMarch 30,\\n2024\\nNet sales:\\n  Products\\n$\\n68,714\\n$\\n66,886\\n$\\n166,674\\n$\\n163,344\\n  Services\\n26,645\\n23,867\\n52,985\\n46,984\\nTotal net sales\\n95,359\\n90,753\\n219,659\\n210,328\\nCost of sales:\\n  Products\\n44,030\\n42,424\\n103,477\\n100,864\\n  Services\\n6,462\\n6,058\\n13,040\\n12,338\\nTotal cost of sales\\n50,492\\n48,482\\n116,517\\n113,202\\nGross margin\\n44,867\\n42,271\\n103,142\\n97,126\\nOperating expenses:\\nResearch and development\\n8,550\\n7,903\\n16,818\\n15,599\\nSelling, general and administrative\\n6,728\\n6,468\\n13,903\\n13,254\\nTotal operating expenses\\n15,278\\n14,371\\n30,721\\n28,853\\nOperating income\\n29,589\\n27,900\\n72,421\\n68,273\\nOther income/(expense), net\\n(279)\\n158\\n(527)\\n108\\nIncome before provision for income taxes\\n29,310\\n28,058\\n71,894\\n68,381\\nProvision for income taxes\\n4,530\\n4,422\\n10,784\\n10,829\\nNet income\\n$\\n24,780\\n$\\n23,636\\n$\\n61,110\\n$\\n57,552\\nEarnings per share:\\nBasic\\n$\\n1.65\\n$\\n1.53\\n$\\n4.06\\n$\\n3.72\\nDiluted\\n$\\n1.65\\n$\\n1.53\\n$\\n4.05\\n$\\n3.71\\nShares used in computing earnings per share:\\nBasic\\n14,994,082\\n15,405,856\\n15,037,903\\n15,457,810\\nDiluted\\n15,056,133\\n15,464,709\\n15,103,499\\n15,520,675\\nSee accompanying Notes to Condensed Consolidated Financial Statements.\\nApple Inc. | Q2 2025 Form 10-Q | 1\", \"pageNumber\": 4, \"excerpt\": \"95,359\", \"documentMetadata\": {\"documentId\": \"7655d55d-07d9-4486-bc41-c5f4f4e9830d\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-05-02\", \"fiscalQuarter\": 2, \"fiscalYear\": 2025}}, \"#76550034\": {\"content\": \"### \\n\\nCONDENSED\\nCONSOLIDATED\\nSTATEMENTS OF\\nOPERATIONS (Unaudited) -\\nUSD ($)\\nshares in Thousands, $ in\\nMillions\\n3 Months Ended\\n6 Months Ended\\nMar. 29,\\n2025\\nMar. 30,\\n2024\\nMar. 29,\\n2025\\nMar. 30,\\n2024\\nNet sales\\n$ 95,359\\n$ 90,753\\n$ 219,659\\n$ 210,328\\nCost of sales\\n50,492\\n48,482\\n116,517\\n113,202\\nGross margin\\n44,867\\n42,271\\n103,142\\n97,126\\nOperating expenses:\\n  Research and development\\n8,550\\n7,903\\n16,818\\n15,599\\nSelling, general and administrative\\n6,728\\n6,468\\n13,903\\n13,254\\nTotal operating expenses\\n15,278\\n14,371\\n30,721\\n28,853\\nOperating income\\n29,589\\n27,900\\n72,421\\n68,273\\nOther income/(expense), net\\n(279)\\n158\\n(527)\\n108\\nIncome before provision for income taxes\\n29,310\\n28,058\\n71,894\\n68,381\\nProvision for income taxes\\n4,530\\n4,422\\n10,784\\n10,829\\nNet income\\n$ 24,780\\n$ 23,636\\n$ 61,110\\n$ 57,552\\nEarnings per share:\\n  Basic (in dollars per share)\\n$ 1.65\\n$ 1.53\\n$ 4.06\\n$ 3.72\\nDiluted (in dollars per share)\\n$ 1.65\\n$ 1.53\\n$ 4.05\\n$ 3.71\\nShares used in computing earnings per\\nshare:\\n  Basic (in shares)\\n14,994,082\\n15,405,856\\n15,037,903\\n15,457,810\\nDiluted (in shares)\\n15,056,133\\n15,464,709\\n15,103,499\\n15,520,675\\nProducts\\n  Net sales\\n$ 68,714\\n$ 66,886\\n$ 166,674\\n$ 163,344\\nCost of sales\\n44,030\\n42,424\\n103,477\\n100,864\\nServices\\n  Net sales\\n26,645\\n23,867\\n52,985\\n46,984\\nCost of sales\\n$ 6,462\\n$ 6,058\\n$ 13,040\\n$ 12,338\", \"pageNumber\": 35, \"excerpt\": \"Net sales $ 95,359 $ 90,753 $ 219,659 $ 210,328\", \"documentMetadata\": {\"documentId\": \"7655d55d-07d9-4486-bc41-c5f4f4e9830d\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-05-02\", \"fiscalQuarter\": 2, \"fiscalYear\": 2025}}, \"#7bcd0008\": {\"content\": \"# Apple Inc. | Q1 2025 Form 10-Q | 6\\n\\n# ®\\n\\n## ®\\n\\n## ®\\n\\n### Total net sales\\n$\\n124,300\\n$\\n119,575\\n\\nApple Inc.\\nNotes to Condensed Consolidated Financial Statements (Unaudited)\\nNote 1 – Summary of Significant Accounting Policies\\nBasis of Presentation and Preparation\\nThe condensed consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries (collectively\\n\"Apple\" or the \"Company\"). In the opinion of the Company's management, the condensed consolidated financial statements reflect\\nall adjustments, which are normal and recurring in nature, necessary for fair financial statement presentation. The preparation of\\nthese condensed consolidated financial statements and accompanying notes in conformity with U.S. generally accepted accounting\\nprinciples (\"GAAP\") requires the use of management estimates. These condensed consolidated financial statements and\\naccompanying notes should be read in conjunction with the Company's annual consolidated financial statements and\\naccompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 28, 2024 (the \"2024 Form 10-\\nK\").\\nThe Company's fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included\\nin the first fiscal quarter every five or six years to realign the Company's fiscal quarters with calendar quarters. The Company's\\nfiscal years 2025 and 2024 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and\\nperiods refer to the Company's fiscal years ended in September and the associated quarters, months and periods of those fiscal\\nyears.\\nNote 2 – Revenue\\nNet sales disaggregated by significant products and services for the three months ended December 28, 2024 and December 30,\\n2023 were as follows (in millions):\\nThree Months Ended\\nDecember 28,\\n2024\\nDecember 30,\\n2023\\niPhone\\n$\\n69,138\\n$\\n69,702\\nMac\\n8,987\\n7,780\\niPad\\n8,088\\n7,023\\nWearables, Home and Accessories\\n11,747\\n11,953\\nServices\\n26,340\\n23,117\\nTotal net sales\\n$\\n124,300\\n$\\n119,575\\nTotal net sales include $3.7 billion of revenue recognized in the three months ended December 28, 2024 that was included in\\ndeferred revenue as of September 28, 2024 and $3.5 billion of revenue recognized in the three months ended December 30, 2023\\nthat was included in deferred revenue as of September 30, 2023.\\nThe Company's proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in\\nNote 10, \"Segment Information and Geographic Data\" for the three months ended December 28, 2024 and December 30, 2023,\\nexcept in Greater China, where iPhone revenue represented a moderately higher proportion of net sales.\\nAs of December 28, 2024 and September 28, 2024, the Company had total deferred revenue of $13.2 billion and $12.8 billion,\\nrespectively. As of December 28, 2024, the Company expects 64% of total deferred revenue to be realized in less than a year, 25%\\nwithin one-to-two years, 9% within two-to-three years and 2% in greater than three years.\\n®\\n®\\n®\\nApple Inc. | Q1 2025 Form 10-Q | 6\", \"pageNumber\": 9, \"excerpt\": \"124,300\", \"documentMetadata\": {\"documentId\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}, \"#2d6e0203\": {\"content\": \"Revenue - Net Sales\\nDisaggregated by\\nSignificant Products and\\nServices (Details) - USD ($)\\n$ in Millions\\n12 Months Ended\\nSep. 28, 2024\\nSep. 30, 2023\\nSep. 24, 2022\\nDisaggregation of Revenue [Line Items]\\n  Net sales\\n$ 391,035\\n$ 383,285\\n$ 394,328\\niPhone\\n  Disaggregation of Revenue [Line Items]\\n  Net sales\\n201,183\\n200,583\\n205,489\\nMac\\n  Disaggregation of Revenue [Line Items]\\n  Net sales\\n29,984\\n29,357\\n40,177\\niPad\\n  Disaggregation of Revenue [Line Items]\\n  Net sales\\n26,694\\n28,300\\n29,292\\nWearables, Home and Accessories\\n  Disaggregation of Revenue [Line Items]\\n  Net sales\\n37,005\\n39,845\\n41,241\\nServices\\n  Disaggregation of Revenue [Line Items]\\n  Net sales\\n$ 96,169\\n$ 85,200\\n$ 78,129\", \"pageNumber\": 204, \"excerpt\": \"Net sales $ 391,035 $ 383,285 $ 394,328\", \"documentMetadata\": {\"documentId\": \"2d6e24a5-080d-4ad4-a1d3-2975143c1e4b\", \"documentCategory\": \"annual-report\", \"formType\": \"10-K\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2024-11-01\", \"fiscalQuarter\": 4, \"fiscalYear\": 2024}}, \"#76550008\": {\"content\": \"# Apple Inc. | Q2 2025 Form 10-Q | 6\\n\\n# ®\\n\\n# ®\\n\\n# ®\\n\\n# revenue as of the beginning of the period\\n$\\n3,672\\n$\\n3,282\\n$\\n5,440\\n$\\n5,135\\n\\nApple Inc.\\nNotes to Condensed Consolidated Financial Statements (Unaudited)\\nNote 1 – Summary of Significant Accounting Policies\\nBasis of Presentation and Preparation\\nThe condensed consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries (collectively\\n\"Apple\" or the \"Company\"). In the opinion of the Company's management, the condensed consolidated financial statements reflect\\nall adjustments, which are normal and recurring in nature, necessary for fair financial statement presentation. The preparation of\\nthese condensed consolidated financial statements and accompanying notes in conformity with U.S. generally accepted accounting\\nprinciples (\"GAAP\") requires the use of management estimates. These condensed consolidated financial statements and\\naccompanying notes should be read in conjunction with the Company's annual consolidated financial statements and\\naccompanying notes included in its Annual Report on Form 10-K for the fiscal year ended September 28, 2024 (the \"2024 Form 10-\\nK\").\\nThe Company's fiscal year is the 52- or 53-week period that ends on the last Saturday of September. An additional week is included\\nin the first fiscal quarter every five or six years to realign the Company's fiscal quarters with calendar quarters. The Company's\\nfiscal years 2025 and 2024 span 52 weeks each. Unless otherwise stated, references to particular years, quarters, months and\\nperiods refer to the Company's fiscal years ended in September and the associated quarters, months and periods of those fiscal\\nyears.\\nNote 2 – Revenue\\nThe following table shows disaggregated net sales, as well as the portion of total net sales that was previously deferred, for the\\nthree- and six-month periods ended March 29, 2025 and March 30, 2024 (in millions):\\nThree Months Ended\\nSix Months Ended\\nMarch 29,\\n2025\\nMarch 30,\\n2024\\nMarch 29,\\n2025\\nMarch 30,\\n2024\\niPhone\\n$\\n46,841\\n$\\n45,963\\n$\\n115,979\\n$\\n115,665\\nMac\\n7,949\\n7,451\\n16,936\\n15,231\\niPad\\n6,402\\n5,559\\n14,490\\n12,582\\nWearables, Home and Accessories\\n7,522\\n7,913\\n19,269\\n19,866\\nServices\\n26,645\\n23,867\\n52,985\\n46,984\\nTotal net sales\\n$\\n95,359\\n$\\n90,753\\n$\\n219,659\\n$\\n210,328\\nPortion of total net sales that was included in deferred\\nrevenue as of the beginning of the period\\n$\\n3,672\\n$\\n3,282\\n$\\n5,440\\n$\\n5,135\\nThe Company's proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in\\nNote 10, \"Segment Information and Geographic Data\" for the three- and six-month periods ended March 29, 2025 and March 30,\\n2024, except in Greater China, where iPhone revenue represented a moderately higher proportion of net sales.\\nAs of March 29, 2025 and September 28, 2024, the Company had total deferred revenue of $13.6 billion and $12.8 billion,\\nrespectively. As of March 29, 2025, the Company expects 66% of total deferred revenue to be realized in less than a year, 24%\\nwithin one-to-two years, 9% within two-to-three years and 1% in greater than three years.\\n®\\n®\\n®\\nApple Inc. | Q2 2025 Form 10-Q | 6\", \"pageNumber\": 9, \"excerpt\": \"Services 26,645\", \"documentMetadata\": {\"documentId\": \"7655d55d-07d9-4486-bc41-c5f4f4e9830d\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-05-02\", \"fiscalQuarter\": 2, \"fiscalYear\": 2025}}, \"#2d6e0034\": {\"content\": \"## Apple Inc. | 2024 Form 10-K | 29\\n\\n## See accompanying Notes to Consolidated Financial Statements.\\n\\n## Basic\\n15,343,783\\n15,744,231\\n16,215,963\\nDiluted\\n15,408,095\\n15,812,547\\n16,325,819\\n\\n## Shares used in computing earnings per share:\\n\\n### Basic\\n$\\n6.11\\n$\\n6.16\\n$\\n6.15\\nDiluted\\n$\\n6.08\\n$\\n6.13\\n$\\n6.11\\n\\nApple Inc.\\nCONSOLIDATED STATEMENTS OF OPERATIONS\\n(In millions, except number of shares, which are reflected in thousands, and per-share amounts)\\nYears ended\\nSeptember 28,\\n2024\\nSeptember 30,\\n2023\\nSeptember 24,\\n2022\\nNet sales:\\n  Products\\n$\\n294,866\\n$\\n298,085\\n$\\n316,199\\n  Services\\n96,169\\n85,200\\n78,129\\nTotal net sales\\n391,035\\n383,285\\n394,328\\nCost of sales:\\n  Products\\n185,233\\n189,282\\n201,471\\n  Services\\n25,119\\n24,855\\n22,075\\nTotal cost of sales\\n210,352\\n214,137\\n223,546\\nGross margin\\n180,683\\n169,148\\n170,782\\nOperating expenses:\\nResearch and development\\n31,370\\n29,915\\n26,251\\nSelling, general and administrative\\n26,097\\n24,932\\n25,094\\nTotal operating expenses\\n57,467\\n54,847\\n51,345\\nOperating income\\n123,216\\n114,301\\n119,437\\nOther income/(expense), net\\n269\\n(565)\\n(334)\\nIncome before provision for income taxes\\n123,485\\n113,736\\n119,103\\nProvision for income taxes\\n29,749\\n16,741\\n19,300\\nNet income\\n$\\n93,736\\n$\\n96,995\\n$\\n99,803\\nEarnings per share:\\nBasic\\n$\\n6.11\\n$\\n6.16\\n$\\n6.15\\nDiluted\\n$\\n6.08\\n$\\n6.13\\n$\\n6.11\\nShares used in computing earnings per share:\\nBasic\\n15,343,783\\n15,744,231\\n16,215,963\\nDiluted\\n15,408,095\\n15,812,547\\n16,325,819\\nSee accompanying Notes to Consolidated Financial Statements.\\nApple Inc. | 2024 Form 10-K | 29\", \"pageNumber\": 35, \"excerpt\": \"Total net sales 391,035 383,285 394,328\", \"documentMetadata\": {\"documentId\": \"2d6e24a5-080d-4ad4-a1d3-2975143c1e4b\", \"documentCategory\": \"annual-report\", \"formType\": \"10-K\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2024-11-01\", \"fiscalQuarter\": 4, \"fiscalYear\": 2024}}}}}}\n\nevent: done\ndata: {}\n\n# Example with warning:\nevent: message\ndata: {\"type\": \"warning\", \"message\": \"No documents found for this query.\"}\n\nevent: done\ndata: {}\n\n"
               }
             }
           },
@@ -991,7 +960,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           },
@@ -1027,7 +998,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           }
@@ -1173,6 +1146,7 @@
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -1311,7 +1285,7 @@
           "id": {
             "type": "string",
             "title": "Id",
-            "description": "Company ID"
+            "description": "Unique company ID"
           },
           "name": {
             "type": "string",
@@ -1324,7 +1298,7 @@
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
+            "description": "List of ticker symbols with exchange suffixes (e.g., 'ASML', 'ASML.AS')"
           },
           "countries": {
             "items": {
@@ -1332,12 +1306,12 @@
             },
             "type": "array",
             "title": "Countries",
-            "description": "List of country ISO2 codes"
+            "description": "Company's country of domicile (ISO 3166-1 alpha-2)"
           },
           "filesWithSec": {
             "type": "boolean",
             "title": "Fileswithsec",
-            "description": "Whether company files with SEC"
+            "description": "Whether the company files reports with the SEC"
           }
         },
         "type": "object",
@@ -1381,11 +1355,11 @@
           "id": {
             "type": "string",
             "title": "Id",
-            "description": "Document ID"
+            "description": "Unique document ID"
           },
           "documentCategory": {
             "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons—without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
           },
           "formType": {
             "anyOf": [
@@ -1396,7 +1370,7 @@
                 "type": "null"
               }
             ],
-            "description": "Form type for SEC filings"
+            "description": "Document SEC form type (only applicable if the company files with the SEC)"
           },
           "tickers": {
             "items": {
@@ -1404,7 +1378,7 @@
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
+            "description": "Tickers of the company filing the document"
           },
           "companyName": {
             "anyOf": [
@@ -1416,7 +1390,7 @@
               }
             ],
             "title": "Companyname",
-            "description": "Company name"
+            "description": "Name of the company filing the document"
           },
           "date": {
             "anyOf": [
@@ -1428,7 +1402,7 @@
               }
             ],
             "title": "Date",
-            "description": "Document date"
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
           },
           "fiscalQuarter": {
             "anyOf": [
@@ -1440,7 +1414,7 @@
               }
             ],
             "title": "Fiscalquarter",
-            "description": "Fiscal quarter (1-4)"
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
           },
           "fiscalYear": {
             "anyOf": [
@@ -1452,7 +1426,7 @@
               }
             ],
             "title": "Fiscalyear",
-            "description": "Fiscal year"
+            "description": "Fiscal year the document relates to (e.g., 2024)"
           },
           "title": {
             "anyOf": [
@@ -1464,7 +1438,7 @@
               }
             ],
             "title": "Title",
-            "description": "Document title"
+            "description": "Captide-generated document title"
           },
           "description": {
             "anyOf": [
@@ -1476,7 +1450,7 @@
               }
             ],
             "title": "Description",
-            "description": "Document description"
+            "description": "Captide-generated document description"
           }
         },
         "type": "object",
@@ -1493,11 +1467,11 @@
           "id": {
             "type": "string",
             "title": "Id",
-            "description": "Document ID"
+            "description": "Unique document ID"
           },
           "documentCategory": {
             "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons\u2014without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
+            "description": "Category of document\n\n**Available categories:**\n- `annual-report`: Comprehensive yearly financial and business performance disclosures, including audited financials, management discussion (MD&A), risks, and governance.\n- `interim-report`: Formal financial reports for part of the fiscal year (e.g., quarterly or semiannual), featuring detailed statements, footnotes, and regulatory sections.\n- `supplemental-financial-information`: Financial data supplements offering KPIs, segment metrics, reconciliations, or historical comparisons—without replacing formal filings.\n- `earnings-release`: Early look at key quarterly or annual results via press releases; includes revenue, earnings, and performance highlights before full reports.\n- `current-report`: Time-sensitive updates on material events like M&A, leadership changes, legal issues, or strategic decisions.\n- `shareholder-meetings-notice`: Notices and materials related to shareholder meetings, including voting items like director elections or executive compensation.\n- `earnings-call-slides`: Visual summaries of quarterly or annual results used during earnings calls; highlight financial performance and management commentary.\n- `special-events-slides`: Presentation decks from investor-focused events (e.g., Investor Day), covering long-term strategy, business updates, and outlooks.\n- `earnings-call-transcript`: Written transcripts of earnings calls with executive commentary and analyst Q&A sessions.\n- `sustainability-report`: Reports focused on environmental, social, and governance (ESG) topics including climate initiatives, diversity, and social responsibility.\n- `initial-registration-statement`: Full disclosure filings for first-time public offerings (e.g., IPOs), including company details, risk factors, and use of proceeds.\n- `follow-on-registration-statement`: Streamlined filings for public companies issuing additional securities, often under a shelf registration.\n- `merger-registration-statement`: Disclosures related to securities issued in mergers, acquisitions, or similar deals, often including proxy materials.\n- `compensation-registration-statement`: Filings for securities issued under employee stock or equity compensation plans.\n- `tender-offer-statement`: Public share offer disclosures for buybacks, takeovers, or third-party acquisitions, detailing terms and pricing.\n- `going-private-statement`: Disclosures related to transactions that delist a company and make it privately held, including fairness assessments for shareholders.\n- `insider-shares-transactions`: Reports of share dealings by executives, directors, or major shareholders to promote transparency and deter insider trading.\n- `other`: Any disclosure that does not clearly match the defined categories above."
           },
           "formType": {
             "anyOf": [
@@ -1508,7 +1482,7 @@
                 "type": "null"
               }
             ],
-            "description": "Form type in the case the documents is an SEC filing (e.g., 10-K, 10-Q)"
+            "description": "Document SEC form type (only applicable if the company files with the SEC)"
           },
           "tickers": {
             "items": {
@@ -1516,7 +1490,7 @@
             },
             "type": "array",
             "title": "Tickers",
-            "description": "List of ticker symbols with exchange suffixes (e.g., 'AAPL', 'ITX.MC')"
+            "description": "Tickers of the company filing the document"
           },
           "companyName": {
             "anyOf": [
@@ -1528,7 +1502,7 @@
               }
             ],
             "title": "Companyname",
-            "description": "Company name"
+            "description": "Name of the company filing the document"
           },
           "date": {
             "anyOf": [
@@ -1540,7 +1514,7 @@
               }
             ],
             "title": "Date",
-            "description": "Document date"
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
           },
           "fiscalQuarter": {
             "anyOf": [
@@ -1552,7 +1526,7 @@
               }
             ],
             "title": "Fiscalquarter",
-            "description": "Fiscal quarter (1-4)"
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
           },
           "fiscalYear": {
             "anyOf": [
@@ -1564,17 +1538,41 @@
               }
             ],
             "title": "Fiscalyear",
-            "description": "Fiscal year"
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
           },
           "originalFileUrl": {
             "type": "string",
             "title": "Originalfileurl",
-            "description": "URL to the original document file"
+            "description": "Secure and temporary URL providing access to the original document file"
           },
           "markdownFileUrl": {
             "type": "string",
             "title": "Markdownfileurl",
-            "description": "URL to the markdown version of the document"
+            "description": "Secure and temporary URL providing access to the pre-processed, machine-readable document file"
           }
         },
         "type": "object",
@@ -1643,6 +1641,7 @@
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -1734,11 +1733,11 @@
           "documentId": {
             "type": "string",
             "title": "Documentid",
-            "description": "Unique identifier for the document in the database"
+            "description": "Unique document ID"
           },
           "documentCategory": {
             "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Document category code (e.g. annual-report, earnings-call-transcript, etc.)"
+            "description": "Document categories. For detailed category descriptions, please refer to [this page](/coverage)"
           },
           "formType": {
             "anyOf": [
@@ -1749,17 +1748,17 @@
                 "type": "null"
               }
             ],
-            "description": "SEC form type (e.g. 10-K, 10-Q, 8-K, etc.)"
+            "description": "Document SEC form type (only applicable if the company files with the SEC)"
           },
           "date": {
             "type": "string",
             "title": "Date",
-            "description": "Document date (filing_date or transcript_date)"
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
           },
           "description": {
             "type": "string",
             "title": "Description",
-            "description": "Description of the document"
+            "description": "Captide-generated document description"
           },
           "fiscalQuarter": {
             "anyOf": [
@@ -1771,7 +1770,7 @@
               }
             ],
             "title": "Fiscalquarter",
-            "description": "Fiscal quarter of the document"
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
           },
           "fiscalYear": {
             "anyOf": [
@@ -1783,12 +1782,12 @@
               }
             ],
             "title": "Fiscalyear",
-            "description": "Fiscal year of the document"
+            "description": "Fiscal year the document relates to (e.g., 2024)"
           },
           "companyName": {
             "type": "string",
             "title": "Companyname",
-            "description": "Company name"
+            "description": "Name of the company filing the document"
           },
           "tickers": {
             "items": {
@@ -1796,11 +1795,12 @@
             },
             "type": "array",
             "title": "Tickers",
-            "description": "Ticker for the company"
+            "description": "Tickers of the company filing the document"
           },
           "metadata": {
             "anyOf": [
               {
+                "additionalProperties": true,
                 "type": "object"
               },
               {

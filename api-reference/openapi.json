@@ -423,7 +423,8 @@
                         "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
                         "documentCategory": "interim-report",
                         "secFormType": null,
-                        "tickers": [
+                        "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "companyTickers": [
                           "STO.AX"
                         ],
                         "companyName": "Santos",
@@ -503,7 +504,8 @@
                     "value": {
                       "documentCategory": "interim-report",
                       "secFormType": null,
-                      "tickers": [
+                      "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "companyTickers": [
                         "STO.AX"
                       ],
                       "companyName": "Santos",

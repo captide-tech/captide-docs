@@ -142,12 +142,12 @@
                     "summary": "List of companies",
                     "value": [
                       {
-                        "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
-                        "name": "Apple Inc.",
-                        "tickers": [
+                        "companyId": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                        "companyName": "Apple Inc.",
+                        "companyTickers": [
                           "AAPL"
                         ],
-                        "countries": [
+                        "companyCountry": [
                           "US"
                         ],
                         "filesWithSec": true
@@ -216,12 +216,12 @@
                   "example": {
                     "summary": "A single company response",
                     "value": {
-                      "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
-                      "name": "Apple Inc.",
-                      "tickers": [
+                      "companyId": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                      "companyName": "Apple Inc.",
+                      "companyTickers": [
                         "AAPL"
                       ],
-                      "countries": [
+                      "companyCountries": [
                         "US"
                       ],
                       "filesWithSec": true

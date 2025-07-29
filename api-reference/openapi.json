@@ -216,7 +216,6 @@
                   "example": {
                     "summary": "A single company response",
                     "value": {
-                      "companyId": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
                       "companyName": "Apple Inc.",
                       "companyTickers": [
                         "AAPL"
@@ -502,7 +501,6 @@
                   "example": {
                     "summary": "A single document response",
                     "value": {
-                      "documentId": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
                       "documentCategory": "interim-report",
                       "secFormType": null,
                       "tickers": [

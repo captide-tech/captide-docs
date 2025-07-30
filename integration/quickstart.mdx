@@ -121,7 +121,7 @@ curl --request GET \
 
 The response includes two additional fields: `originalFileUrl` and `markdownFileUrl`. These provide temporary access to the original document file and its formatted Markdown version, which is optimized for downstream analysis and LLM ingestion.
 
-### Example 3: Retrieve Document Chunks in Response to Natural Language Queries
+### Example 3: Prompt-Based Chunk Retrieval
 
 With Captide, you can create RAG-based applications and tools without the need to collect, preprocess, chunk, or store document excerpts yourself. Simply use the [/rag/chunk-retrieval](/api-reference/endpoint/chunks) endpoint to send natural language requests, and you'll receive relevant document excerpts from our database containing all the information needed to fulfill your query.
 

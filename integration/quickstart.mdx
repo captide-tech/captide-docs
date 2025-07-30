@@ -3,7 +3,7 @@ title: "Quickstart Guide"
 icon: "bolt-lightning"
 ---
 
-This guide will help you get started with Captide quickly, showing you how to set up both the REST API and the JavaScript SDK to integrate financial document Q&A into your application.
+This guide will help you get started with Captide quickly, showing you how to set up both the REST API and the JavaScript SDK to embed corporate disclosure intelligence into your systems.
 
 <Info>
   Before you begin, make sure you [request a Captide test API key](https://www.captide.ai/contact/api-request).
@@ -16,12 +16,11 @@ This guide will help you get started with Captide quickly, showing you how to se
 All API requests require authentication using your API key in the header:
 
 ```bash
-curl -X POST "https://rest-api-captide.co/api/v1/rag/agent-query-stream" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
+  -H "X-API-Key: YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
-  -d '{
-    "query": "What's the latest revenue of AAPL?"
-  }'
+  -H "Accept: text/event-stream" \
+  -d "{\"query\": \"Provide Apple's latest iPhone sales figure\"}"
 ```
 
 ### Example 1: Streaming Agent Response
@@ -29,12 +28,11 @@ curl -X POST "https://rest-api-captide.co/api/v1/rag/agent-query-stream" \
 Use this endpoint when you want to receive a complete AI-generated answer based on global corporate disclosures:
 
 ```bash
-curl -X POST "https://rest-api-captide.co/api/v1/rag/agent-query-stream" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
+  -H "X-API-Key: YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
-  -d '{
-    "query": "What's the latest revenue of AAPL?"
-  }'
+  -H "Accept: text/event-stream" \
+  -d "{\"query\": \"Provide Apple's latest iPhone sales figure\"}"
 ```
 
 This endpoint returns a Server-Sent Events (SSE) stream with:

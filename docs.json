@@ -23,8 +23,13 @@
             "pages": [
               "index",
               "coverage",
-              "integration/quickstart",
               "faqs"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "integration/quickstart"
             ]
           }
         ]

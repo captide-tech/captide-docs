@@ -27,8 +27,8 @@
             ]
           },
           {
-            "group": "Integration",
-            "pages": [
+            "_group": "Integration",
+            "_pages": [
               "integration/quickstart",
               "integration/backend",
               "integration/frontend"

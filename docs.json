@@ -29,9 +29,7 @@
           {
             "group": "Integration",
             "pages": [
-              "integration/quickstart",
-              "integration/backend",
-              "integration/frontend"
+              "integration/quickstart"
             ]
           }
         ]

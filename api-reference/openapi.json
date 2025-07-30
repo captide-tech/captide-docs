@@ -410,6 +410,7 @@
                   {
                     "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
                     "documentCategory": "interim-report",
+                    "formType": null,
                     "tickers": [
                       "STO.AX"
                     ],
@@ -485,6 +486,7 @@
                 "example": {
                   "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
                   "documentCategory": "interim-report",
+                  "formType": null,
                   "tickers": [
                     "STO.AX"
                   ],

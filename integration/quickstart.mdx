@@ -20,7 +20,7 @@ curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
   -H "X-API-Key: YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
-  -d "{\"query\": \"Provide Apple's latest iPhone sales figure\"}"
+  -d '{"query": "Provide Apple latest iPhone sales figure"}'
 ```
 
 ### Example 1: Streaming Agent Response
@@ -32,7 +32,7 @@ curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
   -H "X-API-Key: YOUR_API_KEY_HERE" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
-  -d "{\"query\": \"Provide Apple's latest iPhone sales figure\"}"
+  -d '{"query": "Provide Apple latest iPhone sales figure"}'
 ```
 
 This endpoint returns a Server-Sent Events (SSE) stream with:

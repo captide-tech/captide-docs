@@ -16,20 +16,118 @@ This guide will help you get started with Captide quickly, showing you how to se
 All API requests require authentication using your API key in the header:
 
 ```bash
-curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
-  -H "X-API-Key: YOUR_API_KEY_HERE" \
-  -H "Content-Type: application/json" \
-  -H "Accept: text/event-stream" \
-  -d '{"query": "Provide Apple latest iPhone sales figure"}'
+curl --request GET \
+  --url 'https://rest-apidev.captide.co/api/v1/companies/list' \
+  --header 'X-API-Key: YOUR_API_KEY'
 ```
 
-### Example 1: Streaming Agent Response
+### Example 1: Retrieve Company Information
+
+Use the [/companies/list](/api-reference/endpoint/companies) endpoint when you want to search companies in Captide and retrieve their company `id` to use as parameter in other endpoints.
+
+```bash
+curl --request GET \
+  --url 'https://rest-apidev.captide.co/api/v1/companies/list?limit=100&tickers=STO.AX' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+Use the response to retrieve company information and use the id to retrieve company docs:
+
+```json
+[
+  {
+    "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+    "name": "Santos",
+    "tickers": ["STO.AX"],
+    "countries": ["AU"],
+    "filesWithSec": false
+  }
+]
+```
+
+### Example 2: Retrieve Company Documents
+
+Use the [/documents/list](/api-reference/endpoint/documents) endpoint to search for company documents by applying filters such as `documentCategories`, `formTypes`, or by specifying a company’s `tickers` or `id`. This allows you to retrieve the metadata of the latest corporate disclosures of publicly listed companies.\
+In the example below, we use the `id` of Santos to retrieve its latest `interim-reports`:
+
+```bash
+curl --request GET \
+  --url 'https://rest-apidev.captide.co/api/v1/documents/list?limit=100&companyIds=77848abe-a215-41b7-8950-86e89ea1fadc&documentCategories=interim-report' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+The response below contains metadata for each document. The document `id` is particularly important, as it is used to retrieve the document file and its formatted Markdown version.
+
+```json
+[
+  {
+    "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+    "documentCategory": "interim-report",
+    "formType": null,
+    "tickers": [
+      "STO.AX"
+    ],
+    "companyName": "Santos",
+    "date": "2025-04-17",
+    "fiscalQuarter": 1,
+    "fiscalYear": 2025,
+    "title": "First Quarter Report for period ending 31 March 2025",
+    "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
+  },
+  {
+    "id": "095d866c-c6df-4799-bce3-61b60a5d62ea",
+    "documentCategory": "interim-report",
+    "formType": null,
+    "tickers": [
+      "STO.AX"
+    ],
+    "companyName": "Santos",
+    "date": "2025-01-23",
+    "fiscalQuarter": 4,
+    "fiscalYear": 2024,
+    "title": "Fourth Quarter Report for period ending 31 December 2024",
+    "description": "This document is the Fourth Quarter Report of Santos Limited for the period ending 31 December 2024. It provides a detailed overview of the company's financial and operational performance, including sales revenue, production volumes, capital expenditure, project updates, and carbon capture and storage activities."
+  },
+  ...
+]
+```
+
+Once target documents are identified, we can use their `id` with the [/documents/{id}](/api-reference/endpoint/get_document) endpoint to retrieve the URLs for the document files.
+
+```bash
+curl --request GET \
+  --url https://rest-apidev.captide.co/api/v1/documents/98381fbb-8d8c-4b47-b31c-819f8aca0690 \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+```json
+{
+  "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+  "documentCategory": "interim-report",
+  "formType": null,
+  "tickers": [
+    "STO.AX"
+  ],
+  "companyName": "Santos",
+  "date": "2025-04-17",
+  "fiscalQuarter": 1,
+  "fiscalYear": 2025,
+  "title": "First Quarter Report for period ending 31 March 2025",
+  "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025.",
+  "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
+  "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
+}
+```
+
+The response includes two additional fields: `originalFileUrl` and `markdownFileUrl`. These provide temporary access to the original document file and its formatted Markdown version, which is optimized for downstream analysis and LLM ingestion.
+
+### Example 3: Streaming Agent Response
 
 Use this endpoint when you want to receive a complete AI-generated answer based on global corporate disclosures:
 
 ```bash
 curl -X POST "https://rest-apidev.captide.co/api/v1/rag/agent-query-stream" \
-  -H "X-API-Key: YOUR_API_KEY_HERE" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{"query": "Provide Apple latest iPhone sales figure"}'
@@ -55,7 +153,7 @@ data: {"type":"full_answer","content":"Apple Inc.'s latest revenue was $124,300 
 data: {"type":"done"}
 ```
 
-### Example 2: Document Snippets Only
+### Example 4: Document Snippets Only
 
 Use this endpoint when you want to receive only the relevant document snippets:
 

@@ -25,14 +25,6 @@
               "coverage",
               "faqs"
             ]
-          },
-          {
-            "group": "Integration",
-            "pages": [
-              "integration/quickstart",
-              "integration/backend",
-              "integration/frontend"
-            ]
           }
         ]
       },

@@ -128,7 +128,7 @@ With Captide, you can create RAG-based applications and tools without the need t
 ```bash
 curl --request POST \
   --url 'https://rest-apidev.captide.co/api/v1/rag/chunks?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
-  --header 'X-API-Key: xF2GJxlYwbw48ByD43BppsiSL4lcRoMX'
+  --header 'X-API-Key: YOUR_API_KEY'
 ```
 
 The response includes a list of relevant document chunks from the Captide database, along with their associated metadata.
@@ -187,7 +187,7 @@ Captide enables you to get answers to any question grounded in information from 
 ```bash
 curl --request POST \
   --url 'https://rest-apidev.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
-  --header 'X-API-Key: xF2GJxlYwbw48ByD43BppsiSL4lcRoMX'
+  --header 'X-API-Key: YOUR_API_KEY'
 ```
 
 The response includes the final answer in the `content` field, along with source identifiers (formatted as `#abcd1234`) embedded within the text. These identifiers link to the `sourceMap`, allowing each part of the answer to be traced back to the original document excerpts used.

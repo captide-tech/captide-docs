@@ -17,7 +17,7 @@ All API requests require authentication using your API key in the header:
 
 ```bash
 curl --request GET \
-  --url 'https://rest-apidev.captide.co/api/v1/companies/list' \
+  --url 'https://rest-api.captide.co/api/v1/companies/list' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -27,7 +27,7 @@ Use the [/companies/list](/api-reference/endpoint/companies) endpoint when you w
 
 ```bash
 curl --request GET \
-  --url 'https://rest-apidev.captide.co/api/v1/companies/list?limit=100&tickers=STO.AX' \
+  --url 'https://rest-api.captide.co/api/v1/companies/list?limit=100&tickers=STO.AX' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -52,7 +52,7 @@ In the example below, we use the `id` of Santos to retrieve its latest `interim-
 
 ```bash
 curl --request GET \
-  --url 'https://rest-apidev.captide.co/api/v1/documents/list?limit=100&companyIds=77848abe-a215-41b7-8950-86e89ea1fadc&documentCategories=interim-report' \
+  --url 'https://rest-api.captide.co/api/v1/documents/list?limit=100&companyIds=77848abe-a215-41b7-8950-86e89ea1fadc&documentCategories=interim-report' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -96,7 +96,7 @@ Once target documents are identified, we can use their `id` with the [/documents
 
 ```bash
 curl --request GET \
-  --url https://rest-apidev.captide.co/api/v1/documents/98381fbb-8d8c-4b47-b31c-819f8aca0690 \
+  --url https://rest-api.captide.co/api/v1/documents/98381fbb-8d8c-4b47-b31c-819f8aca0690 \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -127,7 +127,7 @@ With Captide, you can create RAG-based applications and tools without the need t
 
 ```bash
 curl --request POST \
-  --url 'https://rest-apidev.captide.co/api/v1/rag/chunks?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
+  --url 'https://rest-api.captide.co/api/v1/rag/chunks?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -186,7 +186,7 @@ Captide enables you to get answers to any question grounded in information from 
 
 ```bash
 curl --request POST \
-  --url 'https://rest-apidev.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
+  --url 'https://rest-api.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
@@ -246,7 +246,7 @@ The [/rag/agent-response-stream](/api-reference/endpoint/agent_stream) endpoint 
 
 ```bash
 curl --request POST \
-  --url 'https://rest-apidev.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
+  --url 'https://rest-api.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 

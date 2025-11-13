@@ -7,12 +7,16 @@
   },
   "servers": [
     {
-      "url": "https://rest-api.captide.co",
-      "description": "Prod server"
+      "url": "https://rest-api.captide.co/api/v1",
+      "description": "Captide API V1"
+    },
+    {
+      "url": "https://rest-api.captide.co/api/v2",
+      "description": "Captide API V2"
     }
   ],
   "paths": {
-    "/api/v1/companies/list": {
+    "/companies/list": {
       "get": {
         "tags": [
           "Companies"
@@ -195,7 +199,7 @@
         }
       }
     },
-    "/api/v1/companies/{id}": {
+    "/companies/{id}": {
       "get": {
         "tags": [
           "Companies"
@@ -293,7 +297,7 @@
         }
       }
     },
-    "/api/v1/documents/list": {
+    "/documents/list": {
       "get": {
         "tags": [
           "Documents"
@@ -584,7 +588,7 @@
         }
       }
     },
-    "/api/v1/documents/{id}": {
+    "/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
@@ -708,7 +712,7 @@
         }
       }
     },
-    "/api/v1/rag/chunks": {
+    "/rag/chunks": {
       "get": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -832,7 +836,7 @@
         }
       }
     },
-    "/api/v1/rag/agent-response": {
+    "/rag/agent-response": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -964,7 +968,7 @@
         ]
       }
     },
-    "/api/v1/rag/agent-response-stream": {
+    "/rag/agent-response-stream": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1073,7 +1077,7 @@
         ]
       }
     },
-    "/api/v2/documents/{id}": {
+    "/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
@@ -1206,7 +1210,7 @@
         }
       }
     },
-    "/api/v2/rag/chunks": {
+    "/rag/chunks": {
       "get": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1330,7 +1334,7 @@
         }
       }
     },
-    "/api/v2/rag/agent-response": {
+    "/rag/agent-response": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1462,7 +1466,7 @@
         ]
       }
     },
-    "/api/v2/rag/agent-response-stream": {
+    "/rag/agent-response-stream": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"

@@ -3,7 +3,7 @@
   "info": {
     "title": "Captide REST API",
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
-    "version": "1.2.0"
+    "version": "0.3.8"
   },
   "servers": [
     {
@@ -308,27 +308,6 @@
         ],
         "parameters": [
           {
-            "name": "tickers",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
-              "examples": [
-                "STO.AX,ASML.AS"
-              ],
-              "title": "Tickers"
-            },
-            "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
-          },
-          {
             "name": "documentCategories",
             "in": "query",
             "required": false,
@@ -341,16 +320,16 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of document categories. Supported categories are: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement. For detailed descriptions, please refer to [this page](/coverage)",
+              "description": "Comma-separated list of document categories. Supported categories include: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement, and many more. For detailed descriptions and complete list, please refer to [this page](/coverage)",
               "examples": [
                 "annual-report,interim-report"
               ],
               "title": "Documentcategories"
             },
-            "description": "Comma-separated list of document categories. Supported categories are: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement. For detailed descriptions, please refer to [this page](/coverage)"
+            "description": "Comma-separated list of document categories. Supported categories include: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement, and many more. For detailed descriptions and complete list, please refer to [this page](/coverage)"
           },
           {
-            "name": "formTypes",
+            "name": "secFormTypes",
             "in": "query",
             "required": false,
             "schema": {
@@ -366,9 +345,91 @@
               "examples": [
                 "10-K,10-Q"
               ],
-              "title": "Formtypes"
+              "title": "Secformtypes"
             },
             "description": "Comma-separated list of SEC form types to retrieve. This parameter is only applicable to companies that file with the SEC. To check if a company files with the SEC, use the filesWithSec field from the /api/v1/companies/list endpoint"
+          },
+          {
+            "name": "companyTickers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "examples": [
+                "STO.AX,ASML.AS"
+              ],
+              "title": "Companytickers"
+            },
+            "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
+          },
+          {
+            "name": "companyIds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID",
+              "examples": [
+                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
+              ],
+              "title": "Companyids"
+            },
+            "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID"
+          },
+          {
+            "name": "fiscalQuarter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fiscal quarter to filter documents (1-4)",
+              "examples": [1],
+              "title": "Fiscalquarter"
+            },
+            "description": "Fiscal quarter to filter documents (1-4)"
+          },
+          {
+            "name": "fiscalYear",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fiscal year to filter documents (e.g., 2024)",
+              "examples": [2024],
+              "title": "Fiscalyear"
+            },
+            "description": "Fiscal year to filter documents (e.g., 2024)"
           },
           {
             "name": "startDate",
@@ -413,27 +474,6 @@
             "description": "End date for filtering documents (ISO 8601 format)"
           },
           {
-            "name": "companyIds",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID",
-              "examples": [
-                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
-              ],
-              "title": "Companyids"
-            },
-            "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID"
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -473,7 +513,7 @@
                     "summary": "Example documents list",
                     "value": [
                       {
-                        "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                        "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
                         "documentCategory": "interim-report",
                         "tickers": [
                           "STO.AX"
@@ -567,7 +607,7 @@
               "format": "uuid",
               "description": "Document ID",
               "examples": [
-                "123e4567-e89b-12d3-a456-426614174000"
+                "a586df65-76d8-4b04-864c-ceed76592f4d"
               ],
               "title": "Id"
             },
@@ -586,7 +626,7 @@
                   "document": {
                     "summary": "Example document response",
                     "value": {
-                      "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
+                      "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
                       "documentCategory": "interim-report",
                       "tickers": [
                         "STO.AX"
@@ -709,13 +749,12 @@
                 "example": {
                   "relevantChunks": [
                     {
-                      "content": "# Comprehensive Income\n\n| USGAAP | Unnamed: 1 | Unnamed: 2 | Unnamed: 3 |\n| --- | --- | --- | --- |\n| Please note: The content of this file is qualified in its entirety by reference to the electronic version of the ASML 2024 Annual Report based on US GAAP and therefore: (i) your local (browser and/or mobile device) settings can influence the way this table and its content is being displayed and (ii) (foot)notes have been deleted for reader's convenience. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Always refer to the electronic version of the ASML 2024 Annual Report based on US GAAP for the full and official financial information. | nan | nan | nan |\n| nan | nan | nan | nan |\n| Consolidated Statements of Comprehensive Income for the years ended December 31, 2022, 2023 and 2024 | nan | nan | nan |\n| nan | nan | nan | nan |\n| Year ended December 31 (€, in millions) | 2022.0 | 2023.0 | 2024.0 |\n| Net income | 5624.2 | 7839.0 | 7571.6 |\n| nan | nan | nan | nan |\n| Other comprehensive income (OCI): | nan | nan | nan |\n| Proportionate share of OCI from equity method investments | 37.7 | 0.2 | -12.1 |\n| nan | nan | nan | nan |\n| Foreign currency translation, net of taxes: | nan | nan | nan |\n| Gain (loss) on foreign currency translation | 66.0 | -68.3 | 91.9 |\n| nan | nan | nan | nan |\n| Financial instruments, net of taxes: | nan | nan | nan |\n| Gain (loss) on derivative financial instruments | 57.6 | -15.8 | 38.2 |\n| Transfers to net income | -66.5 | 0.6 | -8.9 |\n| Other comprehensive income, net of taxes | 94.8 | -83.3 | 109.1 |\n| nan | nan | nan | nan |\n| Total comprehensive income, net of taxes | 5719.0 | 7755.7 | 7680.7 |\n| Attributable to equity holders | 5719.0 | 7755.7 | 7680.7 |",
                       "pageNumber": 2,
                       "documentMetadata": {
                         "id": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
+                        "title": "ASML 2024 Annual Report",
                         "documentCategory": "annual-report",
                         "date": "2024-12-31",
-                        "description": "This document contains the consolidated financial statements of ASML for the years ended December 31, 2022, 2023, and 2024, including statements of operations, comprehensive income, balance sheets, shareholders' equity, and cash flow statements prepared under US GAAP.",
                         "fiscalQuarter": 4,
                         "fiscalYear": 2024,
                         "companyName": "ASML HOLDING NV",
@@ -805,7 +844,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/app__schemas__rag__AgentRequest"
+                "$ref": "#/components/schemas/AgentRequest"
               }
             }
           },
@@ -826,14 +865,13 @@
                       "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
                       "sourceMap": {
                         "#eaf60040": {
-                          "content": "### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator.",
                           "pageNumber": 41,
                           "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
                           "documentMetadata": {
                             "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
+                            "title": "Zscaler Q2 2025 Form 10-Q",
                             "documentCategory": "interim-report",
                             "date": "2025-03-10",
-                            "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.",
                             "fiscalQuarter": 2,
                             "fiscalYear": 2025,
                             "companyName": "Zscaler, Inc.",
@@ -932,13 +970,13 @@
           "Retrieval Augmented Generation"
         ],
         "summary": "Stream agent response",
-        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`",
         "operationId": "agent_response_stream_api_v1_rag_agent_response_stream_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/app__schemas__rag__AgentRequest"
+                "$ref": "#/components/schemas/AgentRequest"
               }
             }
           },
@@ -957,7 +995,7 @@
                 "examples": {
                   "with_sources": {
                     "summary": "Stream with found documents",
-                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from NVIDIA CORP...\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from NVIDIA CORP\", \"stage\": \"analyzing\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"N\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"VIDIA\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2023 was **$26.97 billion**.\"}\n\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"content\": \"### Revenue (Tables)\\n3 Months Ended Dec. 28, 2024...\", \"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"id\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}}\n\ndata: {\"type\": \"done\"}\n\n"
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc...\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from Apple Inc\", \"stage\": \"analyzing\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"Apple\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \" Inc\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2024 was **$391.0 billion**.\"}\n\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"id\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"title\": \"Apple Q1 2025 Form 10-Q\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}}\n\ndata: {\"type\": \"done\"}\n\n"
                   },
                   "no_sources": {
                     "summary": "Stream when no documents found",
@@ -1035,15 +1073,14 @@
         ]
       }
     },
-    "/api/v1/document": {
+    "/api/v2/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
         ],
-        "summary": "Get Document",
-        "description": "**DEPRECATED**: This endpoint is deprecated and should not be used directly.\n\nRetrieves a source document for display in the frontend.\n\nNOTE: Consuming applications should NOT use this endpoint directly. Instead, they should \nuse the `sourceLink` URLs returned by other endpoints (like `/rag/agent-query-stream` or `/rag/chunks`).\nThis endpoint is documented here purely for reference purposes.\n\nThis endpoint is designed to be called when a consuming application has received\na response containing a `sourceLink` from other endpoints (like `/rag/agent-query-stream` \nor `/rag/chunks`). It returns the full HTML content and metadata of the referenced \ndocument for display and highlighting in the frontend.\n\nSupported document types:\n- SEC filings (10-K, 10-Q)\n- International SEC filings (20-F, 40-F, 6-K)\n- 8-K documents (with embedded images)\n- Earnings call transcripts\n- Proxy statements (DEF 14A, DEFM14A, DEF 14C, etc.)\n- Investor relations (IR) documents (PDF and XLSX files)",
-        "operationId": "get_document_api_v1_document_get",
-        "deprecated": true,
+        "summary": "Get document by ID (v2)",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This v2 endpoint includes several improvements over v1:\n    - Supports newer document categories (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.)\n    - Renamed fields: tickers → companyTickers, formType → secFormType\n    - Added fields: companyId, fiscalPeriod, language",
+        "operationId": "get_document_by_id_api_v2_documents__id__get",
         "security": [
           {
             "APIKeyHeader": []
@@ -1051,71 +1088,117 @@
         ],
         "parameters": [
           {
-            "name": "sourceType",
-            "in": "query",
+            "name": "id",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, ir)",
-              "title": "Sourcetype"
-            },
-            "description": "Type of document (10-K, 10-Q, 8-K, 20-F, 40-F, 6-K, transcript, DEF 14A, DEFM14A, DEF 14C, S-1, ir)"
-          },
-          {
-            "name": "documentId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "description": "UUID of the document",
-              "title": "Documentid"
-            },
-            "description": "UUID of the document"
-          },
-          {
-            "name": "fileType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
+              "format": "uuid",
+              "description": "Document file ID",
+              "examples": [
+                "a586df65-76d8-4b04-864c-ceed76592f4d"
               ],
-              "description": "For IR documents: file type (pdf, xlsx) - optional, will be retrieved from database if not provided",
-              "title": "Filetype"
+              "title": "Id"
             },
-            "description": "For IR documents: file type (pdf, xlsx) - optional, will be retrieved from database if not provided"
+            "description": "Document file ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Document found successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/HTMLDocumentResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/BlobDocumentResponse"
+                  "$ref": "#/components/schemas/DocumentResponseV2"
+                },
+                "examples": {
+                  "document": {
+                    "summary": "Example document response",
+                    "value": {
+                      "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
+                      "documentCategory": "interim-financial-report",
+                      "title": "First Quarter Report for period ending 31 March 2025",
+                      "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025.",
+                      "date": "2025-04-17",
+                      "fiscalQuarter": 1,
+                      "fiscalYear": 2025,
+                      "fiscalPeriod": "Q1",
+                      "language": "en",
+                      "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "companyName": "Santos",
+                      "companyTickers": [
+                        "STO.AX"
+                      ],
+                      "originalFileUrl": "https://files.captide.co/original-docs/...",
+                      "markdownFileUrl": "https://files.captide.co/markdown-docs/...",
+                      "metadata": {
+                        "accessionNumber": "0001193125-22-226507",
+                        "8kItems": [
+                          "9.01"
+                        ]
+                      }
                     }
-                  ],
-                  "title": "Response Get Document Api V1 Document Get"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Validation error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1123,19 +1206,143 @@
         }
       }
     },
-    "/api/v1/rag/agent-query-stream": {
+    "/api/v2/rag/chunks": {
+      "get": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Search document chunks (v2)",
+        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "search_chunks_api_v2_rag_chunks_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The natural language query",
+              "examples": [
+                "What is Zscaler's net dollar retention rate?"
+              ],
+              "title": "Query"
+            },
+            "description": "The natural language query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chunks found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunksResponse"
+                },
+                "example": {
+                  "relevantChunks": [
+                    {
+                      "pageNumber": 2,
+                      "documentMetadata": {
+                        "id": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
+                        "title": "ASML 2024 Annual Report",
+                        "documentCategory": "annual-financial-report",
+                        "date": "2024-12-31",
+                        "fiscalQuarter": 4,
+                        "fiscalYear": 2024,
+                        "companyName": "ASML HOLDING NV",
+                        "tickers": [
+                          "ASML",
+                          "ASML.AS"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/rag/agent-response": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
         ],
-        "summary": "Agent Query Stream",
-        "description": "Stream a response to a query in a simple markdown format.\n\nThis endpoint provides a simplified streaming response:\n1. First, it streams the ID mapping for source linking\n2. Then it streams raw markdown content as it comes from the LLM\n\nThe client only needs to concatenate the markdown chunks to get the full document,\nand can use the ID mapping to resolve citations to their sources.\n\nRequest body:\n- **query**: The query to ask the agent (required)\n- **tickers**: Optional list of ticker symbols to filter documents by\n- **sourceType**: Optional source type(s) to include (available options: '10-K', '10-Q', '8-K', '20-F', '40-F', '6-K', 'transcript', 'DEF 14A', etc.).\n                 Can be a single string or a list of strings.\n- **startDate**: Optional start date for document filtering (format: YYYY-MM-DD)\n- **endDate**: Optional end date for document filtering (format: YYYY-MM-DD)\n- **sourceLink**: Optional source link(s) to search within. Can be a single string or a list of strings.\n                 No other documents will be queried by the agent but these. Use to \n                 restrict the search to user-selected documents.\n\nReturns a streaming response with these event types:\n- 'id_mapping': A mapping of IDs to source links for citation resolution\n  ```\n  {\n    \"type\": \"id_mapping\",\n    \"mapping\": {\n      \"#uuid1234\": {\n        \"sourceLink\": \"http://rest-api-new.captide.co/document?id=12345678\",\n        \"sourceMetadata\": {\n          \"sourceType\": \"10-K\",\n          \"ticker\": \"AAPL\",\n          \"date\": \"2024-01-01\",\n          \"fiscalPeriod\": \"FY 2023\",\n          \"documentId\": \"12345678\"\n        }\n      }\n    }\n  }\n  ```\n\n- 'markdown_chunk': A chunk of markdown text\n  ```\n  {\n    \"type\": \"markdown_chunk\",\n    \"content\": \"This is a part of the markdown response with a citation [#uuid1234].\"\n  }\n  ```\n\n- 'warning': Notification when requested information is not found\n  ```\n  {\n    \"type\": \"warning\",\n    \"message\": \"Could not find information about X in the provided documents.\"\n  }\n  ```\n\n- 'done': Signals the end of the stream\n  ```\n  {\n    \"type\": \"done\"\n  }\n  ```\n\n- 'error': Error information if something goes wrong\n  ```\n  {\n    \"type\": \"error\",\n    \"detail\": \"An error occurred while processing the request.\"\n  }\n  ```\n\nClient implementation recommendations:\n1. First process the 'id_mapping' event to obtain source information for citations\n2. Then accumulate all 'markdown_chunk' events to build the complete response\n3. Display warnings to the user when 'warning' events are received\n4. When a 'done' event is received, the response is complete\n5. Use the ID mapping to create clickable citations in the rendered markdown\n\nIntegration with document search:\nThe 'sourceLink' parameter can be used in conjunction with the document search endpoint to:\n1. Let users search and select specific documents they want to analyze\n2. Then pass those document IDs to this endpoint to ensure the AI only references those selected documents\n3. This creates a more user-controlled research experience where they can direct the AI to specific filings",
-        "operationId": "agent_query_stream_api_v1_rag_agent_query_stream_post",
+        "summary": "Get agent response (v2)",
+        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.\n    \n    **Response Behavior:**\n    - When relevant documents are found: Returns an AI-generated response with citations in the `sourceMap` field\n    - When no relevant documents are found: Returns an informative message explaining why no documents were found, with an empty `sourceMap` field (HTTP 200 status)\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "agent_response_api_v2_rag_agent_response_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/app__schemas__legacy__rag__AgentRequest"
+                "$ref": "#/components/schemas/AgentRequest"
               }
             }
           },
@@ -1143,27 +1350,220 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Agent response generated successfully",
             "content": {
               "application/json": {
                 "schema": {
+                  "$ref": "#/components/schemas/AgentResponse"
+                },
+                "examples": {
+                  "with_sources": {
+                    "summary": "Response with found documents",
+                    "value": {
+                      "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
+                      "sourceMap": {
+                        "#eaf60040": {
+                          "pageNumber": 41,
+                          "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
+                          "documentMetadata": {
+                            "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
+                            "title": "Zscaler Q2 2025 Form 10-Q",
+                            "documentCategory": "interim-financial-report",
+                            "date": "2025-03-10",
+                            "fiscalQuarter": 2,
+                            "fiscalYear": 2025,
+                            "companyName": "Zscaler, Inc.",
+                            "tickers": [
+                              "ZS"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "no_sources": {
+                    "summary": "Response when no documents found",
+                    "value": {
+                      "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
+                      "sourceMap": {
 
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Validation error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
           }
         },
-        "deprecated": true,
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v2/rag/agent-response-stream": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Stream agent response (v2)",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "agent_response_stream_api_v2_rag_agent_response_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stream started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              },
+              "text/event-stream": {
+                "examples": {
+                  "with_sources": {
+                    "summary": "Stream with found documents",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc...\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from Apple Inc\", \"stage\": \"analyzing\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"Apple\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \" Inc\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2024 was **$391.0 billion**.\"}\n\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"id\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"title\": \"Apple Q1 2025 Form 10-Q\", \"documentCategory\": \"interim-financial-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}}\n\ndata: {\"type\": \"done\"}\n\n"
+                  },
+                  "no_sources": {
+                    "summary": "Stream when no documents found",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc.: Net dollar retention (NDR) is a metric typically discussed in the context of SaaS or subscription businesses, and may not be a standard metric reported by Apple Inc. However, if Apple does report or discuss NDR, it would most likely be found in their most recent interim (10-Q) or annual (10-K) reports, as these contain detailed financial and operational metrics. The most recent 10-Qs and the latest 10-K are the best sources to check for any mention or calculation of net dollar retention or related metrics. If not explicitly stated, these documents will provide the necessary revenue and segment data to potentially calculate or estimate NDR if applicable.\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm now analyzing 3 documents to find the most relevant information...\", \"stage\": \"document_inspection\"}\n\ndata: {\"type\": \"warning\", \"message\": \"I couldn't find any relevant information in the selected documents to answer your question.\"}\n\ndata: {\"type\": \"done\"}\n\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
         "security": [
           {
             "APIKeyHeader": []
@@ -1240,6 +1640,22 @@
   },
   "components": {
     "schemas": {
+      "AgentRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Query",
+            "description": "The natural language query"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "AgentRequest",
+        "description": "Request model for agent queries."
+      },
       "AgentResponse": {
         "properties": {
           "content": {
@@ -1264,105 +1680,12 @@
         "title": "AgentResponse",
         "description": "Response model for agent queries."
       },
-      "BlobDocumentResponse": {
-        "properties": {
-          "ticker": {
-            "type": "string",
-            "title": "Ticker",
-            "description": "Company ticker symbol"
-          },
-          "companyName": {
-            "type": "string",
-            "title": "Companyname",
-            "description": "Name of the company"
-          },
-          "metadata": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Metadata",
-            "description": "Additional document metadata"
-          },
-          "sourceType": {
-            "$ref": "#/components/schemas/BlobDocumentType",
-            "description": "Type of blob document"
-          },
-          "sasUrl": {
-            "type": "string",
-            "title": "Sasurl",
-            "description": "SAS URL for direct access to the document in blob storage"
-          },
-          "fileType": {
-            "$ref": "#/components/schemas/IRFileType",
-            "description": "File type (pdf, xlsx)"
-          },
-          "fileName": {
-            "type": "string",
-            "title": "Filename",
-            "description": "File name of the document"
-          },
-          "contentType": {
-            "type": "string",
-            "title": "Contenttype",
-            "description": "MIME type of the document"
-          },
-          "date": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Date",
-            "description": "Document date (filing date or transcript date)"
-          },
-          "fiscalPeriod": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Fiscalperiod",
-            "description": "Fiscal period of the document"
-          }
-        },
-        "type": "object",
-        "required": [
-          "ticker",
-          "companyName",
-          "sourceType",
-          "sasUrl",
-          "fileType",
-          "fileName",
-          "contentType"
-        ],
-        "title": "BlobDocumentResponse",
-        "description": "Response model for blob storage documents (PDFs, XLSX files, etc.)."
-      },
-      "BlobDocumentType": {
-        "type": "string",
-        "enum": [
-          "ir"
-        ],
-        "title": "BlobDocumentType"
-      },
       "Chunk": {
         "properties": {
           "content": {
             "type": "string",
             "title": "Content",
-            "description": "Plain text content of the entire chunk"
+            "description": "Text content of the chunk"
           },
           "pageNumber": {
             "type": "integer",
@@ -1496,7 +1819,35 @@
           "tender-offer-statement",
           "going-private-statement",
           "insider-shares-transactions",
-          "other"
+          "other",
+          "annual-financial-report",
+          "interim-financial-report",
+          "financial-attachments",
+          "shareholder-meeting-circular",
+          "earnings-presentation",
+          "investor-event-presentation",
+          "investor-event-transcript",
+          "universal-registration-statement",
+          "annual-activity-report",
+          "interim-activity-report",
+          "compliance-report",
+          "historical-performance-summary",
+          "letter-to-shareholders",
+          "shareholder-meeting-resolutions",
+          "governance-report",
+          "compensation-report",
+          "governance-policies",
+          "shareholder-dealing-disclosure",
+          "share-issuance-notice",
+          "share-buyback-notice",
+          "share-capital-disclosure",
+          "initial-offering-prospectus",
+          "follow-on-offering-prospectus",
+          "merger-offering-prospectus",
+          "employee-share-plan-prospectus",
+          "tender-offer-disclosure",
+          "insider-share-transactions",
+          "esg-report"
         ],
         "title": "DocumentCategory",
         "description": "Enum for document categories with their descriptions."
@@ -1509,10 +1860,11 @@
             "description": "Unique document ID"
           },
           "documentCategory": {
-            "$ref": "#/components/schemas/DocumentCategory",
-            "description": "Document categories. For detailed category descriptions, please refer to [this page](/coverage)."
+            "type": "string",
+            "title": "Documentcategory",
+            "description": "Document category code as stored in the database. For detailed category descriptions, please refer to [this page](/coverage)."
           },
-          "formType": {
+          "secFormType": {
             "anyOf": [
               {
                 "type": "string"
@@ -1521,18 +1873,10 @@
                 "type": "null"
               }
             ],
-            "title": "Formtype",
+            "title": "Secformtype",
             "description": "Document SEC form type (only applicable if the company files with the SEC)"
           },
-          "tickers": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Tickers",
-            "description": "Tickers of the company filing the document"
-          },
-          "companyName": {
+          "title": {
             "anyOf": [
               {
                 "type": "string"
@@ -1541,8 +1885,20 @@
                 "type": "null"
               }
             ],
-            "title": "Companyname",
-            "description": "Name of the company filing the document"
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
           },
           "date": {
             "anyOf": [
@@ -1580,7 +1936,7 @@
             "title": "Fiscalyear",
             "description": "Fiscal year the document relates to (e.g., 2024)"
           },
-          "title": {
+          "fiscalPeriod": {
             "anyOf": [
               {
                 "type": "string"
@@ -1589,10 +1945,10 @@
                 "type": "null"
               }
             ],
-            "title": "Title",
-            "description": "Captide-generated document title"
+            "title": "Fiscalperiod",
+            "description": "Fiscal period the document relates to"
           },
-          "description": {
+          "language": {
             "anyOf": [
               {
                 "type": "string"
@@ -1601,15 +1957,46 @@
                 "type": "null"
               }
             ],
-            "title": "Description",
-            "description": "Captide-generated document description"
+            "title": "Language",
+            "description": "Language of the document"
+          },
+          "companyId": {
+            "type": "string",
+            "title": "Companyid",
+            "description": "Unique ID of the company filing the document"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "companyTickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., accessionNumber, 8kItems)"
           }
         },
         "type": "object",
         "required": [
           "id",
           "documentCategory",
-          "tickers"
+          "companyId"
         ],
         "title": "DocumentListResponse",
         "description": "Response model for document list results."
@@ -1726,6 +2113,12 @@
             "type": "string",
             "title": "Markdownfileurl",
             "description": "Secure and temporary URL providing access to the pre-processed, machine-readable document file"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., htmlContent, sourceType, webpageUrl) for legacy fallbacks"
           }
         },
         "type": "object",
@@ -1738,6 +2131,167 @@
         ],
         "title": "DocumentResponse",
         "description": "Response model for document retrieval by ID."
+      },
+      "DocumentResponseV2": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique document ID"
+          },
+          "documentCategory": {
+            "type": "string",
+            "title": "Documentcategory",
+            "description": "Document category code as stored in the database. For detailed category descriptions, please refer to [this page](/coverage)."
+          },
+          "secFormType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secformtype",
+            "description": "Document SEC form type (only applicable if the company files with the SEC)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "fiscalPeriod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalperiod",
+            "description": "Fiscal period the document relates to"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Language of the document"
+          },
+          "companyId": {
+            "type": "string",
+            "title": "Companyid",
+            "description": "Unique ID of the company filing the document"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "companyTickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "originalFileUrl": {
+            "type": "string",
+            "title": "Originalfileurl",
+            "description": "Secure and temporary URL providing access to the original document file"
+          },
+          "markdownFileUrl": {
+            "type": "string",
+            "title": "Markdownfileurl",
+            "description": "Secure and temporary URL providing access to the pre-processed, machine-readable document file"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., accessionNumber, 8kItems)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "documentCategory",
+          "companyId",
+          "originalFileUrl",
+          "markdownFileUrl"
+        ],
+        "title": "DocumentResponseV2",
+        "description": "V2 response model for document retrieval by ID. Uses database category codes directly."
       },
       "ErrorResponse": {
         "properties": {
@@ -1753,87 +2307,6 @@
         "title": "ErrorResponse",
         "description": "Standard error response model for all API endpoints."
       },
-      "HTMLDocumentResponse": {
-        "properties": {
-          "ticker": {
-            "type": "string",
-            "title": "Ticker",
-            "description": "Company ticker symbol"
-          },
-          "companyName": {
-            "type": "string",
-            "title": "Companyname",
-            "description": "Name of the company"
-          },
-          "metadata": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Metadata",
-            "description": "Additional document metadata"
-          },
-          "sourceType": {
-            "$ref": "#/components/schemas/HTMLDocumentType",
-            "description": "Type of HTML document"
-          },
-          "htmlContent": {
-            "type": "string",
-            "title": "Htmlcontent",
-            "description": "HTML content of the document for display"
-          },
-          "date": {
-            "type": "string",
-            "title": "Date",
-            "description": "Document date (filing date or transcript date)"
-          },
-          "fiscalPeriod": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Fiscalperiod",
-            "description": "Fiscal period of the document"
-          }
-        },
-        "type": "object",
-        "required": [
-          "ticker",
-          "companyName",
-          "sourceType",
-          "htmlContent",
-          "date"
-        ],
-        "title": "HTMLDocumentResponse",
-        "description": "Response model for HTML-based documents (SEC filings, transcripts, etc.)."
-      },
-      "HTMLDocumentType": {
-        "type": "string",
-        "enum": [
-          "10-K",
-          "10-Q",
-          "8-K",
-          "20-F",
-          "40-F",
-          "6-K",
-          "S-1",
-          "DEF 14A",
-          "DEFM14A",
-          "DEF 14C",
-          "DEFM14C",
-          "transcript"
-        ],
-        "title": "HTMLDocumentType"
-      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1847,14 +2320,6 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "IRFileType": {
-        "type": "string",
-        "enum": [
-          "pdf",
-          "xlsx"
-        ],
-        "title": "IRFileType"
-      },
       "SourceDocument": {
         "properties": {
           "id": {
@@ -1862,8 +2327,14 @@
             "title": "Id",
             "description": "Unique document ID"
           },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Document title"
+          },
           "documentCategory": {
-            "$ref": "#/components/schemas/DocumentCategory",
+            "type": "string",
+            "title": "Documentcategory",
             "description": "Document categories. For detailed category descriptions, please refer to [this page](/coverage)"
           },
           "formType": {
@@ -1882,11 +2353,6 @@
             "type": "string",
             "title": "Date",
             "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
-          },
-          "description": {
-            "type": "string",
-            "title": "Description",
-            "description": "Captide-generated document description"
           },
           "fiscalQuarter": {
             "anyOf": [
@@ -1936,15 +2402,15 @@
               }
             ],
             "title": "Metadata",
-            "description": "Additional metadata for the document"
+            "description": "Metadata for the document"
           }
         },
         "type": "object",
         "required": [
           "id",
+          "title",
           "documentCategory",
           "date",
-          "description",
           "companyName",
           "tickers"
         ],
@@ -1983,119 +2449,6 @@
           "type"
         ],
         "title": "ValidationError"
-      },
-      "app__schemas__legacy__rag__AgentRequest": {
-        "properties": {
-          "query": {
-            "type": "string",
-            "title": "Query",
-            "description": "The natural language query"
-          },
-          "tickers": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tickers",
-            "description": "List of ticker symbols to filter by"
-          },
-          "startDate": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Startdate",
-            "description": "Start date for filtering (YYYY-MM-DD)"
-          },
-          "endDate": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Enddate",
-            "description": "End date for filtering (YYYY-MM-DD)"
-          },
-          "sourceTypes": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sourcetypes",
-            "description": "List of source types to filter by"
-          },
-          "sourceLinks": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sourcelinks",
-            "description": "List of specific source links to use"
-          },
-          "secOnly": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Seconly",
-            "description": "Whether to use only SEC documents",
-            "default": false
-          }
-        },
-        "type": "object",
-        "required": [
-          "query"
-        ],
-        "title": "AgentRequest",
-        "description": "Legacy request model for agent queries with advanced filtering options."
-      },
-      "app__schemas__rag__AgentRequest": {
-        "properties": {
-          "query": {
-            "type": "string",
-            "minLength": 1,
-            "title": "Query",
-            "description": "The natural language query"
-          }
-        },
-        "type": "object",
-        "required": [
-          "query"
-        ],
-        "title": "AgentRequest",
-        "description": "Request model for agent queries."
       }
     },
     "securitySchemes": {

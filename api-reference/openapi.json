@@ -125,23 +125,45 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return. Required range: 1 <= x <= 1000",
+              "description": "Maximum number of records to return",
               "examples": [
                 100
               ],
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return. Required range: 1 <= x <= 1000"
+            "description": "Maximum number of records to return"
           }
         ],
         "responses": {
           "200": {
-            "description": "List of companies matching the filter criteria",
+            "description": "Company list retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyListResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "title": "Response List Companies Api V1 Companies List Get"
+                },
+                "examples": {
+                  "companies": {
+                    "summary": "Example companies list",
+                    "value": [
+                      {
+                        "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "name": "Santos Ltd.",
+                        "tickers": [
+                          "STO.AX"
+                        ],
+                        "countries": [
+                          "AU"
+                        ],
+                        "filesWithSec": false
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -225,11 +247,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Company information for the specified ID",
+            "description": "Company found successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompanyResponse"
+                },
+                "examples": {
+                  "company": {
+                    "summary": "Example company response",
+                    "value": {
+                      "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "name": "Santos Ltd.",
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "countries": [
+                        "AU"
+                      ],
+                      "filesWithSec": false
+                    }
+                  }
                 }
               }
             }
@@ -324,13 +362,13 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated list of document categories. Supported categories include: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement, and many more. For detailed descriptions and complete list, please refer to [this page](/coverage)",
+              "description": "Comma-separated list of document categories. For detailed descriptions and complete list, please refer to [this page](/coverage)",
               "examples": [
-                "annual-report,interim-report"
+                "annual-financial-report,interim-financial-report,earnings-release,current-report,financial-attachments,shareholder-meeting-circular,earnings-presentation,earnings-call-transcript,investor-event-presentation,esg-report,initial-offering-prospectus,follow-on-offering-prospectus,merger-offering-prospectus,employee-share-plan-prospectus,tender-offer-disclosure,going-private-statement,insider-share-transactions,annual-activity-report,interim-activity-report,compliance-report,historical-performance-summary,letter-to-shareholders,investor-event-transcript,shareholder-meeting-resolutions,governance-report,compensation-report,governance-policies,share-capital-disclosure,shareholder-dealing-disclosure,share-issuance-notice,share-buyback-notice,esg-assessment"
               ],
               "title": "Documentcategories"
             },
-            "description": "Comma-separated list of document categories. Supported categories include: annual-report, interim-report, supplemental-financial-information, earnings-release, current-report, shareholder-meetings-notice, earnings-call-transcript, earnings-call-slides, special-events-slides, sustainability-report, initial-registration-statement, and many more. For detailed descriptions and complete list, please refer to [this page](/coverage)"
+            "description": "Comma-separated list of document categories. For detailed descriptions and complete list, please refer to [this page](/coverage)"
           },
           {
             "name": "secFormTypes",
@@ -496,14 +534,14 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return. Required range: 1 <= x <= 1000",
+              "description": "Maximum number of records to return",
               "examples": [
                 100
               ],
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return. Required range: 1 <= x <= 1000"
+            "description": "Maximum number of records to return"
           }
         ],
         "responses": {
@@ -1730,24 +1768,6 @@
         "title": "ChunksResponse",
         "description": "Response model for chunk search results."
       },
-      "CompanyListResponse": {
-        "properties": {
-          "companies": {
-            "items": {
-              "$ref": "#/components/schemas/CompanyResponse"
-            },
-            "type": "array",
-            "title": "Companies",
-            "description": "List of companies matching the filter criteria"
-          }
-        },
-        "type": "object",
-        "required": [
-          "companies"
-        ],
-        "title": "CompanyListResponse",
-        "description": "Response model for company list results."
-      },
       "CompanyResponse": {
         "properties": {
           "id": {
@@ -1940,7 +1960,7 @@
               }
             ],
             "title": "Fiscalperiod",
-            "description": "Fiscal period the document relates to"
+            "description": "Fiscal period the document relates to. Valid values: 'year', 'multi-year', 'month', 'half-year', 'quarter', or null"
           },
           "language": {
             "anyOf": [
@@ -2220,7 +2240,7 @@
               }
             ],
             "title": "Fiscalperiod",
-            "description": "Fiscal period the document relates to"
+            "description": "Fiscal period the document relates to. Valid values: 'year', 'multi-year', 'month', 'half-year', 'quarter', or null"
           },
           "language": {
             "anyOf": [

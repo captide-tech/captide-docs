@@ -3,20 +3,16 @@
   "info": {
     "title": "Captide REST API",
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
-    "version": "0.3.8"
+    "version": "0.3.9"
   },
   "servers": [
     {
-      "url": "https://rest-api.captide.co/api/v1",
-      "description": "Captide API V1"
-    },
-    {
-      "url": "https://rest-api.captide.co/api/v2",
-      "description": "Captide API V2"
+      "url": "https://rest-api.captide.co",
+      "description": "Local server"
     }
   ],
   "paths": {
-    "/companies/list": {
+    "/api/v1/companies/list": {
       "get": {
         "tags": [
           "Companies"
@@ -86,7 +82,9 @@
                 }
               ],
               "description": "Whether the companies file reports with the SEC",
-              "examples": [false],
+              "examples": [
+                false
+              ],
               "title": "Fileswithsec"
             },
             "description": "Whether the companies file reports with the SEC"
@@ -127,12 +125,14 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
-              "examples": [100],
+              "description": "Maximum number of records to return. Required range: 1 <= x <= 1000",
+              "examples": [
+                100
+              ],
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000"
+            "description": "Maximum number of records to return. Required range: 1 <= x <= 1000"
           }
         ],
         "responses": {
@@ -199,7 +199,7 @@
         }
       }
     },
-    "/companies/{id}": {
+    "/api/v1/companies/{id}": {
       "get": {
         "tags": [
           "Companies"
@@ -297,7 +297,7 @@
         }
       }
     },
-    "/documents/list": {
+    "/api/v1/documents/list": {
       "get": {
         "tags": [
           "Documents"
@@ -411,7 +411,9 @@
                 }
               ],
               "description": "Fiscal quarter to filter documents (1-4)",
-              "examples": [1],
+              "examples": [
+                1
+              ],
               "title": "Fiscalquarter"
             },
             "description": "Fiscal quarter to filter documents (1-4)"
@@ -430,7 +432,9 @@
                 }
               ],
               "description": "Fiscal year to filter documents (e.g., 2024)",
-              "examples": [2024],
+              "examples": [
+                2024
+              ],
               "title": "Fiscalyear"
             },
             "description": "Fiscal year to filter documents (e.g., 2024)"
@@ -492,12 +496,14 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000",
-              "examples": [100],
+              "description": "Maximum number of records to return. Required range: 1 <= x <= 1000",
+              "examples": [
+                100
+              ],
               "default": 100,
               "title": "Limit"
             },
-            "description": "Maximum number of records to return. Required range: 1 \u003C= x \u003C= 1000"
+            "description": "Maximum number of records to return. Required range: 1 <= x <= 1000"
           }
         ],
         "responses": {
@@ -517,17 +523,20 @@
                     "summary": "Example documents list",
                     "value": [
                       {
-                        "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
-                        "documentCategory": "interim-report",
-                        "tickers": [
+                        "id": "888255fb-9487-4ce0-a625-992325c18e62",
+                        "documentCategory": "earnings-release",
+                        "title": "Santos Ltd. First Half Results 2025 with Barossa and Pikka Project Updates",
+                        "description": "Santos Ltd. presents strong first-half results with sales revenue of $2.6 billion, net profit after tax of $439 million, and underlying profit of $508 million, with Barossa and Pikka projects on track.",
+                        "date": "2025-08-25",
+                        "fiscalQuarter": 2,
+                        "fiscalYear": 2025,
+                        "fiscalPeriod": "half-year",
+                        "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "companyName": "Santos Ltd.",
+                        "companyTickers": [
                           "STO.AX"
                         ],
-                        "companyName": "Santos",
-                        "date": "2025-04-17",
-                        "fiscalQuarter": 1,
-                        "fiscalYear": 2025,
-                        "title": "First Quarter Report for period ending 31 March 2025",
-                        "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
+                        "metadata": {}
                       }
                     ]
                   }
@@ -588,7 +597,7 @@
         }
       }
     },
-    "/documents/{id}": {
+    "/api/v1/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
@@ -712,7 +721,7 @@
         }
       }
     },
-    "/rag/chunks": {
+    "/api/v1/rag/chunks": {
       "get": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -836,7 +845,7 @@
         }
       }
     },
-    "/rag/agent-response": {
+    "/api/v1/rag/agent-response": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -891,9 +900,7 @@
                     "summary": "Response when no documents found",
                     "value": {
                       "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
-                      "sourceMap": {
-
-                      }
+                      "sourceMap": {}
                     }
                   }
                 }
@@ -968,7 +975,7 @@
         ]
       }
     },
-    "/rag/agent-response-stream": {
+    "/api/v1/rag/agent-response-stream": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -991,9 +998,7 @@
             "description": "Stream started successfully",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               },
               "text/event-stream": {
                 "examples": {
@@ -1077,13 +1082,13 @@
         ]
       }
     },
-    "/documents/{id}": {
+    "/api/v2/documents/{id}": {
       "get": {
         "tags": [
           "Documents"
         ],
         "summary": "Get document by ID (v2)",
-        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This v2 endpoint includes several improvements over v1:\n    - Supports newer document categories (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.)\n    - Renamed fields: tickers → companyTickers, formType → secFormType\n    - Added fields: companyId, fiscalPeriod, language",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This v2 endpoint includes several improvements over v1:\n    - Supports newer document categories (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.)\n    - Renamed fields: tickers \u2192 companyTickers, formType \u2192 secFormType\n    - Added fields: companyId, fiscalPeriod, language",
         "operationId": "get_document_by_id_api_v2_documents__id__get",
         "security": [
           {
@@ -1126,7 +1131,7 @@
                       "date": "2025-04-17",
                       "fiscalQuarter": 1,
                       "fiscalYear": 2025,
-                      "fiscalPeriod": "Q1",
+                      "fiscalPeriod": "quarter",
                       "language": "en",
                       "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
                       "companyName": "Santos",
@@ -1135,12 +1140,7 @@
                       ],
                       "originalFileUrl": "https://files.captide.co/original-docs/...",
                       "markdownFileUrl": "https://files.captide.co/markdown-docs/...",
-                      "metadata": {
-                        "accessionNumber": "0001193125-22-226507",
-                        "8kItems": [
-                          "9.01"
-                        ]
-                      }
+                      "metadata": {}
                     }
                   }
                 }
@@ -1210,7 +1210,7 @@
         }
       }
     },
-    "/rag/chunks": {
+    "/api/v2/rag/chunks": {
       "get": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1334,7 +1334,7 @@
         }
       }
     },
-    "/rag/agent-response": {
+    "/api/v2/rag/agent-response": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1389,9 +1389,7 @@
                     "summary": "Response when no documents found",
                     "value": {
                       "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
-                      "sourceMap": {
-
-                      }
+                      "sourceMap": {}
                     }
                   }
                 }
@@ -1466,7 +1464,7 @@
         ]
       }
     },
-    "/rag/agent-response-stream": {
+    "/api/v2/rag/agent-response-stream": {
       "post": {
         "tags": [
           "Retrieval Augmented Generation"
@@ -1489,9 +1487,7 @@
             "description": "Stream started successfully",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               },
               "text/event-stream": {
                 "examples": {
@@ -1588,9 +1584,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               }
             }
           }
@@ -1610,9 +1604,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               }
             }
           }
@@ -1632,9 +1624,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-
-                }
+                "schema": {}
               }
             }
           }

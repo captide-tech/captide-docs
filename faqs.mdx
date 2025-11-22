@@ -12,7 +12,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide—provided they refer to the same underlying corporation.
   </Accordion>
   <Accordion title="Which company identifiers does Captide use?">
-    Captide assigns proprietary company identifiers (`companyId`) to uniquely identify each entity. Ticker symbols, when paired with their respective exchanges, also serve as reliable identifiers. Users can retrieve the full list of available companies—along with their `companyId` and `tickers` via the `/api/v1/companies/list` endpoint.
+    Captide assigns proprietary company identifiers (`companyId`) to uniquely identify each entity. We also capture organizations’ LEIs and Refinitiv PermIDs. Additionally, ticker symbols, when paired with their respective exchanges, serve as reliable identifiers. Users can retrieve the complete list of available companies, including each entity’s `companyId`, `permId`, `lei`, and associated `tickers`, through the /api/v1/companies/list endpoint.
   </Accordion>
 </AccordionGroup>
 

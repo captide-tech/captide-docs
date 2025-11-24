@@ -3,7 +3,7 @@
   "info": {
     "title": "Captide REST API",
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
-    "version": "0.3.10"
+    "version": "0.3.11"
   },
   "servers": [
     {
@@ -109,6 +109,48 @@
             "description": "Comma-separated list of unique company IDs"
           },
           {
+            "name": "ciks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC",
+              "examples": [
+                "0000320193,0000789019"
+              ],
+              "title": "Ciks"
+            },
+            "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC"
+          },
+          {
+            "name": "permids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv",
+              "examples": [
+                "4295907168,4295907169"
+              ],
+              "title": "Permids"
+            },
+            "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -156,7 +198,8 @@
                         "countries": [
                           "AU"
                         ],
-                        "filesWithSec": false
+                        "filesWithSec": false,
+                        "permid": "4295907168"
                       }
                     ]
                   }
@@ -261,7 +304,8 @@
                       "countries": [
                         "AU"
                       ],
-                      "filesWithSec": false
+                      "filesWithSec": false,
+                      "permid": "4295907168"
                     }
                   }
                 }
@@ -1808,6 +1852,30 @@
             "type": "boolean",
             "title": "Fileswithsec",
             "description": "Whether the company files reports with the SEC"
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cik",
+            "description": "Central Index Key (CIK) assigned by the SEC"
+          },
+          "permid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Permid",
+            "description": "PermID (Permanent Identifier) assigned by Refinitiv"
           }
         },
         "type": "object",

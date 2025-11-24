@@ -3,12 +3,12 @@
   "info": {
     "title": "Captide REST API",
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
-    "version": "0.3.9"
+    "version": "0.3.10"
   },
   "servers": [
     {
       "url": "https://rest-api.captide.co",
-      "description": "Local server"
+      "description": "Prod server"
     }
   ],
   "paths": {
@@ -82,9 +82,7 @@
                 }
               ],
               "description": "Whether the companies file reports with the SEC",
-              "examples": [
-                false
-              ],
+              "examples": [false],
               "title": "Fileswithsec"
             },
             "description": "Whether the companies file reports with the SEC"
@@ -126,9 +124,7 @@
                 }
               ],
               "description": "Maximum number of records to return",
-              "examples": [
-                100
-              ],
+              "examples": [100],
               "default": 100,
               "title": "Limit"
             },
@@ -449,9 +445,7 @@
                 }
               ],
               "description": "Fiscal quarter to filter documents (1-4)",
-              "examples": [
-                1
-              ],
+              "examples": [1],
               "title": "Fiscalquarter"
             },
             "description": "Fiscal quarter to filter documents (1-4)"
@@ -470,9 +464,7 @@
                 }
               ],
               "description": "Fiscal year to filter documents (e.g., 2024)",
-              "examples": [
-                2024
-              ],
+              "examples": [2024],
               "title": "Fiscalyear"
             },
             "description": "Fiscal year to filter documents (e.g., 2024)"
@@ -535,9 +527,7 @@
                 }
               ],
               "description": "Maximum number of records to return",
-              "examples": [
-                100
-              ],
+              "examples": [100],
               "default": 100,
               "title": "Limit"
             },
@@ -574,7 +564,9 @@
                         "companyTickers": [
                           "STO.AX"
                         ],
-                        "metadata": {}
+                        "metadata": {
+
+                        }
                       }
                     ]
                   }
@@ -938,7 +930,9 @@
                     "summary": "Response when no documents found",
                     "value": {
                       "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
-                      "sourceMap": {}
+                      "sourceMap": {
+
+                      }
                     }
                   }
                 }
@@ -1036,7 +1030,9 @@
             "description": "Stream started successfully",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               },
               "text/event-stream": {
                 "examples": {
@@ -1126,7 +1122,7 @@
           "Documents"
         ],
         "summary": "Get document by ID (v2)",
-        "description": "Fetch a document by its ID from the database, including company and ticker info.",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This v2 endpoint includes several improvements over v1:\n    - Supports newer document categories (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.)\n    - Renamed fields: tickers → companyTickers, formType → secFormType\n    - Added fields: companyId, fiscalPeriod, language",
         "operationId": "get_document_by_id_api_v2_documents__id__get",
         "security": [
           {
@@ -1178,7 +1174,9 @@
                       ],
                       "originalFileUrl": "https://files.captide.co/original-docs/...",
                       "markdownFileUrl": "https://files.captide.co/markdown-docs/...",
-                      "metadata": {}
+                      "metadata": {
+
+                      }
                     }
                   }
                 }
@@ -1254,7 +1252,7 @@
           "Retrieval Augmented Generation"
         ],
         "summary": "Search document chunks (v2)",
-        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.",
+        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
         "operationId": "search_chunks_api_v2_rag_chunks_get",
         "security": [
           {
@@ -1378,7 +1376,7 @@
           "Retrieval Augmented Generation"
         ],
         "summary": "Get agent response (v2)",
-        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.\n    \n    **Response Behavior:**\n    - When relevant documents are found: Returns an AI-generated response with citations in the `sourceMap` field\n    - When no relevant documents are found: Returns an informative message explaining why no documents were found, with an empty `sourceMap` field (HTTP 200 status)",
+        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.\n    \n    **Response Behavior:**\n    - When relevant documents are found: Returns an AI-generated response with citations in the `sourceMap` field\n    - When no relevant documents are found: Returns an informative message explaining why no documents were found, with an empty `sourceMap` field (HTTP 200 status)\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
         "operationId": "agent_response_api_v2_rag_agent_response_post",
         "requestBody": {
           "content": {
@@ -1427,7 +1425,9 @@
                     "summary": "Response when no documents found",
                     "value": {
                       "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
-                      "sourceMap": {}
+                      "sourceMap": {
+
+                      }
                     }
                   }
                 }
@@ -1508,7 +1508,7 @@
           "Retrieval Augmented Generation"
         ],
         "summary": "Stream agent response (v2)",
-        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
         "operationId": "agent_response_stream_api_v2_rag_agent_response_stream_post",
         "requestBody": {
           "content": {
@@ -1525,7 +1525,9 @@
             "description": "Stream started successfully",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               },
               "text/event-stream": {
                 "examples": {
@@ -1622,7 +1624,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           }
@@ -1642,7 +1646,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           }
@@ -1662,7 +1668,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+
+                }
               }
             }
           }

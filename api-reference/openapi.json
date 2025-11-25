@@ -3,7 +3,7 @@
   "info": {
     "title": "Captide REST API",
     "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
-    "version": "0.3.11"
+    "version": "0.3.12"
   },
   "servers": [
     {
@@ -199,7 +199,7 @@
                           "AU"
                         ],
                         "filesWithSec": false,
-                        "permid": "4295907168"
+                        "permid": "4295857141"
                       }
                     ]
                   }
@@ -305,7 +305,7 @@
                         "AU"
                       ],
                       "filesWithSec": false,
-                      "permid": "4295907168"
+                      "permid": "4295857141"
                     }
                   }
                 }
@@ -919,6 +919,128 @@
         }
       }
     },
+    "/api/v1/rag/company-retrieval": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Retrieve companies by natural language query",
+        "description": "Retrieves a list of companies from the Captide database based on a natural language query. \n    This endpoint uses Captide's RAG system to understand company names, tickers, or informal references \n    and returns matching companies with their full details.\n    \n    **Example queries:**\n    - \"Give me Estee Lauder and Louis Vuitton\"\n    - \"Show me Apple and Microsoft\"\n    - \"Find companies with tickers AAPL and MSFT\"",
+        "operationId": "company_retrieval_api_v1_rag_company_retrieval_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest",
+                "description": "Natural language query to find companies",
+                "examples": [
+                  {
+                    "query": "Give me Estee Lauder and Louis Vuitton"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Companies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Company Retrieval Api V1 Rag Company Retrieval Post"
+                },
+                "example": [
+                  {
+                    "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                    "name": "Apple Inc.",
+                    "tickers": [
+                      "AAPL"
+                    ],
+                    "countries": [
+                      "US"
+                    ],
+                    "filesWithSec": true,
+                    "cik": "0000320193",
+                    "permid": "4295907168"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
     "/api/v1/rag/agent-response": {
       "post": {
         "tags": [
@@ -1158,6 +1280,369 @@
             "APIKeyHeader": []
           }
         ]
+      }
+    },
+    "/api/v2/companies/list": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "List companies",
+        "description": "Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, SEC filing status, and the unique company ID assigned by Captide.",
+        "operationId": "list_companies_api_v2_companies_list_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tickers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "examples": [
+                "STO.AX,ASML.AS"
+              ],
+              "title": "Tickers"
+            },
+            "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
+          },
+          {
+            "name": "countries",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)",
+              "examples": [
+                "AU,NL"
+              ],
+              "title": "Countries"
+            },
+            "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)"
+          },
+          {
+            "name": "filesWithSec",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Whether the companies file reports with the SEC",
+              "examples": [false],
+              "title": "Fileswithsec"
+            },
+            "description": "Whether the companies file reports with the SEC"
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of unique company IDs",
+              "examples": [
+                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
+              ],
+              "title": "Ids"
+            },
+            "description": "Comma-separated list of unique company IDs"
+          },
+          {
+            "name": "ciks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC",
+              "examples": [
+                "0000320193,0000789019"
+              ],
+              "title": "Ciks"
+            },
+            "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC"
+          },
+          {
+            "name": "permids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv",
+              "examples": [
+                "4295907168,4295907169"
+              ],
+              "title": "Permids"
+            },
+            "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of records to return",
+              "examples": [100],
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "title": "Response List Companies Api V2 Companies List Get"
+                },
+                "examples": {
+                  "companies": {
+                    "summary": "Example companies list",
+                    "value": [
+                      {
+                        "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "name": "Santos Ltd.",
+                        "tickers": [
+                          "STO.AX"
+                        ],
+                        "countries": [
+                          "AU"
+                        ],
+                        "filesWithSec": false,
+                        "permid": "4295857141"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/companies/{id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get company by ID",
+        "description": "Retrieves a single company from the Captide database by its unique ID. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, and SEC filing status.",
+        "operationId": "get_company_api_v2_companies__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                },
+                "examples": {
+                  "company": {
+                    "summary": "Example company response",
+                    "value": {
+                      "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "name": "Santos Ltd.",
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "countries": [
+                        "AU"
+                      ],
+                      "filesWithSec": false,
+                      "permid": "4295857141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v2/documents/{id}": {
@@ -1412,6 +1897,128 @@
             }
           }
         }
+      }
+    },
+    "/api/v2/rag/company-retrieval": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Retrieve companies by natural language query (v2)",
+        "description": "Retrieves a list of companies from the Captide database based on a natural language query. \n    This endpoint uses Captide's RAG system to understand company names, tickers, or informal references \n    and returns matching companies with their full details.\n    \n    **Example queries:**\n    - \"Give me Estee Lauder and Louis Vuitton\"\n    - \"Show me Apple and Microsoft\"\n    - \"Find companies with tickers AAPL and MSFT\"\n    \n    This v2 endpoint is functionally identical to v1. It is provided for API version consistency.",
+        "operationId": "company_retrieval_api_v2_rag_company_retrieval_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest",
+                "description": "Natural language query to find companies",
+                "examples": [
+                  {
+                    "query": "Give me Estee Lauder and Louis Vuitton"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Companies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Company Retrieval Api V2 Rag Company Retrieval Post"
+                },
+                "example": [
+                  {
+                    "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                    "name": "Apple Inc.",
+                    "tickers": [
+                      "AAPL"
+                    ],
+                    "countries": [
+                      "US"
+                    ],
+                    "filesWithSec": true,
+                    "cik": "0000320193",
+                    "permid": "4295907168"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
       }
     },
     "/api/v2/rag/agent-response": {

@@ -60,6 +60,7 @@
           {
             "group": "Agentic RAG",
             "pages": [
+              "api-reference/endpoint/company_retrieval",
               "api-reference/endpoint/chunks",
               "api-reference/endpoint/agent",
               "api-reference/endpoint/agent_stream"

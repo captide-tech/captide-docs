@@ -1,0 +1,3207 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Captide REST API",
+    "description": "API for accessing financial disclosures and AI-powered financial document analysis.",
+    "version": "0.3.13"
+  },
+  "servers": [
+    {
+      "url": "https://rest-api.captide.co",
+      "description": "Prod server"
+    }
+  ],
+  "paths": {
+    "/api/v1/companies/list": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "List companies",
+        "description": "Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, SEC filing status, and the unique company ID assigned by Captide.",
+        "operationId": "list_companies_api_v1_companies_list_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tickers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "examples": [
+                "STO.AX,ASML.AS"
+              ],
+              "title": "Tickers"
+            },
+            "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
+          },
+          {
+            "name": "countries",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)",
+              "examples": [
+                "AU,NL"
+              ],
+              "title": "Countries"
+            },
+            "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)"
+          },
+          {
+            "name": "filesWithSec",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Whether the companies file reports with the SEC",
+              "examples": [false],
+              "title": "Fileswithsec"
+            },
+            "description": "Whether the companies file reports with the SEC"
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of unique company IDs",
+              "examples": [
+                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
+              ],
+              "title": "Ids"
+            },
+            "description": "Comma-separated list of unique company IDs"
+          },
+          {
+            "name": "ciks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC",
+              "examples": [
+                "0000320193,0000789019"
+              ],
+              "title": "Ciks"
+            },
+            "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC"
+          },
+          {
+            "name": "permids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv",
+              "examples": [
+                "4295907168,4295907169"
+              ],
+              "title": "Permids"
+            },
+            "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of records to return",
+              "examples": [100],
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "title": "Response List Companies Api V1 Companies List Get"
+                },
+                "examples": {
+                  "companies": {
+                    "summary": "Example companies list",
+                    "value": [
+                      {
+                        "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "name": "Santos Ltd.",
+                        "tickers": [
+                          "STO.AX"
+                        ],
+                        "countries": [
+                          "AU"
+                        ],
+                        "filesWithSec": false,
+                        "permid": "4295857141"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get company by ID",
+        "description": "Retrieves a single company from the Captide database by its unique ID. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, and SEC filing status.",
+        "operationId": "get_company_api_v1_companies__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                },
+                "examples": {
+                  "company": {
+                    "summary": "Example company response",
+                    "value": {
+                      "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "name": "Santos Ltd.",
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "countries": [
+                        "AU"
+                      ],
+                      "filesWithSec": false,
+                      "permid": "4295857141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/list": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "List documents",
+        "description": "Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company's ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, and the associated company ID.",
+        "operationId": "list_documents_api_v1_documents_list_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "documentCategories",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of document categories. For detailed descriptions and complete list, please refer to [this page](/coverage).\n\nValid values: `annual-financial-report`, `interim-financial-report`, `financial-attachments`, `annual-activity-report`, `interim-activity-report`, `compliance-report`, `historical-performance-summary`, `letter-to-shareholders`, `earnings-release`, `current-report`, `earnings-presentation`, `earnings-call-transcript`, `investor-event-presentation`, `investor-event-transcript`, `shareholder-meeting-circular`, `shareholder-meeting-resolutions`, `governance-report`, `compensation-report`, `governance-policies`, `esg-report`, `esg-assessment`, `insider-share-transactions`, `shareholder-dealing-disclosure`, `share-issuance-notice`, `share-buyback-notice`, `share-capital-disclosure`, `initial-offering-prospectus`, `follow-on-offering-prospectus`, `merger-offering-prospectus`, `employee-share-plan-prospectus`, `tender-offer-disclosure`",
+              "examples": [
+                "annual-financial-report,interim-financial-report,earnings-release"
+              ],
+              "title": "Documentcategories"
+            },
+            "description": "Comma-separated list of document categories. For detailed descriptions and complete list, please refer to [this page](/coverage).\n\nValid values: `annual-financial-report`, `interim-financial-report`, `financial-attachments`, `annual-activity-report`, `interim-activity-report`, `compliance-report`, `historical-performance-summary`, `letter-to-shareholders`, `earnings-release`, `current-report`, `earnings-presentation`, `earnings-call-transcript`, `investor-event-presentation`, `investor-event-transcript`, `shareholder-meeting-circular`, `shareholder-meeting-resolutions`, `governance-report`, `compensation-report`, `governance-policies`, `esg-report`, `esg-assessment`, `insider-share-transactions`, `shareholder-dealing-disclosure`, `share-issuance-notice`, `share-buyback-notice`, `share-capital-disclosure`, `initial-offering-prospectus`, `follow-on-offering-prospectus`, `merger-offering-prospectus`, `employee-share-plan-prospectus`, `tender-offer-disclosure`"
+          },
+          {
+            "name": "secFormTypes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of SEC form types to retrieve. This parameter is only applicable to companies that file with the SEC. To check if a company files with the SEC, use the filesWithSec field from the /api/v1/companies/list endpoint.\n\nValid values: `10-K`, `10-K/A`, `10-Q`, `10-Q/A`, `8-K`, `8-K/A`, `6-K`, `6-K/A`, `20-F`, `20-F/A`, `40-F`, `40-F/A`, `S-1`, `S-1/A`, `F-1`, `F-1/A`, `S-3`, `S-3/A`, `F-3`, `F-3/A`, `S-4`, `S-4/A`, `F-4`, `F-4/A`, `S-8`, `F-8`, `F-8 POS`, `DEF 14A`, `DEFA14A`, `DEFM14A`, `DEF 14C`, `DEFA14C`, `DEFM14C`",
+              "examples": [
+                "10-K,10-Q"
+              ],
+              "title": "Secformtypes"
+            },
+            "description": "Comma-separated list of SEC form types to retrieve. This parameter is only applicable to companies that file with the SEC. To check if a company files with the SEC, use the filesWithSec field from the /api/v1/companies/list endpoint.\n\nValid values: `10-K`, `10-K/A`, `10-Q`, `10-Q/A`, `8-K`, `8-K/A`, `6-K`, `6-K/A`, `20-F`, `20-F/A`, `40-F`, `40-F/A`, `S-1`, `S-1/A`, `F-1`, `F-1/A`, `S-3`, `S-3/A`, `F-3`, `F-3/A`, `S-4`, `S-4/A`, `F-4`, `F-4/A`, `S-8`, `F-8`, `F-8 POS`, `DEF 14A`, `DEFA14A`, `DEFM14A`, `DEF 14C`, `DEFA14C`, `DEFM14C`"
+          },
+          {
+            "name": "companyTickers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "examples": [
+                "STO.AX,ASML.AS"
+              ],
+              "title": "Companytickers"
+            },
+            "description": "Comma-separated list of tickers of the companies filing the documents (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
+          },
+          {
+            "name": "companyIds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID",
+              "examples": [
+                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
+              ],
+              "title": "Companyids"
+            },
+            "description": "Comma-separated list of unique IDs of the companies filing the documents. Use /api/v1/companies/list to find the company ID"
+          },
+          {
+            "name": "fiscalQuarter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fiscal quarter to filter documents (1-4)",
+              "examples": [1],
+              "title": "Fiscalquarter"
+            },
+            "description": "Fiscal quarter to filter documents (1-4)"
+          },
+          {
+            "name": "fiscalYear",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fiscal year to filter documents (e.g., 2024)",
+              "examples": [2024],
+              "title": "Fiscalyear"
+            },
+            "description": "Fiscal year to filter documents (e.g., 2024)"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date for filtering documents (ISO 8601 format)",
+              "examples": [
+                "2025-01-01"
+              ],
+              "title": "Startdate"
+            },
+            "description": "Start date for filtering documents (ISO 8601 format)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date for filtering documents (ISO 8601 format)",
+              "examples": [
+                "2025-12-31"
+              ],
+              "title": "Enddate"
+            },
+            "description": "End date for filtering documents (ISO 8601 format)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of records to return",
+              "examples": [100],
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentListResponse"
+                  },
+                  "title": "Response List Documents Api V1 Documents List Get"
+                },
+                "examples": {
+                  "documents": {
+                    "summary": "Example documents list",
+                    "value": [
+                      {
+                        "id": "888255fb-9487-4ce0-a625-992325c18e62",
+                        "documentCategory": "earnings-release",
+                        "title": "Santos Ltd. First Half Results 2025 with Barossa and Pikka Project Updates",
+                        "description": "Santos Ltd. presents strong first-half results with sales revenue of $2.6 billion, net profit after tax of $439 million, and underlying profit of $508 million, with Barossa and Pikka projects on track.",
+                        "date": "2025-08-25",
+                        "fiscalQuarter": 2,
+                        "fiscalYear": 2025,
+                        "fiscalPeriod": "half-year",
+                        "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "companyName": "Santos Ltd.",
+                        "companyTickers": [
+                          "STO.AX"
+                        ],
+                        "metadata": {
+
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get document by ID",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This endpoint returns complete document details including metadata, file URLs,\n    and associated company information.",
+        "operationId": "get_document_by_id_api_v1_documents__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Document ID",
+              "examples": [
+                "a586df65-76d8-4b04-864c-ceed76592f4d"
+              ],
+              "title": "Id"
+            },
+            "description": "Document ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponse"
+                },
+                "examples": {
+                  "document": {
+                    "summary": "Example document response",
+                    "value": {
+                      "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
+                      "documentCategory": "interim-report",
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "companyName": "Santos",
+                      "date": "2025-04-17",
+                      "fiscalQuarter": 1,
+                      "fiscalYear": 2025,
+                      "title": "First Quarter Report for period ending 31 March 2025",
+                      "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025.",
+                      "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
+                      "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/chunks": {
+      "get": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Search document chunks",
+        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.",
+        "operationId": "search_chunks_api_v1_rag_chunks_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The natural language query",
+              "examples": [
+                "What is Zscaler's net dollar retention rate?"
+              ],
+              "title": "Query"
+            },
+            "description": "The natural language query"
+          },
+          {
+            "name": "document_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval.",
+              "title": "Document Ids"
+            },
+            "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chunks found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunksResponse"
+                },
+                "example": {
+                  "relevantChunks": [
+                    {
+                      "pageNumber": 2,
+                      "documentMetadata": {
+                        "id": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
+                        "title": "ASML 2024 Annual Report",
+                        "documentCategory": "annual-report",
+                        "date": "2024-12-31",
+                        "fiscalQuarter": 4,
+                        "fiscalYear": 2024,
+                        "companyName": "ASML HOLDING NV",
+                        "tickers": [
+                          "ASML",
+                          "ASML.AS"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/company-retrieval": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Retrieve companies by natural language query",
+        "description": "Retrieves a list of companies from the Captide database based on a natural language query. \n    This endpoint uses Captide's RAG system to understand company names, tickers, or informal references \n    and returns matching companies with their full details.\n    \n    **Example queries:**\n    - \"Give me Estee Lauder and Louis Vuitton\"\n    - \"Show me Apple and Microsoft\"\n    - \"Find companies with tickers AAPL and MSFT\"",
+        "operationId": "company_retrieval_api_v1_rag_company_retrieval_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest",
+                "description": "Natural language query to find companies",
+                "examples": [
+                  {
+                    "query": "Give me Estee Lauder and Louis Vuitton"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Companies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Company Retrieval Api V1 Rag Company Retrieval Post"
+                },
+                "example": [
+                  {
+                    "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                    "name": "Apple Inc.",
+                    "tickers": [
+                      "AAPL"
+                    ],
+                    "countries": [
+                      "US"
+                    ],
+                    "filesWithSec": true,
+                    "cik": "320193",
+                    "permid": "4295905573"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rag/agent-response": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Get agent response",
+        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.\n    \n    **Response Behavior:**\n    - When relevant documents are found: Returns an AI-generated response with citations in the `sourceMap` field\n    - When no relevant documents are found: Returns an informative message explaining why no documents were found, with an empty `sourceMap` field (HTTP 200 status)",
+        "operationId": "agent_response_api_v1_rag_agent_response_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Agent response generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponse"
+                },
+                "examples": {
+                  "with_sources": {
+                    "summary": "Response with found documents",
+                    "value": {
+                      "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
+                      "sourceMap": {
+                        "#eaf60040": {
+                          "pageNumber": 41,
+                          "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
+                          "documentMetadata": {
+                            "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
+                            "title": "Zscaler Q2 2025 Form 10-Q",
+                            "documentCategory": "interim-report",
+                            "date": "2025-03-10",
+                            "fiscalQuarter": 2,
+                            "fiscalYear": 2025,
+                            "companyName": "Zscaler, Inc.",
+                            "tickers": [
+                              "ZS"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "no_sources": {
+                    "summary": "Response when no documents found",
+                    "value": {
+                      "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
+                      "sourceMap": {
+
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rag/agent-response-stream": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Stream agent response",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`",
+        "operationId": "agent_response_stream_api_v1_rag_agent_response_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stream started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              },
+              "text/event-stream": {
+                "examples": {
+                  "with_sources": {
+                    "summary": "Stream with found documents",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc...\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from Apple Inc\", \"stage\": \"analyzing\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"Apple\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \" Inc\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2024 was **$391.0 billion**.\"}\n\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"id\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"title\": \"Apple Q1 2025 Form 10-Q\", \"documentCategory\": \"interim-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}}\n\ndata: {\"type\": \"done\"}\n\n"
+                  },
+                  "no_sources": {
+                    "summary": "Stream when no documents found",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc.: Net dollar retention (NDR) is a metric typically discussed in the context of SaaS or subscription businesses, and may not be a standard metric reported by Apple Inc. However, if Apple does report or discuss NDR, it would most likely be found in their most recent interim (10-Q) or annual (10-K) reports, as these contain detailed financial and operational metrics. The most recent 10-Qs and the latest 10-K are the best sources to check for any mention or calculation of net dollar retention or related metrics. If not explicitly stated, these documents will provide the necessary revenue and segment data to potentially calculate or estimate NDR if applicable.\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm now analyzing 3 documents to find the most relevant information...\", \"stage\": \"document_inspection\"}\n\ndata: {\"type\": \"warning\", \"message\": \"I couldn't find any relevant information in the selected documents to answer your question.\"}\n\ndata: {\"type\": \"done\"}\n\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v2/companies/list": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "List companies",
+        "description": "Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, SEC filing status, and the unique company ID assigned by Captide.",
+        "operationId": "list_companies_api_v2_companies_list_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tickers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')",
+              "examples": [
+                "STO.AX,ASML.AS"
+              ],
+              "title": "Tickers"
+            },
+            "description": "Comma-separated list of company tickers (supports both base tickers like 'ITX' and suffixed tickers like 'ITX.MC')"
+          },
+          {
+            "name": "countries",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)",
+              "examples": [
+                "AU,NL"
+              ],
+              "title": "Countries"
+            },
+            "description": "Comma-separated list of companies' country of domicile (ISO 3166-1 alpha-2)"
+          },
+          {
+            "name": "filesWithSec",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Whether the companies file reports with the SEC",
+              "examples": [false],
+              "title": "Fileswithsec"
+            },
+            "description": "Whether the companies file reports with the SEC"
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of unique company IDs",
+              "examples": [
+                "77848abe-a215-41b7-8950-86e89ea1fadc,91f6c6da-478f-4161-b451-aa5177cc7fb9"
+              ],
+              "title": "Ids"
+            },
+            "description": "Comma-separated list of unique company IDs"
+          },
+          {
+            "name": "ciks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC",
+              "examples": [
+                "0000320193,0000789019"
+              ],
+              "title": "Ciks"
+            },
+            "description": "Comma-separated list of Central Index Keys (CIK) assigned by the SEC"
+          },
+          {
+            "name": "permids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv",
+              "examples": [
+                "4295907168,4295907169"
+              ],
+              "title": "Permids"
+            },
+            "description": "Comma-separated list of PermIDs (Permanent Identifiers) assigned by Refinitiv"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 1000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of records to return",
+              "examples": [100],
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Maximum number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "title": "Response List Companies Api V2 Companies List Get"
+                },
+                "examples": {
+                  "companies": {
+                    "summary": "Example companies list",
+                    "value": [
+                      {
+                        "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                        "name": "Santos Ltd.",
+                        "tickers": [
+                          "STO.AX"
+                        ],
+                        "countries": [
+                          "AU"
+                        ],
+                        "filesWithSec": false,
+                        "permid": "4295857141"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/companies/{id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get company by ID",
+        "description": "Retrieves a single company from the Captide database by its unique ID. The response includes key company information such as name, ticker symbol(s) with exchange suffixes, country of domicile, and SEC filing status.",
+        "operationId": "get_company_api_v2_companies__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                },
+                "examples": {
+                  "company": {
+                    "summary": "Example company response",
+                    "value": {
+                      "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "name": "Santos Ltd.",
+                      "tickers": [
+                        "STO.AX"
+                      ],
+                      "countries": [
+                        "AU"
+                      ],
+                      "filesWithSec": false,
+                      "permid": "4295857141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/documents/{id}": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Get document by ID (v2)",
+        "description": "Fetch a document by its ID from the database, including company and ticker info.\n    \n    This v2 endpoint includes several improvements over v1:\n    - Supports newer document categories (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.)\n    - Renamed fields: tickers → companyTickers, formType → secFormType\n    - Added fields: companyId, fiscalPeriod, language",
+        "operationId": "get_document_by_id_api_v2_documents__id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Document file ID",
+              "examples": [
+                "a586df65-76d8-4b04-864c-ceed76592f4d"
+              ],
+              "title": "Id"
+            },
+            "description": "Document file ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponseV2"
+                },
+                "examples": {
+                  "document": {
+                    "summary": "Example document response",
+                    "value": {
+                      "id": "a586df65-76d8-4b04-864c-ceed76592f4d",
+                      "documentCategory": "interim-financial-report",
+                      "title": "First Quarter Report for period ending 31 March 2025",
+                      "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025.",
+                      "date": "2025-04-17",
+                      "fiscalQuarter": 1,
+                      "fiscalYear": 2025,
+                      "fiscalPeriod": "quarter",
+                      "language": "en",
+                      "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+                      "companyName": "Santos",
+                      "companyTickers": [
+                        "STO.AX"
+                      ],
+                      "originalFileUrl": "https://files.captide.co/original-docs/...",
+                      "markdownFileUrl": "https://files.captide.co/markdown-docs/...",
+                      "metadata": {
+
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/rag/chunks": {
+      "get": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Search document chunks (v2)",
+        "description": "Search for relevant document chunks based on a query. Under the hood, Captide's RAG system uses a combination of LLMs and vector databases to find the most relevant chunks of text from corporate disclosures that are most relevant to the query.\n    This endpoint returns chunks of text from corporate disclosures that are most relevant to the query, along with metadata about their source documents. This endpoint is useful for building search interfaces or retrieving specific content from documents.\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "search_chunks_api_v2_rag_chunks_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The natural language query",
+              "examples": [
+                "What is Zscaler's net dollar retention rate?"
+              ],
+              "title": "Query"
+            },
+            "description": "The natural language query"
+          },
+          {
+            "name": "document_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval.",
+              "title": "Document Ids"
+            },
+            "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chunks found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunksResponse"
+                },
+                "example": {
+                  "relevantChunks": [
+                    {
+                      "pageNumber": 2,
+                      "documentMetadata": {
+                        "id": "2dfd0c2a-fb6d-486a-ad62-3b1830eb30bf",
+                        "title": "ASML 2024 Annual Report",
+                        "documentCategory": "annual-financial-report",
+                        "date": "2024-12-31",
+                        "fiscalQuarter": 4,
+                        "fiscalYear": 2024,
+                        "companyName": "ASML HOLDING NV",
+                        "tickers": [
+                          "ASML",
+                          "ASML.AS"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/rag/company-retrieval": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Retrieve companies by natural language query (v2)",
+        "description": "Retrieves a list of companies from the Captide database based on a natural language query. \n    This endpoint uses Captide's RAG system to understand company names, tickers, or informal references \n    and returns matching companies with their full details.\n    \n    **Example queries:**\n    - \"Give me Estee Lauder and Louis Vuitton\"\n    - \"Show me Apple and Microsoft\"\n    - \"Find companies with tickers AAPL and MSFT\"\n    \n    This v2 endpoint is functionally identical to v1. It is provided for API version consistency.",
+        "operationId": "company_retrieval_api_v2_rag_company_retrieval_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest",
+                "description": "Natural language query to find companies",
+                "examples": [
+                  {
+                    "query": "Give me Estee Lauder and Louis Vuitton"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Companies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompanyResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Company Retrieval Api V2 Rag Company Retrieval Post"
+                },
+                "example": [
+                  {
+                    "id": "91f6c6da-478f-4161-b451-aa5177cc7fb9",
+                    "name": "Apple Inc.",
+                    "tickers": [
+                      "AAPL"
+                    ],
+                    "countries": [
+                      "US"
+                    ],
+                    "filesWithSec": true,
+                    "cik": "320193",
+                    "permid": "4295905573"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v2/rag/agent-response": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Get agent response (v2)",
+        "description": "Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.\n    This endpoint provides AI-generated answers with proper citations to source documents, making it ideal for building Q&A interfaces or research tools.\n    \n    **Response Behavior:**\n    - When relevant documents are found: Returns an AI-generated response with citations in the `sourceMap` field\n    - When no relevant documents are found: Returns an informative message explaining why no documents were found, with an empty `sourceMap` field (HTTP 200 status)\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "agent_response_api_v2_rag_agent_response_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Agent response generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponse"
+                },
+                "examples": {
+                  "with_sources": {
+                    "summary": "Response with found documents",
+                    "value": {
+                      "content": "Zscaler's net dollar retention rates for the last two quarters are as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%**  \n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%**  \n\nThese figures reflect Zscaler's ability to retain and expand recurring revenue from existing customers over the respective periods [#eaf60040].",
+                      "sourceMap": {
+                        "#eaf60040": {
+                          "pageNumber": 41,
+                          "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
+                          "documentMetadata": {
+                            "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
+                            "title": "Zscaler Q2 2025 Form 10-Q",
+                            "documentCategory": "interim-financial-report",
+                            "date": "2025-03-10",
+                            "fiscalQuarter": 2,
+                            "fiscalYear": 2025,
+                            "companyName": "Zscaler, Inc.",
+                            "tickers": [
+                              "ZS"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "no_sources": {
+                    "summary": "Response when no documents found",
+                    "value": {
+                      "content": "I couldn't find any relevant documents in our database to answer your query. This could be because:\n\n- The company or topic you're asking about isn't covered in our document collection\n- The specific information you're looking for isn't mentioned in the available documents\n- Your query might need to be more specific or use different terminology\n\nTry rephrasing your question or asking about a different company or topic that might be covered in our financial disclosure database.",
+                      "sourceMap": {
+
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/api/v2/rag/agent-response-stream": {
+      "post": {
+        "tags": [
+          "Retrieval Augmented Generation"
+        ],
+        "summary": "Stream agent response (v2)",
+        "description": "Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries. This endpoint provides real-time streaming of AI-generated answers, making it ideal for interactive chat interfaces where users can see responses as they're generated.\n    \n    **Server-Sent Events (SSE) Structure:**\n    \n    - **`data: {\"type\": \"thinking\", ...}`** - Agent's thinking process with stage information\n      - `data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"...\", \"stage\": \"search\"}`\n    \n    - **`data: {\"type\": \"message\", ...}`** - Response content chunks\n      - `data: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"...\"}`\n    \n    - **`data: {\"type\": \"warning\", ...}`** - Warning when no documents found\n      - `data: {\"type\": \"warning\", \"message\": \"...\"}`\n    \n    - **`data: {\"type\": \"sources\", ...}`** - Source document information\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": \"...\", \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations\n      - `data: {\"type\": \"sources\", \"content\": {\"#ref_id\": {\"content\": \"...\", \"pageNumber\": 123, \"excerpt\": null, \"documentMetadata\": {\"id\": \"...\", \"title\": \"...\", \"documentCategory\": \"...\", \"formType\": \"...\", \"tickers\": [\"...\"], \"companyName\": \"...\", \"date\": \"...\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}` - Document sources and citations (with null excerpt, often given before agent response)\n    \n    - **`data: {\"type\": \"done\"}`** - Stream completion\n      - `data: {\"type\": \"done\"}`\n    \n    This v2 endpoint supports newer document categories in source mappings (e.g., earnings-presentation, investor-event-presentation, shareholder-meeting-circular, etc.). Agent response quality is exactly the same compared to v1.",
+        "operationId": "agent_response_stream_api_v2_rag_agent_response_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Stream started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              },
+              "text/event-stream": {
+                "examples": {
+                  "with_sources": {
+                    "summary": "Stream with found documents",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc...\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I found 13 relevant pages from Apple Inc\", \"stage\": \"analyzing\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"Apple\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \" Inc\"}\n\ndata: {\"type\": \"message\", \"role\": \"assistant\", \"content\": \"'s revenue for the fiscal year 2024 was **$391.0 billion**.\"}\n\ndata: {\"type\": \"sources\", \"content\": {\"#7bcd0078\": {\"pageNumber\": 79, \"excerpt\": \"Total net sales $ 124,300\", \"documentMetadata\": {\"id\": \"7bcdbd06-6b2a-460d-9596-626b6bfded3a\", \"title\": \"Apple Q1 2025 Form 10-Q\", \"documentCategory\": \"interim-financial-report\", \"formType\": \"10-Q\", \"tickers\": [\"AAPL\"], \"companyName\": \"Apple Inc.\", \"date\": \"2025-01-31\", \"fiscalQuarter\": 1, \"fiscalYear\": 2025}}}}}}\n\ndata: {\"type\": \"done\"}\n\n"
+                  },
+                  "no_sources": {
+                    "summary": "Stream when no documents found",
+                    "value": "data: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm going to look through 3 documents from Apple Inc.: Net dollar retention (NDR) is a metric typically discussed in the context of SaaS or subscription businesses, and may not be a standard metric reported by Apple Inc. However, if Apple does report or discuss NDR, it would most likely be found in their most recent interim (10-Q) or annual (10-K) reports, as these contain detailed financial and operational metrics. The most recent 10-Qs and the latest 10-K are the best sources to check for any mention or calculation of net dollar retention or related metrics. If not explicitly stated, these documents will provide the necessary revenue and segment data to potentially calculate or estimate NDR if applicable.\", \"stage\": \"search\"}\n\ndata: {\"type\": \"thinking\", \"role\": \"assistant\", \"content\": \"I'm now analyzing 3 documents to find the most relevant information...\", \"stage\": \"document_inspection\"}\n\ndata: {\"type\": \"warning\", \"message\": \"I couldn't find any relevant information in the selected documents to answer your question.\"}\n\ndata: {\"type\": \"done\"}\n\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Root",
+        "description": "Health check endpoint.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health",
+        "description": "Simple health check endpoint for Kubernetes probes.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/redis": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Redis Health",
+        "description": "Redis health check endpoint.",
+        "operationId": "redis_health_health_redis_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Query",
+            "description": "The natural language query"
+          },
+          "documentIds": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Documentids",
+            "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval."
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "AgentRequest",
+        "description": "Request model for agent queries."
+      },
+      "AgentResponse": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "The agent's response in markdown format"
+          },
+          "sourceMap": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Chunk"
+            },
+            "type": "object",
+            "title": "Sourcemap",
+            "description": "Mapping of citation reference IDs to chunk metadata. Empty when no relevant documents are found."
+          }
+        },
+        "type": "object",
+        "required": [
+          "content",
+          "sourceMap"
+        ],
+        "title": "AgentResponse",
+        "description": "Response model for agent queries."
+      },
+      "Chunk": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Text content of the chunk"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "title": "Pagenumber",
+            "description": "Page number in the document"
+          },
+          "excerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excerpt",
+            "description": "Specific part of the chunk that the agent used to answer the user's question. Used for source linking and highlighting."
+          },
+          "documentMetadata": {
+            "$ref": "#/components/schemas/SourceDocument",
+            "description": "Metadata for the chunk's document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content",
+          "pageNumber",
+          "documentMetadata"
+        ],
+        "title": "Chunk",
+        "description": "A chunk of document content with metadata."
+      },
+      "ChunksResponse": {
+        "properties": {
+          "relevantChunks": {
+            "items": {
+              "$ref": "#/components/schemas/Chunk"
+            },
+            "type": "array",
+            "title": "Relevantchunks",
+            "description": "List of relevant document chunks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "relevantChunks"
+        ],
+        "title": "ChunksResponse",
+        "description": "Response model for chunk search results."
+      },
+      "CompanyResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique company ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Company name"
+          },
+          "tickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "List of ticker symbols with exchange suffixes (e.g., 'ASML', 'ASML.AS')"
+          },
+          "countries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Countries",
+            "description": "Company's country of domicile (ISO 3166-1 alpha-2)"
+          },
+          "filesWithSec": {
+            "type": "boolean",
+            "title": "Fileswithsec",
+            "description": "Whether the company files reports with the SEC"
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cik",
+            "description": "Central Index Key (CIK) assigned by the SEC"
+          },
+          "permid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Permid",
+            "description": "PermID (Permanent Identifier) assigned by Refinitiv"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "tickers",
+          "countries",
+          "filesWithSec"
+        ],
+        "title": "CompanyResponse",
+        "description": "Response model for single company retrieval."
+      },
+      "DocumentCategory": {
+        "type": "string",
+        "enum": [
+          "annual-report",
+          "interim-report",
+          "supplemental-financial-information",
+          "earnings-release",
+          "current-report",
+          "shareholder-meetings-notice",
+          "earnings-call-slides",
+          "special-events-slides",
+          "earnings-call-transcript",
+          "sustainability-report",
+          "initial-registration-statement",
+          "follow-on-registration-statement",
+          "merger-registration-statement",
+          "compensation-registration-statement",
+          "tender-offer-statement",
+          "going-private-statement",
+          "insider-shares-transactions",
+          "other",
+          "annual-financial-report",
+          "interim-financial-report",
+          "financial-attachments",
+          "shareholder-meeting-circular",
+          "earnings-presentation",
+          "investor-event-presentation",
+          "investor-event-transcript",
+          "universal-registration-statement",
+          "annual-activity-report",
+          "interim-activity-report",
+          "compliance-report",
+          "historical-performance-summary",
+          "letter-to-shareholders",
+          "shareholder-meeting-resolutions",
+          "governance-report",
+          "compensation-report",
+          "governance-policies",
+          "shareholder-dealing-disclosure",
+          "share-issuance-notice",
+          "share-buyback-notice",
+          "share-capital-disclosure",
+          "initial-offering-prospectus",
+          "follow-on-offering-prospectus",
+          "merger-offering-prospectus",
+          "employee-share-plan-prospectus",
+          "tender-offer-disclosure",
+          "insider-share-transactions",
+          "esg-report"
+        ],
+        "title": "DocumentCategory",
+        "description": "Enum for document categories with their descriptions."
+      },
+      "DocumentListResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique document ID"
+          },
+          "documentCategory": {
+            "type": "string",
+            "title": "Documentcategory",
+            "description": "Document category code as stored in the database. For detailed category descriptions, please refer to [this page](/coverage)."
+          },
+          "secFormType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secformtype",
+            "description": "Document SEC form type (only applicable if the document is an SEC filing)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "fiscalPeriod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalperiod",
+            "description": "Fiscal period the document relates to. Valid values: `year`, `multi-year`, `month`, `half-year`, `quarter`, or null"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Language of the document in ISO 639-1 code"
+          },
+          "companyId": {
+            "type": "string",
+            "title": "Companyid",
+            "description": "Unique ID of the company filing the document"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "companyTickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., accessionNumber, 8kItems)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "documentCategory",
+          "companyId"
+        ],
+        "title": "DocumentListResponse",
+        "description": "Response model for document list results."
+      },
+      "DocumentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique document ID"
+          },
+          "documentCategory": {
+            "$ref": "#/components/schemas/DocumentCategory",
+            "description": "Document categories. For detailed category descriptions, please refer to [this page](/coverage)."
+          },
+          "formType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formtype",
+            "description": "Document SEC form type (only applicable if the document is an SEC filing)"
+          },
+          "tickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
+          },
+          "originalFileUrl": {
+            "type": "string",
+            "title": "Originalfileurl",
+            "description": "Secure and temporary URL providing access to the original document file"
+          },
+          "markdownFileUrl": {
+            "type": "string",
+            "title": "Markdownfileurl",
+            "description": "Secure and temporary URL providing access to the pre-processed, machine-readable document file"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., htmlContent, sourceType, webpageUrl) for legacy fallbacks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "documentCategory",
+          "tickers",
+          "originalFileUrl",
+          "markdownFileUrl"
+        ],
+        "title": "DocumentResponse",
+        "description": "Response model for document retrieval by ID."
+      },
+      "DocumentResponseV2": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique document ID"
+          },
+          "documentCategory": {
+            "type": "string",
+            "title": "Documentcategory",
+            "description": "Document category code as stored in the database. For detailed category descriptions, please refer to [this page](/coverage)."
+          },
+          "secFormType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secformtype",
+            "description": "Document SEC form type (only applicable if the document is an SEC filing)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Captide-generated document title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Captide-generated document description"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date",
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "fiscalPeriod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalperiod",
+            "description": "Fiscal period the document relates to. Valid values: `year`, `multi-year`, `month`, `half-year`, `quarter`, or null"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Language of the document in ISO 639-1 code"
+          },
+          "companyId": {
+            "type": "string",
+            "title": "Companyid",
+            "description": "Unique ID of the company filing the document"
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "companyTickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Companytickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "originalFileUrl": {
+            "type": "string",
+            "title": "Originalfileurl",
+            "description": "Secure and temporary URL providing access to the original document file"
+          },
+          "markdownFileUrl": {
+            "type": "string",
+            "title": "Markdownfileurl",
+            "description": "Secure and temporary URL providing access to the pre-processed, machine-readable document file"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "description": "Additional document metadata (e.g., accessionNumber, 8kItems)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "documentCategory",
+          "companyId",
+          "originalFileUrl",
+          "markdownFileUrl"
+        ],
+        "title": "DocumentResponseV2",
+        "description": "V2 response model for document retrieval by ID. Uses database category codes directly."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse",
+        "description": "Standard error response model for all API endpoints."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "SourceDocument": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique document ID"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Document title"
+          },
+          "documentCategory": {
+            "type": "string",
+            "title": "Documentcategory",
+            "description": "Document categories. For detailed category descriptions, please refer to [this page](/coverage)"
+          },
+          "formType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formtype",
+            "description": "Document SEC form type (only applicable if the document is an SEC filing)"
+          },
+          "date": {
+            "type": "string",
+            "title": "Date",
+            "description": "Date the document relates to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports)"
+          },
+          "fiscalQuarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalquarter",
+            "description": "Fiscal quarter the document relates to (from 1 to 4)"
+          },
+          "fiscalYear": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fiscalyear",
+            "description": "Fiscal year the document relates to (e.g., 2024)"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "Companyname",
+            "description": "Name of the company filing the document"
+          },
+          "tickers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tickers",
+            "description": "Tickers of the company filing the document"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata",
+            "description": "Metadata for the document"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "documentCategory",
+          "date",
+          "companyName",
+          "tickers"
+        ],
+        "title": "SourceDocument",
+        "description": "Source document metadata model."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

@@ -2376,15 +2376,8 @@
             "description": "The natural language query"
           },
           "documentIds": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Documentids",
+            "type": ["string", "null"],
+            "title": "Document IDs",
             "description": "Comma-separated string of document file IDs. If provided and non-empty, skips document and company selection and goes directly to retrieval."
           }
         },

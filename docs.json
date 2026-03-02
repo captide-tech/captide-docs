@@ -91,5 +91,11 @@
       "github": "https://github.com/captide-tech",
       "linkedin": "https://linkedin.com/company/captide"
     }
+  },
+  "api": {
+    "openapi": "https://rest-api.captide.co/openapi.json",
+    "playground": {
+      "display": "interactive"
+    }
   }
 }

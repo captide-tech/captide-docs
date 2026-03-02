@@ -47,7 +47,8 @@
             "group": "Companies",
             "pages": [
               "api-reference/endpoint/companies",
-              "api-reference/endpoint/get_company"
+              "api-reference/endpoint/get_company",
+              "api-reference/endpoint/search_company"
             ]
           },
           {
@@ -90,6 +91,12 @@
       "x": "https://x.com/captideai",
       "github": "https://github.com/captide-tech",
       "linkedin": "https://linkedin.com/company/captide"
+    }
+  },
+  "api": {
+    "openapi": "https://rest-api.captide.co/openapi.json",
+    "playground": {
+      "display": "interactive"
     }
   }
 }

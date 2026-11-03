@@ -21,6 +21,7 @@ Each resource has one current endpoint. Older versions stay available, so existi
 `GET /api/v1/documents/{id}` is kept for older integrations. Compared with v2, it:
 
 - returns `formType` and `tickers` instead of `secFormType` and `companyTickers`, and has no `fiscalPeriod`, `language` or `companyId`;
+- returns the source address as `metadata.sourceURL` (`metadata.sourceUrl` elsewhere), along with the document's other stored metadata;
 - returns **legacy category codes**: renamed categories map to their old code, and categories that didn't exist before are returned as `other`.
 
 | Category | Legacy code (v1 by ID) |
@@ -42,6 +43,21 @@ Each resource has one current endpoint. Older versions stay available, so existi
 | Any other category | `other` |
 
 Every other endpoint returns the current codes listed in [Document Coverage](/coverage). The `documentCategories` filter accepts both current and legacy codes.
+
+## Renamed parameters and fields
+
+In November 2026 a few names were aligned across endpoints.
+
+| Where | Current name | Previous name |
+|---|---|---|
+| `/companies/search` parameter | `query` | `q` |
+| `/companies/list` parameter | `permIds` | `permids` |
+| `/rag/chunks` parameter | `documentIds` | `document_ids` |
+| Company responses | `permId` | `permid` |
+| `metadata` of documents and webhook payloads | `sourceUrl` | `sourceURL` |
+| `documentMetadata` of chunks and agent sources | `secFormType`, `companyTickers` | `formType`, `tickers` |
+
+The previous parameter names are still accepted, but use the current ones. Responses return only the current field names, except `GET /api/v1/documents/{id}`, which keeps its legacy fields.
 
 ## Pagination
 

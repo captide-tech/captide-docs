@@ -3,92 +3,80 @@ title: "Frontend Integration"
 icon: "gear"
 ---
 
-This guide explains how to integrate the Captide API into your React frontend application.
+This guide explains how to show Captide results in a React frontend, and open their sources in the Document Auditing SDK's viewer.
 
 <Note>
-  **Never expose your Captide API key in frontend code\!** Always use a backend proxy as shown in the [Backend Integration](./backend) guide.
+  **Never expose your Captide API key in frontend code!** The examples below call the backend proxy from the [Backend Integration](/integration/backend) guide: `GET /api/chunks`, `GET /api/documents/:id` and `POST /api/agent-stream`.
 </Note>
 
 ## React Integration
 
 ### Basic Document Viewer Setup
 
-Here's how to set up the Captide document viewer component in a React application:
+Wrap your app in `DocumentViewerProvider` with a `fetchDocumentFn` that loads a document from your backend. Then call `loadDocument(documentId, { page, snippet })` to open a document at a page and highlight a passage. Here, each chunk returned for a query gets a button that opens its source:
 
 ```jsx
 import React, { useState } from 'react';
-import { DocumentViewer, DocumentViewerProvider } from 'captide';
+import { DocumentViewer, DocumentViewerProvider, useDocumentViewer } from 'captide';
 
-function App() {
-  // Function to fetch document through your backend API
-  const fetchDocument = async (sourceLink) => {
-    const response = await fetch('/api/document', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source_link: sourceLink })
-    });
-    
-    return response.json();
-  };
+const fetchDocument = async (documentId) => {
+  const response = await fetch(`/api/documents/${documentId}`);
+  if (!response.ok) throw new Error(`Failed to load document ${documentId}`);
+  return response.json();
+};
 
+export default function App() {
   return (
-    <div className="app">
-      <h1>Captide Document Explorer</h1>
-      
-      <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
-        <DocumentExplorerDemo />
-      </DocumentViewerProvider>
-    </div>
+    <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
+      <ChunkExplorer />
+    </DocumentViewerProvider>
   );
 }
 
-function DocumentExplorerDemo() {
-  const [answer, setAnswer] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+function ChunkExplorer() {
+  const { loadDocument } = useDocumentViewer();
   const [query, setQuery] = useState('');
-  
-  // Create a simple form for asking questions
+  const [chunks, setChunks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
     try {
-      // Call your backend API that proxies to Captide
-      const response = await fetch('/api/document-snippets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
-      });
-      
+      const response = await fetch(`/api/chunks?query=${encodeURIComponent(query)}`);
       const data = await response.json();
-      // Process and display the response
-      // This is a simplified example - you'd typically render the snippets
-      setAnswer(JSON.stringify(data, null, 2));
-    } catch (error) {
-      console.error('Error:', error);
+      setChunks(data.relevantChunks ?? []);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask about SEC filings (e.g., What's AAPL's revenue?)"
+          placeholder="What was Apple's revenue last quarter?"
         />
         <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Loading...' : 'Ask'}
+          {isLoading ? 'Loading...' : 'Search'}
         </button>
       </form>
-      
-      {answer && (
-        <pre>{answer}</pre>
-      )}
-      
+
+      <ul>
+        {chunks.map((chunk, i) => (
+          <li key={i}>
+            {chunk.documentMetadata.title}, page {chunk.pageNumber}{' '}
+            <button
+              onClick={() => loadDocument(chunk.documentMetadata.id, { page: chunk.pageNumber })}
+            >
+              Open
+            </button>
+          </li>
+        ))}
+      </ul>
+
       {/* The DocumentViewer needs to be sized explicitly */}
       <div style={{ height: '600px', marginTop: '20px', border: '1px solid #ccc' }}>
         <DocumentViewer />
@@ -96,134 +84,128 @@ function DocumentExplorerDemo() {
     </div>
   );
 }
-
-export default App;
 ```
 
 ### Streaming Response Example
 
-For handling streaming responses from the AI agent:
+The agent stream is a sequence of `data:` lines, each holding a JSON event (see Example 5 in the [Quickstart](/integration/quickstart) for the event types). The example below:
+
+- shows `thinking` events as a status line;
+- builds the answer from `message` events, and replaces it with `content_final` when that arrives;
+- keeps the `sources` event, which maps each citation (`#43c00004`, `#43c00004:2`, …) to its chunk;
+- turns each citation into a link that opens the source page and highlights the cited excerpt.
+
+A network read can end in the middle of a line, so the parser keeps the unfinished part until the next read.
 
 ```jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { DocumentViewer, DocumentViewerProvider, useDocumentViewer } from 'captide';
 
-function StreamingDemo() {
-  const [query, setQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [streamedText, setStreamedText] = useState('');
-  const [idMapping, setIdMapping] = useState({});
+const CITATION = /(\[#[^\]\s]+\])/g;
+
+function AgentChat() {
   const { loadDocument } = useDocumentViewer();
-  
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [sources, setSources] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleEvent = (event) => {
+    switch (event.type) {
+      case 'thinking':
+        setStatus(event.content);
+        break;
+      case 'message':
+        setAnswer((prev) => prev + event.content);
+        break;
+      case 'content_final':
+        setAnswer(event.content);
+        break;
+      case 'sources':
+        setSources(event.content);
+        break;
+      case 'warning':
+        setStatus(event.message);
+        break;
+      case 'done':
+        setStatus('');
+        break;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setStreamedText('');
-    
+    setAnswer('');
+    setSources({});
     try {
-      // Call your backend API that proxies the streaming endpoint
-      const response = await fetch('/api/query-stream', {
+      const response = await fetch('/api/agent-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
       });
-      
-      // Create a reader for the stream
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      
+      let buffer = '';
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        
-        const text = decoder.decode(value);
-        // Process the SSE data
-        const lines = text.split('\n');
-        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // keep the unfinished line for the next read
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.substring(6));
-              
-              // Handle different event types
-              if (data.type === 'id_mapping') {
-                setIdMapping(data.mapping);
-              } else if (data.type === 'markdown_chunk') {
-                setStreamedText(prev => prev + data.content);
-              } else if (data.type === 'full_answer') {
-                setStreamedText(data.content);
-              }
-            } catch (e) {
-              console.error('Error parsing SSE data:', e);
-            }
-          }
+          if (line.startsWith('data: ')) handleEvent(JSON.parse(line.slice(6)));
         }
       }
-    } catch (error) {
-      console.error('Error with streaming:', error);
     } finally {
       setIsLoading(false);
     }
   };
-  
-  // Function to handle source link clicks
-  const handleSourceClick = async (sourceId) => {
-    // Extract source info from the mapping
-    const sourceInfo = idMapping[sourceId];
-    if (sourceInfo && sourceInfo.sourceLink) {
-      await loadDocument(sourceInfo.sourceLink, sourceId);
-    }
-  };
-  
-  // Simple regex to detect source references like [#123abc]
-  const renderWithSourceLinks = (text) => {
-    if (!text) return '';
-    
-    // Split by references [#id] and render as clickable spans
-    const parts = text.split(/(\[#[a-z0-9]+\])/g);
-    
-    return parts.map((part, index) => {
-      // Check if this part is a reference
-      const match = part.match(/\[#([a-z0-9]+)\]/);
-      
-      if (match) {
-        const sourceId = `#${match[1]}`;
-        return (
-          <span 
-            key={index}
-            className="source-link"
-            onClick={() => handleSourceClick(sourceId)}
-            style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-          >
-            [{index + 1}]
-          </span>
-        );
-      }
-      
-      // Regular text
-      return <span key={index}>{part}</span>;
+
+  const openCitation = (ref) => {
+    const source = sources[ref];
+    if (!source) return; // sources arrive at the end of the stream
+    loadDocument(source.documentMetadata.id, {
+      page: source.pageNumber,
+      snippet: source.excerpt ?? undefined
     });
   };
-  
+
+  // Render "[#43c00004]" as a numbered link to its source
+  const renderAnswer = (text) => {
+    const refs = [];
+    return text.split(CITATION).map((part, i) => {
+      const match = part.match(/^\[(#[^\]\s]+)\]$/);
+      if (!match) return <span key={i}>{part}</span>;
+      const ref = match[1];
+      if (!refs.includes(ref)) refs.push(ref);
+      return (
+        <a key={i} href="#" onClick={(e) => { e.preventDefault(); openCitation(ref); }}>
+          [{refs.indexOf(ref) + 1}]
+        </a>
+      );
+    });
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask about SEC filings (e.g., What's AAPL's revenue?)"
+          placeholder="What was Zscaler's net dollar retention in the last two quarters?"
           style={{ width: '400px' }}
         />
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Ask'}
         </button>
       </form>
-      
-      <div className="answer-container">
-        {renderWithSourceLinks(streamedText)}
-      </div>
-      
+
+      {status && <p><em>{status}</em></p>}
+      <div style={{ whiteSpace: 'pre-wrap' }}>{renderAnswer(answer)}</div>
+
       <div style={{ height: '600px', marginTop: '20px', border: '1px solid #ccc' }}>
         <DocumentViewer />
       </div>
@@ -231,57 +213,46 @@ function StreamingDemo() {
   );
 }
 
-function App() {
-  const fetchDocument = async (sourceLink) => {
-    const response = await fetch('/api/document', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source_link: sourceLink })
-    });
-    
-    return response.json();
-  };
+const fetchDocument = async (documentId) => {
+  const response = await fetch(`/api/documents/${documentId}`);
+  if (!response.ok) throw new Error(`Failed to load document ${documentId}`);
+  return response.json();
+};
 
+export default function App() {
   return (
     <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
-      <StreamingDemo />
+      <AgentChat />
     </DocumentViewerProvider>
   );
 }
-
-export default App;
 ```
+
+The answer is Markdown. In a real application, render it with a Markdown renderer (such as `react-markdown`) and replace citations with links in its output.
 
 ## Next.js Integration
 
-If you're using Next.js, you can create API routes to proxy requests to Captide:
+With Next.js, the proxy routes can be route handlers. This one serves documents to the viewer, mapped to the SDK's `Document` fields:
 
 ```javascript
-// pages/api/document.js
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+// app/api/documents/[id]/route.js
+export async function GET(request, { params }) {
+  const { id } = await params;
+  const response = await fetch(
+    `https://rest-api.captide.co/api/v2/documents/${encodeURIComponent(id)}`,
+    { headers: { 'X-API-Key': process.env.CAPTIDE_API_KEY } }
+  );
+  const doc = await response.json();
+  if (!response.ok) {
+    return Response.json(doc, { status: response.status });
   }
 
-  try {
-    const { source_link } = req.body;
-    
-    const response = await fetch(source_link, {
-      headers: {
-        'Authorization': `Bearer ${process.env.CAPTIDE_API_KEY}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching document:', error);
-    res.status(500).json({ error: 'Failed to fetch document' });
-  }
+  return Response.json({
+    ...doc,
+    formType: doc.secFormType,
+    tickers: doc.companyTickers,
+    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html'
+  });
 }
 ```
 

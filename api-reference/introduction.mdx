@@ -4,44 +4,54 @@ title: "Introduction"
 
 The Captide API unlocks **structured access to a rich corporate disclosure database**, powered by agentic AI systems. Designed for hedge funds, investment banks, and developers, it enables the creation of RAG-based applications with built-in source attribution.
 
+Base URL: `https://rest-api.captide.co`
+
 ## API Structure
 
 <AccordionGroup>
   <Accordion title="Companies" icon="building-columns">
     Endpoints to access Captide’s company database and perform metadata-based screening.
 
-    `/api/v1/companies/list`\
-    Retrieves a list of companies from the Captide database that match user-specified parameters. The response includes key company information such as name, ticker symbol(s), country of domicile, SEC filing status, delisting status, and the unique company ID assigned by Captide.
+    `GET /api/v2/companies/list`\
+    Retrieves the companies that match your filters: tickers, countries of domicile, SEC filing status, CIKs, PermIDs or Captide company IDs. The response includes each company’s name, ticker symbol(s) with exchange suffixes, countries, SEC filing status, CIK, PermID, and the unique company ID assigned by Captide. Results are sorted by name and paginated with `limit` (up to 1,000) and `offset`.
 
-    `/api/v1/companies/{id}`\
-    Fetches a document by its ID from the database. The response includes key company information such as name, ticker symbol(s), country of domicile, SEC filing status, and delisting status.
+    `GET /api/v2/companies/search`\
+    Type-ahead search by company name or ticker (for example `Apple`, `AAPL` or `STO.AX`).
+
+    `GET /api/v2/companies/{id}`\
+    Fetches a single company by its Captide company ID.
   </Accordion>
   <Accordion title="Documents" icon="file-contract">
-    Endpoints to access company disclosures in either PDF or LLM-optimized Markdown format.
+    Endpoints to access company disclosures in either their original format or LLM-optimized Markdown.
 
-    `/api/v1/document/list`\
-    Retrieves a list of financial and corporate disclosures available in Captide that match user-specified parameters. The response includes key document metadata such as the associated company’s ticker symbol(s), document type, release date, fiscal year and quarter, the Captide-assigned document ID, and the associated company ID. Results are sorted by `documentDate` in descending order.
+    `GET /api/v1/documents/list`\
+    Retrieves the documents that match your filters: document categories, SEC form types, company tickers or IDs, fiscal year and quarter, date range, or free text in the title and description. The response includes each document’s category, title, description, date, fiscal period, language, and the associated company. Results are sorted by `date`, newest first, by default; use `sortBy` (`date` or `name`) and `sortOrder` (`asc` or `desc`) to change it, and `limit` and `offset` to paginate.
 
-    `/api/v1/documents/{id}`\
-    Fetches a document by its ID from the database. The response includes document metadata, associated company information, and the file URLs to access the original file and the pre-processed Markdown file.
+    `GET /api/v2/documents/{id}`\
+    Fetches a document by its ID. The response includes the document’s metadata, the associated company, and temporary links to the original file and its Markdown version.
   </Accordion>
   <Accordion title="Agentic RAG" icon="robot">
     Endpoints for leveraging Captide’s agentic AI workflows to programmatically extract insights and data from the document corpus.
 
-    `/api/v1/rag/chunk-retrieval`\
-    Returns the most relevant document excerpts in response to natural language queries.
+    `GET /api/v2/rag/chunks`\
+    Returns the document excerpts most relevant to a natural language query.
 
-    `/api/v1/rag/agent-response`\
-    Returns cited Markdown responses, sourced exclusively from corporate disclosures, in response to natural language queries.
+    `POST /api/v2/rag/company-retrieval`\
+    Returns the companies a natural language query refers to (for example “Give me Estée Lauder and Louis Vuitton”).
 
-    `/api/v1/rag/agent-response-stream`\
-    Streams cited Markdown responses, sourced exclusively from corporate disclosures, as server-sent events in response to natural language queries.
+    `POST /api/v2/rag/agent-response`\
+    Returns a cited Markdown answer, sourced exclusively from corporate disclosures, to a natural language query.
+
+    `POST /api/v2/rag/agent-response-stream`\
+    Streams the same cited answer as Server-Sent Events, with progress updates while the agent works.
   </Accordion>
 </AccordionGroup>
 
 ## API Conventions
 
-- All JSON request and response fields use **camelCase** naming (e.g., `sourceType`, `fiscalPeriod`, `documentId`)
-- URL paths follow **kebab-case** convention (e.g., `/api/v1/rag/agent-response`)
-- Date format: **ISO 8601** (YYYY-MM-DD)
-- Authentication: API key via **X-API-Key** header
+- Authentication: API key in the **`X-API-Key`** header.
+- JSON request and response fields use **camelCase** (e.g. `documentCategory`, `fiscalPeriod`, `companyId`).
+- List filters take **comma-separated values** (e.g. `companyTickers=AAPL,MSFT`).
+- URL paths use **kebab-case** (e.g. `/api/v2/rag/agent-response`).
+- Dates use **ISO 8601** (`YYYY-MM-DD`).
+- Errors return a JSON object with a `detail` field and a standard HTTP status code.

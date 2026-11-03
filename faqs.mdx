@@ -12,7 +12,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide—provided they refer to the same underlying corporation.
   </Accordion>
   <Accordion title="Which company identifiers does Captide use?">
-    Captide assigns proprietary company identifiers (`companyId`) to uniquely identify each entity. We also capture organizations’ LEIs and Refinitiv PermIDs. Additionally, ticker symbols, when paired with their respective exchanges, serve as reliable identifiers. Users can retrieve the complete list of available companies, including each entity’s `companyId`, `permId`, `lei`, and associated `tickers`, through the `/api/v1/companies/list` endpoint.
+    Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permid`) and, for SEC filers, their SEC Central Index Key (`cik`). Ticker symbols with their exchange suffix (for example `STO.AX`) identify a listing; a symbol without a suffix (`STO`) matches that symbol on every exchange. Retrieve each company’s `id`, `permid`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permids` and `ciks` as filters.
   </Accordion>
 </AccordionGroup>
 
@@ -25,14 +25,15 @@ Explore our frequently asked questions below. If your question isn’t covered, 
   <Accordion title="Are all document types available for every company?">
     Annual, interim, and current reports are available for all companies in Captide. Additional document types are provided for companies that have filed them at any point. Note that reporting practices vary by geography (for example, companies in the United States typically file quarterly interim reports, while those in Australia often file semi-annual reports). As a result, the availability and frequency of document types may vary by region, company, and regulatory requirements.
   </Accordion>
-  <Accordion title="How do available document dates differ? Is point-in-time data available?">
-    When retrieving documents, the following date-related parameters provide key information:
+  <Accordion title="What do the document dates and fiscal fields mean?">
+    Each document carries one date and its fiscal period:
 
-    - `date`: Indicates the date the document refers to (e.g., the press release date for a current report, or the fiscal period end date for annual and interim reports).
-    - `filingDate`: The date and time the document was made publicly available (useful for point-in-time analysis).
-    - `fiscalYear` and `fiscalQuarter`: Indicate the fiscal period covered by the document.
-    - `createdAt`: The date and time the document became available in Captide.
-    - `updatedAt`: The most recent date and time the document was updated in Captide.
+    - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published. When a document has no date of its own, Captide uses the date it was published online.
+    - `fiscalYear`: the fiscal year the document covers, as the company labels it. For most companies this is the calendar year in which the fiscal year ends (for a company whose year ends in March, April–June 2025 is Q1 of fiscal 2026).
+    - `fiscalQuarter`: the fiscal quarter covered (1–4), or `null` for documents that cover a whole year or no specific period.
+    - `fiscalPeriod`: the length of the period covered: `quarter`, `half-year`, `year`, `multi-year` or `month`.
+
+    Use `startDate` and `endDate` on `/documents/list` to filter by `date`, and `fiscalYear` and `fiscalQuarter` to filter by fiscal period.
   </Accordion>
   <Accordion title="What is the use case of Markdown versions of documents?">
     Captide transforms original corporate disclosures into LLM-optimized Markdown files that preserve all information and data points from the source documents in a machine-readable format. This enables efficient and interpretable downstream analysis or AI applications, where documents must be chunked and ingested by large language models.
@@ -45,8 +46,8 @@ Explore our frequently asked questions below. If your question isn’t covered, 
   <Accordion title="What is different between the agent-response and agent-response-stream endpoints?">
     The only difference between the two endpoints is how they deliver AI-generated responses. The `agent-response` endpoint is optimized for use cases where the full response is only needed after generation is complete (e.g., data extraction or alert systems). In contrast, the `agent-response-stream` endpoint streams the response in real time via server-sent events, making it more suitable for chat interfaces and interactive applications.
   </Accordion>
-  <Accordion title="What is the use case of the chunk-retrieval endpoint?">
-    The `chunk-retrieval` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts—without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
+  <Accordion title="What is the use case of the chunks endpoint?">
+    The `/rag/chunks` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts—without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
   </Accordion>
   <Accordion title="How can I verify the source of AI generated answers?">
     Every API response from the agentic RAG endpoints includes metadata about the sources and document excerpts used to generate the answer. The `agent-response` and `agent-response-stream` endpoints provide sentence-level attribution to excerpts from corporate disclosures. Clients can programmatically access these excerpts and metadata, or use the Captide SDK to easily display sources within a document viewer.

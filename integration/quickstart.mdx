@@ -13,281 +13,235 @@ This guide will help you get started with Captide quickly, showing you how to se
 
 ### Authentication
 
-All API requests require authentication using your API key in the header:
+All API requests require authentication using your API key in the `X-API-Key` header:
 
 ```bash
 curl --request GET \
-  --url 'https://rest-api.captide.co/api/v1/companies/list' \
+  --url 'https://rest-api.captide.co/api/v2/companies/list?limit=10' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
 ### Example 1: Retrieve Company Information
 
-Use the [/companies/list](/api-reference/endpoint/companies) endpoint when you want to search companies in Captide and retrieve their company `id` to use as parameter in other endpoints.
+Use the [/companies/list](/api-reference/endpoint/companies) endpoint to find companies in Captide and retrieve their company `id`, which you can pass to other endpoints. Tickers are accepted with or without an exchange suffix (`STO.AX` or `STO`).
 
 ```bash
 curl --request GET \
-  --url 'https://rest-api.captide.co/api/v1/companies/list?limit=100&tickers=STO.AX' \
+  --url 'https://rest-api.captide.co/api/v2/companies/list?tickers=STO.AX' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
-
-Use the response to retrieve company information and use the id to retrieve company docs:
 
 ```json
 [
   {
     "id": "77848abe-a215-41b7-8950-86e89ea1fadc",
-    "name": "Santos",
+    "name": "Santos Ltd.",
     "tickers": ["STO.AX"],
     "countries": ["AU"],
-    "filesWithSec": false
+    "filesWithSec": false,
+    "cik": null,
+    "permid": "4295857141"
   }
 ]
 ```
 
+To look companies up by name instead, use [/companies/search](/api-reference/endpoint/search_company) (for example `?q=Santos`).
+
 ### Example 2: Retrieve Company Documents
 
-Use the [/documents/list](/api-reference/endpoint/documents) endpoint to search for company documents by applying filters such as `documentCategories`, `formTypes`, or by specifying a company’s `tickers` or `id`. This allows you to retrieve the metadata of the latest corporate disclosures of publicly listed companies.\
-In the example below, we use the `id` of Santos to retrieve its latest `interim-reports`:
+Use the [/documents/list](/api-reference/endpoint/documents) endpoint to search for documents by `documentCategories`, `secFormTypes`, fiscal period, date range, or by the filing company's `companyTickers` or `companyIds`.
+In the example below, we use the `id` of Santos to retrieve its latest `interim-financial-report` documents:
 
 ```bash
 curl --request GET \
-  --url 'https://rest-api.captide.co/api/v1/documents/list?limit=100&companyIds=77848abe-a215-41b7-8950-86e89ea1fadc&documentCategories=interim-report' \
+  --url 'https://rest-api.captide.co/api/v1/documents/list?companyIds=77848abe-a215-41b7-8950-86e89ea1fadc&documentCategories=interim-financial-report&limit=10' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
-The response below contains metadata for each document. The document `id` is particularly important, as it is used to retrieve the document file and its formatted Markdown version.
+The response contains the metadata of each document, newest first. Keep the document `id`: you use it to retrieve the document's files.
 
 ```json
 [
   {
-    "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
-    "documentCategory": "interim-report",
-    "formType": null,
-    "tickers": [
-      "STO.AX"
-    ],
-    "companyName": "Santos",
-    "date": "2025-04-17",
-    "fiscalQuarter": 1,
-    "fiscalYear": 2025,
-    "title": "First Quarter Report for period ending 31 March 2025",
-    "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025."
-  },
-  {
-    "id": "095d866c-c6df-4799-bce3-61b60a5d62ea",
-    "documentCategory": "interim-report",
-    "formType": null,
-    "tickers": [
-      "STO.AX"
-    ],
-    "companyName": "Santos",
-    "date": "2025-01-23",
-    "fiscalQuarter": 4,
-    "fiscalYear": 2024,
-    "title": "Fourth Quarter Report for period ending 31 December 2024",
-    "description": "This document is the Fourth Quarter Report of Santos Limited for the period ending 31 December 2024. It provides a detailed overview of the company's financial and operational performance, including sales revenue, production volumes, capital expenditure, project updates, and carbon capture and storage activities."
+    "id": "97ac0c55-7349-46ec-8670-92f8524f5294",
+    "documentCategory": "interim-financial-report",
+    "secFormType": null,
+    "title": "Third Quarter Report",
+    "description": "Santos Limited third quarter report for the period ending 30 September 2026, summarising record quarterly production and free cash flow, operational performance across assets (including Barossa, Pikka and PNG LNG), sales and pricing, updated 2026 guidance and project developments.",
+    "date": "2026-10-22",
+    "fiscalQuarter": 3,
+    "fiscalYear": 2026,
+    "fiscalPeriod": "quarter",
+    "language": "en",
+    "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+    "companyName": "Santos Ltd.",
+    "companyTickers": ["STO.AX"],
+    "metadata": {}
   },
   ...
 ]
 ```
 
-Once target documents are identified, we can use their `id` with the [/documents/](/api-reference/endpoint/get_document) endpoint to retrieve the URLs for the document files.
+Once you have identified the documents you need, pass their `id` to the [/documents/\{id\}](/api-reference/endpoint/get_document) endpoint to get links to the files:
 
 ```bash
 curl --request GET \
-  --url https://rest-api.captide.co/api/v1/documents/98381fbb-8d8c-4b47-b31c-819f8aca0690 \
+  --url 'https://rest-api.captide.co/api/v2/documents/97ac0c55-7349-46ec-8670-92f8524f5294' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
 ```json
 {
-  "id": "98381fbb-8d8c-4b47-b31c-819f8aca0690",
-  "documentCategory": "interim-report",
-  "formType": null,
-  "tickers": [
-    "STO.AX"
-  ],
-  "companyName": "Santos",
-  "date": "2025-04-17",
-  "fiscalQuarter": 1,
-  "fiscalYear": 2025,
-  "title": "First Quarter Report for period ending 31 March 2025",
-  "description": "This document is the First Quarter Report of Santos Limited for the period ending 31 March 2025. It provides a detailed overview of the company's operational and financial performance, including production volumes, sales, revenue, capital expenditure, project updates, and guidance for 2025.",
-  "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.pdf?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=B6JuHmW4Yoif5tMJItatav/Vwe9IzOoqSaHs%2BZEwbDk%3D",
-  "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/2025-Santos-First-Quarter-Report.md?se=2025-07-28T17%3A33%3A51Z&sp=r&sv=2025-07-05&sr=b&sig=umdy9HFMwQykzafdb62ZQAXF/4OXJHKM9Py0dfd2wuA%3D"
+  "id": "97ac0c55-7349-46ec-8670-92f8524f5294",
+  "documentCategory": "interim-financial-report",
+  "secFormType": null,
+  "title": "Third Quarter Report",
+  "description": "Santos Limited third quarter report for the period ending 30 September 2026, summarising record quarterly production and free cash flow, …",
+  "date": "2026-10-22",
+  "fiscalQuarter": 3,
+  "fiscalYear": 2026,
+  "fiscalPeriod": "quarter",
+  "language": "en",
+  "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+  "companyName": "Santos Ltd.",
+  "companyTickers": ["STO.AX"],
+  "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/97ac0c55-7349-46ec-8670-92f8524f5294.pdf?se=2026-11-03T18%3A15%3A55Z&sp=r&sv=2025-07-05&sr=b&sig=…",
+  "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/97ac0c55-7349-46ec-8670-92f8524f5294.md?se=2026-11-03T18%3A15%3A55Z&sp=r&sv=2025-07-05&sr=b&sig=…",
+  "metadata": {}
 }
 ```
 
-The response includes two additional fields: `originalFileUrl` and `markdownFileUrl`. These provide temporary access to the original document file and its formatted Markdown version, which is optimized for downstream analysis and LLM ingestion.
+`originalFileUrl` links to the original document and `markdownFileUrl` to its Markdown version, which is optimized for downstream analysis and LLM ingestion.
+
+<Note>
+  File links are signed and expire **one hour** after the request (the `se` parameter). Request the document again for fresh links instead of storing them.
+</Note>
 
 ### Example 3: Prompt-Based Chunk Retrieval
 
-With Captide, you can create RAG-based applications and tools without the need to collect, preprocess, chunk, or store document excerpts yourself. Simply use the [/rag/chunk-retrieval](/api-reference/endpoint/chunks) endpoint to send natural language requests, and you'll receive relevant document excerpts from our database containing all the information needed to fulfill your query.
+With Captide, you can create RAG-based applications and tools without the need to collect, preprocess, chunk, or store document excerpts yourself. Send a natural language query to the [/rag/chunks](/api-reference/endpoint/chunks) endpoint and you'll receive the relevant document excerpts from our database.
 
 ```bash
-curl --request POST \
-  --url 'https://rest-api.captide.co/api/v1/rag/chunks?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/rag/chunks?query=Provide%20the%20net%20dollar%20retention%20of%20Zscaler%20for%20the%20last%20two%20quarters' \
   --header 'X-API-Key: YOUR_API_KEY'
 ```
 
-The response includes a list of relevant document chunks from the Captide database, along with their associated metadata.
+The response includes the relevant chunks with their page number and document metadata:
 
 ```json
 {
   "relevantChunks": [
     {
-      "content": "## 34\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 11, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and\n116%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n34",
-      "pageNumber": 45,
+      "content": "please join us at our upcoming Investor Day on October 6 in New York City. I want to thank our employees, customers and partners for their continued support. …",
+      "pageNumber": 5,
       "excerpt": null,
       "documentMetadata": {
-        "id": "207db5da-c2bb-42b8-a0d3-1a5d508e723c",
-        "documentCategory": "interim-report",
+        "id": "a0dcd3e7-7985-4fbc-9c77-371b4232e242",
+        "title": "Zscaler, Inc. Earnings Call Transcript Q4 2026 (2026-09-03)",
+        "documentCategory": "earnings-call-transcript",
         "formType": null,
-        "date": "2025-05-29",
-        "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the third fiscal quarter ended April 30, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive income, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and other information relevant to the quarter. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for investors and the SEC.",
-        "fiscalQuarter": 3,
-        "fiscalYear": 2025,
+        "date": "2026-09-03",
+        "fiscalQuarter": 4,
+        "fiscalYear": 2026,
         "companyName": "Zscaler, Inc.",
-        "tickers": [
-          "ZS"
-        ],
+        "tickers": ["ZS"],
         "metadata": null
       }
     },
-    {
-      "content": "## 31\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n31",
-      "pageNumber": 41,
-      "excerpt": null,
-      "documentMetadata": {
-        "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
-        "documentCategory": "interim-report",
-        "formType": null,
-        "date": "2025-03-10",
-        "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.",
-        "fiscalQuarter": 2,
-        "fiscalYear": 2025,
-        "companyName": "Zscaler, Inc.",
-        "tickers": [
-          "ZS"
-        ],
-        "metadata": null
-      }
-    }
+    ...
   ]
 }
 ```
 
-You can then use the relevant chunks as context for AI-generated responses, and even combine them with context from other sources—such as internal data or structured databases.
+You can then use the relevant chunks as context for AI-generated responses, and combine them with context from other sources, such as internal data or structured databases. To search only specific documents, pass their ids in `document_ids` (comma-separated).
 
 ### Example 4: AI Agent Response
 
-Captide enables you to get answers to any question grounded in information from corporate disclosures with full traceability. This allows you to instantly extract insights and metrics from millions of financial filings, or to build multi-agent systems that accelerate and enhance investment research. Below is an example query submitted to Captide’s AI agent.
+Captide answers questions grounded in corporate disclosures, with every statement traceable to its source. Send the query as JSON to the [/rag/agent-response](/api-reference/endpoint/agent) endpoint:
 
 ```bash
 curl --request POST \
-  --url 'https://rest-api.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
-  --header 'X-API-Key: YOUR_API_KEY'
+  --url 'https://rest-api.captide.co/api/v2/rag/agent-response' \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{"query": "Provide the net dollar retention of Zscaler for the last two quarters"}'
 ```
 
-The response includes the final answer in the `content` field, along with source identifiers (formatted as `#abcd1234`) embedded within the text. These identifiers link to the `sourceMap`, allowing each part of the answer to be traced back to the original document excerpts used.
+The answer is in the `content` field, in Markdown, with citations such as `[#43c00004]` embedded in the text. Every citation is a key in `sourceMap`, which holds the chunk it came from and the exact `excerpt` that supports it. When the same chunk supports several statements, later citations carry a suffix (`#43c00004:2`), each with its own entry and excerpt.
 
 ```json
 {
-  "content": "Zscaler's dollar-based net retention rate for the last two quarters was as follows:\n\n- Q3 2025 (trailing 12 months ended April 30, 2025): **114%** [#207d0044]\n- Q2 2025 (trailing 12 months ended January 31, 2025): **115%** [#eaf60040]\n\nThis indicates a slight sequential decrease in net dollar retention over the past two quarters.",
+  "content": "Zscaler’s net dollar retention / net retention was **115%** for each of the last two reported quarters available in the retrieved disclosures.\n\n| Quarter | Net dollar retention / net retention |\n|---|---:|\n| Q4 FY2026 | **115%** [#43c00004] |\n| Q3 FY2026 | **115%** [#4e0f0010] |\n\nNote: In Q4 FY2026, management said NRR was “consistent each quarter this year at **115%**” [#43c00004:2]. …",
   "sourceMap": {
-    "#eaf60040": {
-      "content": "## 31\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n31",
-      "pageNumber": 41,
-      "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.",
+    "#43c00004": {
+      "content": "please join us at our upcoming Investor Day on October 6 in New York City. …",
+      "pageNumber": 5,
+      "excerpt": "115%",
       "documentMetadata": {
-        "id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9",
-        "documentCategory": "interim-report",
+        "id": "a0dcd3e7-7985-4fbc-9c77-371b4232e242",
+        "title": "Zscaler, Inc. Earnings Call Transcript Q4 2026 (2026-09-03)",
+        "documentCategory": "earnings-call-transcript",
         "formType": null,
-        "date": "2025-03-10",
-        "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.",
-        "fiscalQuarter": 2,
-        "fiscalYear": 2025,
+        "date": "2026-09-03",
+        "fiscalQuarter": 4,
+        "fiscalYear": 2026,
         "companyName": "Zscaler, Inc.",
-        "tickers": [
-          "ZS"
-        ],
+        "tickers": ["ZS"],
         "metadata": null
       }
     },
-    "#207d0044": {
-      "content": "## 34\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 11, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and\n116%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n34",
-      "pageNumber": 45,
-      "excerpt": "For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and 116%, respectively.",
-      "documentMetadata": {
-        "id": "207db5da-c2bb-42b8-a0d3-1a5d508e723c",
-        "documentCategory": "interim-report",
-        "formType": null,
-        "date": "2025-05-29",
-        "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the third fiscal quarter ended April 30, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive income, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and other information relevant to the quarter. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for investors and the SEC.",
-        "fiscalQuarter": 3,
-        "fiscalYear": 2025,
-        "companyName": "Zscaler, Inc.",
-        "tickers": [
-          "ZS"
-        ],
-        "metadata": null
-      }
-    }
+    "#43c00004:2": { ... },
+    "#4e0f0010": { ... },
+    "#4e0f0010:2": { ... }
   }
 }
 ```
 
-The `sourceMap` can be integrated with Captide’s Document Auditing SDK to render relevant content chunks in frontend applications, enabling accurate source auditing.
+Use `documentMetadata.id`, `pageNumber` and `excerpt` from a `sourceMap` entry to open the source in Captide's Document Auditing SDK and highlight the passage (see [below](#using-the-document-auditing-javascript-sdk)).
 
 ### Example 5: Streaming AI Agent Response
 
-The [/rag/agent-response-stream](/api-reference/endpoint/agent_stream) endpoint streams Captide’s AI agent responses in real time using Server-Sent Events (SSE). It’s useful in chat interfaces where you want to show the agent’s reasoning steps and display the response as it’s being generated, rather than waiting for the full message.
+The [/rag/agent-response-stream](/api-reference/endpoint/agent_stream) endpoint streams the agent's progress and answer as Server-Sent Events (SSE). Use it in chat interfaces, where you want to show what the agent is doing and display the answer as it is written.
 
 ```bash
-curl --request POST \
-  --url 'https://rest-api.captide.co/api/v1/rag/agent-response?query=Provide%20the%20net%20dollar%20retention%20of%20ZScaler%20for%20the%20last%20two%20quarters' \
-  --header 'X-API-Key: YOUR_API_KEY'
+curl --no-buffer --request POST \
+  --url 'https://rest-api.captide.co/api/v2/rag/agent-response-stream' \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{"query": "Provide the net dollar retention of Zscaler for the last two quarters"}'
 ```
 
-The SSE stream response contains the following event types:
+Each event is a `data:` line holding a JSON object. Its `type` is one of:
 
-- `thinking` events – Indicate the agent’s internal progress and reasoning stages (e.g., searching, analyzing).
-- `message/partial` events – Stream the response incrementally, sending words or phrases as they’re generated.
-- `metadata` event – Provides associated document metadata, source links, and citations.
+| `type` | Meaning |
+|---|---|
+| `thinking` | Progress update, with a `stage` such as `search`, `document_selection` or `analyzing`. |
+| `message` | The next piece of the answer. Append the `content` of each one to build the answer. |
+| `content_final` | The complete answer after post-processing (repeated citations renumbered as `#ref:2`, …). When present, it replaces the text built from `message` events. |
+| `sources` | The `sourceMap`: every citation in the answer mapped to its chunk and excerpt, as in Example 4. |
+| `warning` | A non-fatal issue, such as no relevant documents being found. |
+| `done` | The stream is complete. |
 
 ```
-event: thinking
-data: {"type": "message", "role": "assistant", "content": "I'm going to look through 2 documents from Zscaler, Inc.: To find the net dollar retention for the last two quarters, I need to look at the most recent interim (quarterly) reports, as these typically contain key financial metrics such as net dollar retention. The two most recent interim reports are from May 29, 2025, and March 10, 2025, which correspond to the last two reported quarters. These documents are the most likely to contain the requested information.", "stage": "search"}
+data: {"type": "thinking", "role": "assistant", "content": "Identifying companies from your query...", "stage": "search"}
 
-event: thinking
-data: {"type": "message", "role": "assistant", "content": "I'm now analyzing 2 documents to find the most relevant information...", "stage": "document_inspection"}
+data: {"type": "thinking", "role": "assistant", "content": "Selecting documents for Zscaler, Inc....", "stage": "document_selection"}
 
-event: thinking
-data: {"type": "message", "role": "assistant", "content": "I found 2 relevant pages from Zscaler, Inc.", "stage": "document_inspection"}
+data: {"type": "thinking", "role": "assistant", "content": "Found 5 relevant pages.", "stage": "analyzing"}
 
-event: message/partial
 data: {"type": "message", "role": "assistant", "content": "Z"}
 
-event: message/partial
 data: {"type": "message", "role": "assistant", "content": "sc"}
-
-event: message/partial
-data: {"type": "message", "role": "assistant", "content": "aler"}
-
-event: message/partial
-data: {"type": "message", "role": "assistant", "content": "'s"}
 
 ...
 
-event: message/partial
-data: {"type": "message", "role": "assistant", "content": "."}
+data: {"type": "content_final", "role": "assistant", "content": "Zscaler’s net dollar retention / net retention for the last two reported quarters was: …"}
 
-event: metadata
-data: {"type": "sources", "content": {"#207d0044": {"content": "## 34\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 11, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and\n116%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n34", "pageNumber": 45, "excerpt": "For the trailing 12 months ended April 30, 2025 and 2024, the dollar-based net retention rate was 114% and 116%, respectively.", "documentMetadata": {"id": "207db5da-c2bb-42b8-a0d3-1a5d508e723c", "documentCategory": "interim-report", "formType": null, "date": "2025-05-29", "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the third fiscal quarter ended April 30, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive income, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and other information relevant to the quarter. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for investors and the SEC.", "fiscalQuarter": 3, "fiscalYear": 2025, "companyName": "Zscaler, Inc.", "tickers": ["ZS"], "metadata": null}}, "#eaf60040": {"content": "## 31\n\n### We calculate our dollar-based net retention rate as follows:\n\nTable of Contents\nInvesting in Business Growth\nSince our founding, we have invested significantly in growing our business. We intend to continue (i) investing in our\nresearch and development organization and our development efforts to offer new solutions on our cloud platform and (ii)\ndedicating resources to update and upgrade our existing solutions. In addition, we expect our general and administrative expenses\nto increase in absolute dollars in the foreseeable future, as we continue to operate as a public company, and address any legal\nmatters and related accruals, as further described in Note 10, Commitments and Contingencies, of the unaudited condensed\nconsolidated financial statements included elsewhere in this Quarterly Report on Form 10-Q.\nWe also intend to continue to invest significantly in sales and marketing to grow and train our sales force, broaden our brand\nawareness and expand and deepen our channel partner relationships. While these planned investments will increase our operating\nexpenses in the short term, we believe that over the long term these investments will help us to expand our customer base and\ngrow our business. We also are investing in programs to increase recognition of our brand and solutions, including joint marketing\nactivities with our channel partners and strategic partners.\nWhile we expect our operating expenses to increase in absolute dollars in the foreseeable future as a result of these\nactivities, we intend to balance these investments in future growth with a continued focus on managing our results of operations\nand investing judiciously. In the long term we anticipate that these investments will positively impact our business and results of\noperations.\nKey Business Metrics and Other Financial Measures\nWe review a number of operating and financial metrics, including the following key metrics, to measure our performance,\nidentify trends, formulate business plans and make strategic decisions.\nDollar-Based Net Retention Rate\nWe believe that dollar-based net retention rate is an indicator to measure the long-term value of our customer relationships\nbecause it is driven by our ability to retain and expand the recurring revenue generated from our existing customers. Our dollar-\nbased net retention rate compares the recurring revenue from a set of customers against the same metric for the prior 12-month\nperiod on a trailing basis. Because our customers have repeat buying patterns and the average term of our contracts is more than\n12 months, we measure this metric over a set of customers who were with us as of the last day of the same reporting period in the\nprior fiscal year. For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and\n117%, respectively.\nWe calculate our dollar-based net retention rate as follows:\nDenominator: To calculate our dollar-based net retention rate as of the end of a reporting period, we first establish the ARR\nfrom all active subscriptions as of the last day of the same reporting period in the prior fiscal year. This effectively represents\nrecurring dollars that we expect in the next 12-month period from the cohort of customers that existed on the last day of the same\nreporting period in the prior fiscal year.\nNumerator: We measure the ARR for that same cohort of customers representing all subscriptions based on confirmed\ncustomer orders booked by us as of the end of the reporting period.\nDollar-based net retention rate is obtained by dividing the numerator by the denominator. Our dollar-based net retention rate\nmay fluctuate due to a number of factors, including the performance of our cloud platform, our success in selling bigger deals,\nincluding deals for all employees with our higher-end bundles, selling multiple-pillars from the start of our contract with new\ncustomers, faster upsells within a year, the timing and the rate of ARR expansion of our existing\n31", "pageNumber": 41, "excerpt": "For the trailing 12 months ended January 31, 2025 and 2024, the dollar-based net retention rate was 115% and 117%, respectively.", "documentMetadata": {"id": "eaf63939-0da6-4fc7-ba06-adbd46e546a9", "documentCategory": "interim-report", "formType": null, "date": "2025-03-10", "description": "This document is the Form 10-Q quarterly report filed by Zscaler, Inc. for the second fiscal quarter ended January 31, 2025. It includes unaudited condensed consolidated financial statements such as balance sheets, statements of operations, comprehensive loss, stockholders' equity, and cash flows. The report also contains management's discussion and analysis of financial condition and results of operations, quantitative and qualitative disclosures about market risk, controls and procedures, legal proceedings, risk factors, unregistered sales of equity securities, use of proceeds, and exhibits. The filing provides detailed financial data, forward-looking statements, and regulatory compliance information for the quarter.", "fiscalQuarter": 2, "fiscalYear": 2025, "companyName": "Zscaler, Inc.", "tickers": ["ZS"], "metadata": null}}}}
+data: {"type": "sources", "content": {"#43c00004": {"content": "…", "pageNumber": 5, "excerpt": "115%", "documentMetadata": {"id": "a0dcd3e7-7985-4fbc-9c77-371b4232e242", "title": "Zscaler, Inc. Earnings Call Transcript Q4 2026 (2026-09-03)", …}}, …}}
+
+data: {"type": "done"}
 ```
-
-All `message/partial` events can be combined to reconstruct the full response and, as with the `/rag/agent-response` endpoint, the final `metadata` event can be used with Captide’s Document Auditing SDK to display relevant content chunks in frontend applications, enabling accurate source traceability and auditing.
 
 ## Using the Document Auditing JavaScript SDK
 
@@ -303,64 +257,49 @@ yarn add captide
 
 ### Integration Example
 
-Here's how to integrate the document viewer into your React application:
+The viewer loads documents through a `fetchDocumentFn` you provide. Point it at your own backend, which calls `GET /api/v2/documents/{id}` with your API key (see the [Backend Integration guide](/integration/backend)), so the key never reaches the browser.
 
 ```jsx
 import React from 'react';
 import { DocumentViewer, DocumentViewerProvider, useDocumentViewer } from 'captide';
 
-// Function to fetch document content from your backend that calls our API
-const fetchDocument = async (sourceLink) => {
-  const response = await fetch('/your-backend/document', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ source_link: sourceLink })
-  });
-  
+// Returns the document for the viewer, from your backend proxy
+const fetchDocument = async (documentId) => {
+  const response = await fetch(`/api/documents/${documentId}`);
+  if (!response.ok) throw new Error(`Failed to load document ${documentId}`);
   return response.json();
 };
 
-// Example component using the DocumentViewer
-function App() {
+export default function App() {
   return (
     <DocumentViewerProvider fetchDocumentFn={fetchDocument}>
-      <DocumentViewerDemo />
+      <SourceButton />
+      <div style={{ height: '600px', width: '100%', border: '1px solid #ccc' }}>
+        <DocumentViewer />
+      </div>
     </DocumentViewerProvider>
   );
 }
 
-function DocumentViewerDemo() {
+function SourceButton() {
   const { loadDocument } = useDocumentViewer();
-  
-  // IMPORTANT: sourceLink and elementId come from your API response
-  // - sourceLink: The 'sourceLink' field from the id_mapping in the streaming response
-  //   or the 'source_link' field in the chunks response
-  // - elementId: The element ID reference (like '#a060daba') from either the streaming 
-  //   or chunks response that you want to highlight
-  const handleSourceLinkClick = async (sourceLink, elementId) => {
-    // Load document and highlight specific element
-    await loadDocument(sourceLink, elementId);
-  };
-  
-  return (
-    <div>
-      <button 
-        onClick={() => handleSourceLinkClick(
-          'https://rest-api.captide.co/api/v1/document?source_type=10-Q&document_id=69443120-e3a3-4ebb-91b1-a55ff2afe141',
-          '#ab12ef34'
-        )}
-      >
-        View Source
-      </button>
-      
-      <div style={{ height: '600px', width: '100%', border: '1px solid #ccc' }}>
-        <DocumentViewer />
-      </div>
-    </div>
-  );
-}
 
-export default App;
+  // A sourceMap entry from /rag/agent-response or the stream's `sources` event
+  const source = {
+    pageNumber: 5,
+    excerpt: '115%',
+    documentMetadata: { id: 'a0dcd3e7-7985-4fbc-9c77-371b4232e242' }
+  };
+
+  // Opens the document at the cited page and highlights the excerpt
+  const openSource = () =>
+    loadDocument(source.documentMetadata.id, {
+      page: source.pageNumber,
+      snippet: source.excerpt ?? undefined
+    });
+
+  return <button onClick={openSource}>View source</button>;
+}
 ```
 
 <Info>
@@ -370,4 +309,4 @@ export default App;
 ## Next Steps
 
 - Explore the [API Reference](/api-reference/introduction) for detailed documentation.
-- Obtain a liscence for production or commercial use: [Contact our team](https://www.captide.ai/contact/api-request).
+- Obtain a license for production or commercial use: [Contact our team](https://www.captide.ai/contact/api-request).

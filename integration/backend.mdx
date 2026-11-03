@@ -3,17 +3,23 @@ title: "Backend Integration"
 icon: "code"
 ---
 
-This guide explains how to integrate the Captide API with your backend applications, focusing on Node.js/Express implementations.
+This guide explains how to call the Captide API from your backend, using Node.js and Express. Your backend holds the API key and exposes the few routes your frontend needs, so the key never reaches the browser.
 
 ## Node.js Integration
 
 ### Express.js Example
 
-Here's an example of creating a proxy API with Express.js that forwards requests to Captide's API:
+The proxy below exposes three routes:
+
+1. `GET /api/chunks` returns the chunks relevant to a query.
+2. `GET /api/documents/:id` returns a document in the shape the [Document Auditing SDK](/integration/frontend) expects.
+3. `POST /api/agent-stream` streams the agent's answer to the browser.
+
+It uses the `fetch` built into Node.js 18 and later.
 
 ```typescript
 import express from 'express';
-import fetch from 'node-fetch';
+import { Readable } from 'node:stream';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -22,100 +28,59 @@ const app = express();
 app.use(express.json());
 
 const CAPTIDE_API_KEY = process.env.CAPTIDE_API_KEY;
-const CAPTIDE_BASE_URL = 'https://rest-api-captide.co/api/v1';
+const CAPTIDE_BASE_URL = 'https://rest-api.captide.co';
+const captideHeaders = { 'X-API-Key': CAPTIDE_API_KEY };
 
-// 1. Endpoint to get document snippets
-app.post('/api/document-snippets', async (req, res) => {
-  try {
-    const { query } = req.body;
-    
-    const response = await fetch(`${CAPTIDE_BASE_URL}/rag/chunks`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${CAPTIDE_API_KEY}`
-      },
-      body: JSON.stringify({ query })
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching document snippets:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch document snippets' 
-    });
-  }
+// 1. Chunks relevant to a natural language query
+app.get('/api/chunks', async (req, res) => {
+  const url = new URL('/api/v2/rag/chunks', CAPTIDE_BASE_URL);
+  url.searchParams.set('query', String(req.query.query ?? ''));
+
+  const response = await fetch(url, { headers: captideHeaders });
+  res.status(response.status).json(await response.json());
 });
 
-// 2. Endpoint to proxy document retrieval for source links
-app.post('/api/document', async (req, res) => {
-  try {
-    const { source_link } = req.body;
-    
-    const response = await fetch(source_link, {
-      headers: {
-        'Authorization': `Bearer ${CAPTIDE_API_KEY}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching document:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch document' 
-    });
+// 2. A document for the viewer. `id` is `documentMetadata.id` from a chunk or sourceMap entry.
+app.get('/api/documents/:id', async (req, res) => {
+  const response = await fetch(
+    `${CAPTIDE_BASE_URL}/api/v2/documents/${encodeURIComponent(req.params.id)}`,
+    { headers: captideHeaders }
+  );
+  if (!response.ok) {
+    return res.status(response.status).json(await response.json());
   }
+
+  const doc = await response.json();
+  res.json({
+    ...doc,
+    // Field names the SDK's Document type uses
+    formType: doc.secFormType,
+    tickers: doc.companyTickers,
+    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html'
+  });
 });
 
-// 3. Streaming endpoint - proxy the SSE stream from Captide to client
-app.post('/api/query-stream', async (req, res) => {
-  try {
-    const { query } = req.body;
-    
-    // Set headers for SSE
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    const response = await fetch(`${CAPTIDE_BASE_URL}/rag/agent-query-stream`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${CAPTIDE_API_KEY}`
-      },
-      body: JSON.stringify({ query })
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    // Forward the stream to the client
-    response.body.pipe(res);
-    
-    // Handle client disconnect
-    req.on('close', () => {
-      response.body.destroy();
-    });
-  } catch (error) {
-    console.error('Error in streaming query:', error);
-    res.status(500).json({ 
-      error: 'Failed to stream response' 
-    });
+// 3. The agent's answer as Server-Sent Events
+app.post('/api/agent-stream', async (req, res) => {
+  const upstream = new AbortController();
+  res.on('close', () => upstream.abort()); // stop the upstream request if the browser disconnects
+
+  const response = await fetch(`${CAPTIDE_BASE_URL}/api/v2/rag/agent-response-stream`, {
+    method: 'POST',
+    headers: { ...captideHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: req.body.query }),
+    signal: upstream.signal
+  });
+  if (!response.ok) {
+    return res.status(response.status).json(await response.json());
   }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  Readable.fromWeb(response.body).pipe(res);
 });
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -134,57 +99,52 @@ CAPTIDE_API_KEY=your_api_key_here
 
 Make sure to add `.env` to your `.gitignore` file to avoid committing sensitive credentials.
 
-## Error Handling Best Practices
+## Error Handling
 
-Implement proper error handling for the different types of requests:
+Errors from the Captide API are JSON objects with a `detail` field, returned with a standard HTTP status. `detail` is a message, except on `422`, where it lists the invalid fields:
+
+| Status | Meaning |
+|---|---|
+| `400` | A parameter is invalid (for example an unknown document category or a malformed company ID). |
+| `401` | The API key is missing or invalid. |
+| `403` | Your organization doesn't have access to this endpoint. |
+| `402` | Your organization has no API credits left. |
+| `404` | The company or document doesn't exist. |
+| `422` | A parameter has the wrong type or is out of range (for example `limit` above 1000). |
+| `429` | Rate limit exceeded. Retry after a pause. |
+| `500` / `504` | Server error or timeout. Retry later, or narrow the request (for example add `companyTickers` to a text search). |
+
+`fetch` doesn't throw on HTTP errors, so check `response.ok` and pass the status and `detail` on to your client, as the routes above do. Network failures (no response at all) do throw:
 
 ```typescript
-// Example of more comprehensive error handling
-app.post('/api/document-snippets', async (req, res) => {
-  try {
-    // ... API request code ...
-  } catch (error) {
-    console.error('Error:', error);
-    
-    if (error.response) {
-      // The API returned an error status code
-      res.status(error.response.status).json({
-        error: 'api_error',
-        message: error.response.statusText || 'API error occurred'
-      });
-    } else if (error.request) {
-      // Network error or timeout
-      res.status(503).json({
-        error: 'network_error',
-        message: 'Unable to reach the Captide API'
-      });
-    } else {
-      // Something else went wrong
-      res.status(500).json({
-        error: 'unknown_error',
-        message: 'An unexpected error occurred'
-      });
-    }
+try {
+  const response = await fetch(url, { headers: captideHeaders });
+  if (!response.ok) {
+    const { detail } = await response.json();
+    return res.status(response.status).json({ error: detail });
   }
-});
+  res.json(await response.json());
+} catch (error) {
+  console.error('Unable to reach the Captide API:', error);
+  res.status(503).json({ error: 'Unable to reach the Captide API' });
+}
 ```
 
 ## Rate Limiting
 
-Implement rate limiting to prevent abuse of your API endpoints:
+Your API key's limits apply across everyone using your application. Rate-limit your own routes so that one user can't use them up:
 
 ```typescript
 import rateLimit from 'express-rate-limit';
 
-// Create a rate limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per window
   message: 'Too many requests, please try again later'
 });
 
 // Apply to routes that call Captide
-app.use('/api/document-snippets', apiLimiter);
-app.use('/api/document', apiLimiter);
-app.use('/api/query-stream', apiLimiter);
+app.use('/api/chunks', apiLimiter);
+app.use('/api/documents', apiLimiter);
+app.use('/api/agent-stream', apiLimiter);
 ```

@@ -40,12 +40,12 @@ curl --request GET \
     "countries": ["AU"],
     "filesWithSec": false,
     "cik": null,
-    "permid": "4295857141"
+    "permId": "4295857141"
   }
 ]
 ```
 
-To look companies up by name instead, use [/companies/search](/api-reference/endpoint/search_company) (for example `?q=Santos`).
+To look companies up by name instead, use [/companies/search](/api-reference/endpoint/search_company) (for example `?query=Santos`).
 
 ### Example 2: Retrieve Company Documents
 
@@ -140,12 +140,12 @@ The response includes the relevant chunks with their page number and document me
         "id": "a0dcd3e7-7985-4fbc-9c77-371b4232e242",
         "title": "Zscaler, Inc. Earnings Call Transcript Q4 2026 (2026-09-03)",
         "documentCategory": "earnings-call-transcript",
-        "formType": null,
+        "secFormType": null,
         "date": "2026-09-03",
         "fiscalQuarter": 4,
         "fiscalYear": 2026,
         "companyName": "Zscaler, Inc.",
-        "tickers": ["ZS"],
+        "companyTickers": ["ZS"],
         "metadata": null
       }
     },
@@ -154,7 +154,7 @@ The response includes the relevant chunks with their page number and document me
 }
 ```
 
-You can then use the relevant chunks as context for AI-generated responses, and combine them with context from other sources, such as internal data or structured databases. To search only specific documents, pass their ids in `document_ids` (comma-separated).
+You can then use the relevant chunks as context for AI-generated responses, and combine them with context from other sources, such as internal data or structured databases. To search only specific documents, pass their IDs in `documentIds` (comma-separated).
 
 ### Example 4: AI Agent Response
 
@@ -182,12 +182,12 @@ The answer is in the `content` field, in Markdown, with citations such as `[#43c
         "id": "a0dcd3e7-7985-4fbc-9c77-371b4232e242",
         "title": "Zscaler, Inc. Earnings Call Transcript Q4 2026 (2026-09-03)",
         "documentCategory": "earnings-call-transcript",
-        "formType": null,
+        "secFormType": null,
         "date": "2026-09-03",
         "fiscalQuarter": 4,
         "fiscalYear": 2026,
         "companyName": "Zscaler, Inc.",
-        "tickers": ["ZS"],
+        "companyTickers": ["ZS"],
         "metadata": null
       }
     },

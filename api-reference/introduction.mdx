@@ -45,6 +45,15 @@ Base URL: `https://rest-api.captide.co`
     `POST /api/v2/rag/agent-response-stream`\
     Streams the same cited answer as Server-Sent Events, with progress updates while the agent works.
   </Accordion>
+  <Accordion title="Webhooks" icon="bell">
+    Endpoints to have new documents sent to your application as they are added. See the [Webhooks guide](/integration/webhooks).
+
+    `POST /api/v2/webhooks`\
+    Registers a URL to receive new documents, optionally only for some document categories.
+
+    `GET /api/v2/webhooks`, `GET /api/v2/webhooks/{id}`, `PATCH /api/v2/webhooks/{id}`, `DELETE /api/v2/webhooks/{id}`\
+    List, inspect, change, pause or delete your organization’s webhooks.
+  </Accordion>
 </AccordionGroup>
 
 ## API Conventions
@@ -55,3 +64,5 @@ Base URL: `https://rest-api.captide.co`
 - URL paths use **kebab-case** (e.g. `/api/v2/rag/agent-response`).
 - Dates use **ISO 8601** (`YYYY-MM-DD`).
 - Errors return a JSON object with a `detail` field and a standard HTTP status code.
+
+See [Versions and Conventions](/api-reference/versions) for which version of each endpoint to use, pagination, ticker formats and file links.

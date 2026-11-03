@@ -1,0 +1,78 @@
+---
+title: "Versions and Conventions"
+---
+
+## Which version to use
+
+Each resource has one current endpoint. Older versions stay available, so existing integrations keep working.
+
+| Resource | Current endpoint | Older versions |
+|---|---|---|
+| Companies | `/api/v2/companies/list`, `/search`, `/{id}` | `/api/v1/companies/…` returns the same responses. |
+| Document list | `/api/v1/documents/list` | Only version. |
+| Document by ID | `/api/v2/documents/{id}` | `/api/v1/documents/{id}`: see below. |
+| Chunks | `/api/v2/rag/chunks` | `/api/v1/rag/chunks` returns the same responses. |
+| Company retrieval | `/api/v2/rag/company-retrieval` | `/api/v1/rag/agent-response` also identifies the companies in a query, formatted as an answer. |
+| Agent answers | `/api/v2/rag/agent-response`, `/api/v2/rag/agent-response-stream` | `/api/v1/rag/agent-response` now only identifies companies. Use v2 for answers. |
+| Webhooks | `/api/v2/webhooks` | `/api/v1/webhooks` behaves the same. |
+
+### v1 document by ID
+
+`GET /api/v1/documents/{id}` is kept for older integrations. Compared with v2, it:
+
+- returns `formType` and `tickers` instead of `secFormType` and `companyTickers`, and has no `fiscalPeriod`, `language` or `companyId`;
+- returns **legacy category codes**: renamed categories map to their old code, and categories that didn't exist before are returned as `other`.
+
+| Category | Legacy code (v1 by ID) |
+|---|---|
+| `annual-financial-report` | `annual-report` |
+| `interim-financial-report` | `interim-report` |
+| `financial-attachments` | `supplemental-financial-information` |
+| `shareholder-meeting-circular` | `shareholder-meetings-notice` |
+| `earnings-presentation` | `earnings-call-slides` |
+| `investor-event-presentation` | `special-events-slides` |
+| `initial-offering-prospectus` | `initial-registration-statement` |
+| `follow-on-offering-prospectus` | `follow-on-registration-statement` |
+| `merger-offering-prospectus` | `merger-registration-statement` |
+| `employee-share-plan-prospectus` | `compensation-registration-statement` |
+| `tender-offer-disclosure` | `tender-offer-statement` |
+| `insider-share-transactions` | `insider-shares-transactions` |
+| `esg-report` | `sustainability-report` |
+| `earnings-release`, `current-report`, `earnings-call-transcript`, `other` | Unchanged |
+| Any other category | `other` |
+
+Every other endpoint returns the current codes listed in [Document Coverage](/coverage). The `documentCategories` filter accepts both current and legacy codes.
+
+## Pagination
+
+| Endpoint | `limit` | Pagination |
+|---|---|---|
+| `/companies/list` | 1–1,000, default 100 | `offset` |
+| `/companies/search` | 1–50, default 20 | First page only (type-ahead). |
+| `/documents/list` | 1–1,000, default 100 | `offset` |
+
+To read all results, request pages with the same filters and increasing `offset` (`0`, `limit`, `2 × limit`, …) until a page returns fewer than `limit` items. Results have a stable order: companies by name, documents by `date` (newest first by default), with ties broken by ID.
+
+## Tickers
+
+Ticker filters (`tickers` on `/companies/list`, `companyTickers` on `/documents/list`) accept tickers in the form the API returns them:
+
+- **With an exchange suffix**, such as `STO.AX` or `ITX.MC`, to match one listing.
+- **Without a suffix**, such as `STO` or `AAPL`, to match that symbol on every exchange. A short symbol can match companies listed on different exchanges, so prefer the suffixed form.
+- Symbols that contain a dot work as returned, for example `BRK.B` or `BRK.B.US`.
+
+Matching is case-sensitive: use upper case as in the API's responses. Country codes (`countries`) are matched in any case.
+
+## Document IDs
+
+Use the `id` from `/documents/list`, from `documentMetadata.id` in chunks and agent sources, or from a webhook payload, with `GET /api/v2/documents/{id}`. They identify the same document across endpoints.
+
+## File links
+
+`originalFileUrl` and `markdownFileUrl` are signed links that expire **one hour** after the request. Download the files within that hour, or request the document again for fresh links instead of storing them. When a document has no Markdown version yet, `markdownFileUrl` is an empty string.
+
+## Limits and credits
+
+- Requests over your organization's rate limit receive `429`. Wait and retry.
+- Each endpoint has a price per call in API credits; when your organization runs out of credits, requests receive `402`. Check usage in the [API Dashboard](https://app.captide.co/api-dashboard).
+- Requests that take longer than about 15 seconds are cut off with `504`. This mainly affects text searches (`query` on `/documents/list`) for very common words across all companies: add a filter such as `companyTickers` or `documentCategories`.

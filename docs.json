@@ -29,7 +29,10 @@
           {
             "group": "Integration",
             "pages": [
-              "integration/quickstart"
+              "integration/quickstart",
+              "integration/backend",
+              "integration/frontend",
+              "integration/webhooks"
             ]
           }
         ]
@@ -40,7 +43,8 @@
           {
             "group": "API documentation",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/versions"
             ]
           },
           {
@@ -65,6 +69,16 @@
               "api-reference/endpoint/chunks",
               "api-reference/endpoint/agent",
               "api-reference/endpoint/agent_stream"
+            ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "api-reference/endpoint/webhook_create",
+              "api-reference/endpoint/webhook_list",
+              "api-reference/endpoint/webhook_get",
+              "api-reference/endpoint/webhook_update",
+              "api-reference/endpoint/webhook_delete"
             ]
           }
         ]

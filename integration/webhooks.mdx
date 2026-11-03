@@ -1,0 +1,138 @@
+---
+title: "Webhooks"
+icon: "bell"
+---
+
+Webhooks notify your application when Captide adds a new document, instead of you polling `/documents/list`. Register a URL, optionally filtered by document category, and Captide sends each new document to it as a `POST` request.
+
+## Create a webhook
+
+Register your URL with [`POST /api/v2/webhooks`](/api-reference/endpoint/webhook_create):
+
+```bash
+curl --request POST \
+  --url 'https://rest-api.captide.co/api/v2/webhooks' \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "url": "https://example.com/captide/webhook",
+    "documentCategories": ["earnings-release", "earnings-call-transcript"],
+    "description": "Earnings watchlist"
+  }'
+```
+
+```json
+{
+  "id": "f4482e5d-0876-43d0-bca4-272f823faed1",
+  "url": "https://example.com/captide/webhook",
+  "documentCategories": ["earnings-release", "earnings-call-transcript"],
+  "enabled": true,
+  "description": "Earnings watchlist",
+  "createdAt": "2026-11-03T17:40:12.481930+00:00"
+}
+```
+
+- `url`: where Captide sends documents. Use HTTPS.
+- `documentCategories`: only send documents in these [categories](/coverage). Omit it, or send `null` or `[]`, to receive every category.
+- `description`: a label for your own use. [`GET /api/v2/webhooks?description=…`](/api-reference/endpoint/webhook_list) finds webhooks by it.
+
+Webhooks belong to your organization: every API key of the organization sees and manages the same webhooks.
+
+## What Captide sends
+
+For each new document, Captide sends a `POST` request to your URL with the document as JSON, in the same format as [`GET /api/v2/documents/{id}`](/api-reference/endpoint/get_document):
+
+```json
+{
+  "id": "97ac0c55-7349-46ec-8670-92f8524f5294",
+  "documentCategory": "interim-financial-report",
+  "secFormType": null,
+  "title": "Third Quarter Report",
+  "description": "Santos Limited third quarter report for the period ending 30 September 2026, …",
+  "date": "2026-10-22",
+  "fiscalQuarter": 3,
+  "fiscalYear": 2026,
+  "fiscalPeriod": "quarter",
+  "language": "en",
+  "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+  "companyName": "Santos Ltd.",
+  "companyTickers": ["STO.AX"],
+  "originalFileUrl": "https://files.captide.co/original-docs/…/97ac0c55-7349-46ec-8670-92f8524f5294.pdf?se=…&sig=…",
+  "markdownFileUrl": "https://files.captide.co/markdown-docs/…/97ac0c55-7349-46ec-8670-92f8524f5294.md?se=…&sig=…",
+  "metadata": {}
+}
+```
+
+Each request has these headers:
+
+| Header | Value |
+|---|---|
+| `Content-Type` | `application/json` |
+| `User-Agent` | `Captide-Webhook/1.0` |
+| `Idempotency-Key` | The delivery ID: the same on every retry of this document to this webhook. |
+| `X-Captide-Delivery-ID` | The same delivery ID. |
+
+<Note>
+  The file links in the payload are signed and expire **one hour** after the request is sent. Download the files promptly, or call `GET /api/v2/documents/{id}` later for fresh links.
+</Note>
+
+## Which documents are sent
+
+- A webhook fires when Captide adds a document that was **published in the last 7 days**. Older documents, for example from historical backfills, are added to the API without triggering webhooks.
+- The category filter uses the document's category when it is added.
+- Documents are sent for every company. To follow specific companies, check `companyId` or `companyTickers` in the payload.
+- If Captide adds a new version of a document's file, you can receive it again, with a new `id`.
+
+## Responding and retries
+
+Respond with any `2xx` status to confirm receipt, within 30 seconds. Do the processing after you respond, for example in a queue.
+
+| Your response | What Captide does |
+|---|---|
+| `2xx` | Delivered. |
+| `408`, `425`, `429`, `5xx`, a timeout or no connection | Retries after 1 minute, then after 5 more minutes. After 3 attempts in total, the delivery fails. |
+| Any other status, such as `400`, `401`, `404` or `410` | Fails without retrying. |
+
+Delivery is **at least once**: in rare cases, such as a timeout after your server accepted the request, you can receive the same document twice. Use the `Idempotency-Key` header to ignore repeats.
+
+## Receiving webhooks
+
+A minimal receiver with Express:
+
+```typescript
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+const seen = new Set(); // use a database in production
+
+app.post('/captide/webhook', (req, res) => {
+  const deliveryId = req.get('Idempotency-Key');
+  res.sendStatus(200); // confirm first, process after
+
+  if (seen.has(deliveryId)) return;
+  seen.add(deliveryId);
+
+  const doc = req.body;
+  console.log(`${doc.companyName}: ${doc.documentCategory} "${doc.title}" (${doc.id})`);
+  // e.g. queue the document for processing, or download doc.markdownFileUrl now
+});
+
+app.listen(3000);
+```
+
+<Warning>
+  Webhook requests aren't signed. Use an HTTPS URL that is hard to guess (for example with a random path segment), and treat the payload as a notification: to trust a document, fetch it with your API key from `GET /api/v2/documents/{id}`.
+</Warning>
+
+## Manage webhooks
+
+| Action | Endpoint |
+|---|---|
+| List your webhooks | [`GET /api/v2/webhooks`](/api-reference/endpoint/webhook_list) |
+| Get one webhook | [`GET /api/v2/webhooks/{id}`](/api-reference/endpoint/webhook_get) |
+| Change the URL, categories or description, or pause it | [`PATCH /api/v2/webhooks/{id}`](/api-reference/endpoint/webhook_update) |
+| Delete a webhook | [`DELETE /api/v2/webhooks/{id}`](/api-reference/endpoint/webhook_delete) |
+
+`PATCH` only changes the fields you send. To pause a webhook, send `{"enabled": false}`; documents added while it is paused aren't sent later. To remove a category filter, send `{"documentCategories": []}` (`null` leaves the filter unchanged).

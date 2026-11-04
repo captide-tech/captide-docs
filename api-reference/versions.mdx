@@ -43,7 +43,7 @@ Use the `id` from `/documents/list`, from `documentMetadata.id` in chunks and ag
 
 ## File links
 
-`originalFileUrl` and `markdownFileUrl` are signed links that expire **one hour** after the request. Download the files within that hour, or request the document again for fresh links instead of storing them. When a document has no Markdown version yet, `markdownFileUrl` is an empty string.
+`originalFileUrl`, `markdownFileUrl` and `layoutJsonFileUrl` are signed links that expire **one hour** after the request. Download the files within that hour, or request the document again for fresh links instead of storing them. When a document has no Markdown version yet, `markdownFileUrl` is an empty string. `layoutJsonFileUrl` is `null` for documents that weren't processed by Captide's OCR pipeline.
 
 ## Limits and credits
 

@@ -12,7 +12,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide, provided they refer to the same underlying corporation.
   </Accordion>
   <Accordion title="Which company identifiers does Captide use?">
-    Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permId`) and, for SEC filers, their SEC Central Index Key (`cik`). Ticker symbols with their exchange suffix (for example `STO.AX`) identify a listing; a symbol without a suffix (`STO`) matches that symbol on every exchange. Retrieve each company’s `id`, `permId`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permIds` and `ciks` as filters.
+    Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permId`) and, for SEC filers, their SEC Central Index Key (`cik`). Tickers are the exchange's own symbol followed by a Yahoo Finance style exchange suffix, for example `STO.AX` (ASX), `7203.T` (Tokyo), `NESN.SW` (SIX Swiss Exchange) or `00700.HK` (Hong Kong). US listings have no suffix (`AAPL`), and share classes use a hyphen (`BRK-B`). They aren't Refinitiv RICs (`AAPL.O`, `NESN.S`) or Bloomberg tickers (`AAPL US`); to match companies from Refinitiv data, use `permId`. A ticker with its suffix identifies one listing; a symbol without a suffix (`STO`) matches that symbol on every exchange. Retrieve each company’s `id`, `permId`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permIds` and `ciks` as filters.
   </Accordion>
 </AccordionGroup>
 
@@ -28,7 +28,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
   <Accordion title="What do the document dates and fiscal fields mean?">
     Each document carries one date and its fiscal period:
 
-    - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published. When a document has no date of its own, Captide uses the date it was published online.
+    - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published.
     - `fiscalYear`: the fiscal year the document covers, as the company labels it. For most companies this is the calendar year in which the fiscal year ends (for a company whose year ends in March, April–June 2025 is Q1 of fiscal 2026).
     - `fiscalQuarter`: the fiscal quarter covered (1–4), or `null` for documents that cover a whole year or no specific period.
     - `fiscalPeriod`: the length of the period covered: `quarter`, `half-year`, `year`, `multi-year` or `month`, or `null` for documents that don't cover a specific period, such as current reports and transaction filings.

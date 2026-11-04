@@ -64,13 +64,6 @@
             ]
           },
           {
-            "group": "Changes",
-            "pages": [
-              "api-reference/endpoint/changes",
-              "api-reference/endpoint/changes_snapshot"
-            ]
-          },
-          {
             "group": "Agentic RAG",
             "pages": [
               "api-reference/endpoint/company_retrieval",
@@ -87,6 +80,13 @@
               "api-reference/endpoint/webhook_get",
               "api-reference/endpoint/webhook_update",
               "api-reference/endpoint/webhook_delete"
+            ]
+          },
+          {
+            "group": "Changes",
+            "pages": [
+              "api-reference/endpoint/changes",
+              "api-reference/endpoint/changes_snapshot"
             ]
           }
         ]

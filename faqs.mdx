@@ -3,13 +3,13 @@ title: "FAQs"
 icon: "circle-question"
 ---
 
-Explore our frequently asked questions below. If your question isn’t covered, our team is just a message away—feel free to get in touch.
+Explore our frequently asked questions below. If your question isn’t covered, our team is just a message away, so feel free to get in touch.
 
 ## Company Identification
 
 <AccordionGroup>
   <Accordion title="What defines a company in Captide?">
-    We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide—provided they refer to the same underlying corporation.
+    We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide, provided they refer to the same underlying corporation.
   </Accordion>
   <Accordion title="Which company identifiers does Captide use?">
     Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permId`) and, for SEC filers, their SEC Central Index Key (`cik`). Ticker symbols with their exchange suffix (for example `STO.AX`) identify a listing; a symbol without a suffix (`STO`) matches that symbol on every exchange. Retrieve each company’s `id`, `permId`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permIds` and `ciks` as filters.
@@ -47,7 +47,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     The only difference between the two endpoints is how they deliver AI-generated responses. The `agent-response` endpoint is optimized for use cases where the full response is only needed after generation is complete (e.g., data extraction or alert systems). In contrast, the `agent-response-stream` endpoint streams the response in real time via server-sent events, making it more suitable for chat interfaces and interactive applications.
   </Accordion>
   <Accordion title="What is the use case of the chunks endpoint?">
-    The `/rag/chunks` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts—without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
+    The `/rag/chunks` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts, without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
   </Accordion>
   <Accordion title="How can I verify the source of AI generated answers?">
     Every API response from the agentic RAG endpoints includes metadata about the sources and document excerpts used to generate the answer. The `agent-response` and `agent-response-stream` endpoints provide sentence-level attribution to excerpts from corporate disclosures. Clients can programmatically access these excerpts and metadata, or use the Captide SDK to easily display sources within a document viewer.

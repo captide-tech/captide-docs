@@ -1,0 +1,156 @@
+---
+title: "Keep a copy in sync"
+icon: "arrows-rotate"
+---
+
+To keep your own copy of Captide's documents and companies, load it once, then follow the **changes feed**. The feed lists every change to what the API shows, in order: new documents, edited metadata, new versions of files, documents removed from the API, and the same for companies. You don't have to re-read the lists to find out what changed.
+
+| Endpoint | Use it to |
+|---|---|
+| [`GET /api/v2/changes/snapshot`](/api-reference/endpoint/changes_snapshot) | Load your starting copy, page by page. |
+| [`GET /api/v2/changes`](/api-reference/endpoint/changes) | Get every change after a position (`after`), oldest first. |
+
+Both are free.
+
+## 1. Load the snapshot
+
+Page through the snapshot with `pageToken` until `nextPageToken` is `null`. Load companies first, then documents.
+
+- **Keep the `cursor` of the first page you load.** It is the feed position your copy starts from, and it is the same on every page of a snapshot.
+- Changes made while you load come through the feed again in step 2, so nothing is missed.
+
+```bash
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/changes/snapshot?type=document&limit=1000' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+```json
+{
+  "items": [
+    {
+      "id": "97ac0c55-7349-46ec-8670-92f8524f5294",
+      "documentCategory": "interim-financial-report",
+      "title": "Third Quarter Report",
+      "date": "2026-10-22",
+      "companyId": "77848abe-a215-41b7-8950-86e89ea1fadc",
+      "companyName": "Santos Ltd.",
+      "companyTickers": ["STO.AX"],
+      …
+    }
+  ],
+  "nextPageToken": "MTMxNS4wMDBhNmU1Yy0xYjJkLTRlNGYtOGE5Yy0zZDJlMWYwYTliN2M",
+  "cursor": 1315
+}
+```
+
+To keep only some companies, pass `companyIds`.
+
+## 2. Follow the changes
+
+Call `/changes` with `after` set to your saved cursor, apply the changes in order, then save the response's `nextCursor` and use it as `after` next time.
+
+- **When to call again:** poll every few minutes. Changes are published about a minute after they are made.
+- **Catching up:** while `hasMore` is `true`, call again straight away.
+
+```bash
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/changes?after=1315&limit=1000' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+```json
+{
+  "changes": [
+    {
+      "sequence": 1316,
+      "id": "6f1d9c1e-2b7a-4d0e-9d5f-0c9a7e2b41a3",
+      "type": "document.updated",
+      "changedAt": "2026-11-04T18:02:11.514Z",
+      "changedFields": ["fiscalQuarter", "markdownFileUrl"],
+      "previous": {"fiscalQuarter": null},
+      "document": { "id": "97ac0c55-7349-46ec-8670-92f8524f5294", "fiscalQuarter": 3, … },
+      "company": null
+    }
+  ],
+  "nextCursor": 1316,
+  "hasMore": false,
+  "latestCursor": 1316
+}
+```
+
+Apply each change by its `type`:
+
+| Type | What to do |
+|---|---|
+| `document.created`, `company.created` | Add it. If you already have it, replace it. |
+| `document.updated`, `company.updated` | Replace it. `changedFields` lists what changed, and `previous` has the old values. |
+| `document.deleted`, `company.deleted` | Remove it, if you have it. |
+
+Apply every change as an upsert or a delete, so a change you already have can come through again without harm. For example, a change made while you loaded the snapshot.
+
+### Files and IDs
+
+A change never contains file links, because they expire.
+- **New version of a file:** `changedFields` names the link: `originalFileUrl`, `markdownFileUrl` (new Markdown, for example after OCR) or `layoutJsonFileUrl`. Get fresh links from [`GET /api/v2/documents/{id}`](/api-reference/endpoint/get_document).
+- **New file for the document:** the document gets a new `id`, `changedFields` includes `id`, and `previous.id` is the old one. Remove the old ID from your copy.
+
+## Example
+
+```python
+import time
+import requests
+
+API = "https://rest-api.captide.co/api/v2"
+HEADERS = {"X-API-Key": "YOUR_API_KEY"}
+documents, companies = {}, {}  # your store, keyed by id
+
+
+def load_snapshot(kind, store):
+    """Loads every item of one type; returns the cursor of the snapshot's first page."""
+    cursor, token = None, None
+    while True:
+        params = {"type": kind, "limit": 1000, **({"pageToken": token} if token else {})}
+        page = requests.get(f"{API}/changes/snapshot", params=params, headers=HEADERS).json()
+        cursor = page["cursor"] if cursor is None else cursor
+        for item in page["items"]:
+            store[item["id"]] = item
+        token = page["nextPageToken"]
+        if token is None:
+            return cursor
+
+
+def apply(change):
+    is_company = change["type"].startswith("company.")
+    store, item = (companies, change["company"]) if is_company else (documents, change["document"])
+    if change["type"].endswith(".deleted"):
+        store.pop(item["id"], None)
+        return
+    old_id = (change["previous"] or {}).get("id")
+    if old_id:
+        store.pop(old_id, None)  # a new file gave the document a new id
+    store[item["id"]] = item
+
+
+cursor = load_snapshot("company", companies)  # replay from the first snapshot's cursor
+load_snapshot("document", documents)
+
+while True:
+    page = requests.get(f"{API}/changes", params={"after": cursor, "limit": 1000}, headers=HEADERS).json()
+    for change in page["changes"]:
+        apply(change)
+    cursor = page["nextCursor"]  # store it with your data
+    if not page["hasMore"]:
+        time.sleep(60)
+```
+
+Store the cursor together with your data, in the same transaction if you can. After a restart you then carry on from the last change you applied.
+
+## Good to know
+
+- **What's in the feed.** A document is in the feed when [`/documents/list`](/api-reference/endpoint/documents) lists it. A document that gains a category or a listable file comes through as `document.created`; one that loses them comes through as `document.deleted`.
+- **Future dates.** A document dated in the future is in the feed and the snapshot from the moment it is added, although `/documents/list` only shows it from its date.
+- **Company names on documents.** `companyName` and `companyTickers` on documents are the company's current values. When a company changes, you get one `company.updated`, not one change per document.
+- **Moved documents.** A document moved to another company comes through as `document.updated` with `companyId` in `changedFields`. With a `companyIds` filter, you get it for both companies.
+- **Filters.** `types`, `companyIds` and `documentCategories` narrow the feed. `nextCursor` moves past changes they skip, so a page can be empty while the feed goes on.
+- **Webhooks or the feed?** [Webhooks](/integration/webhooks) push recently published new documents to you as they are added. The feed covers every change, including edits and removals, and you read it when you want.

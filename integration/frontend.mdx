@@ -6,7 +6,7 @@ icon: "gear"
 This guide explains how to show Captide results in a React frontend, and open their sources in the Document Auditing SDK's viewer.
 
 <Note>
-  **Never expose your Captide API key in frontend code!** The examples below call the backend proxy from the [Backend Integration](/integration/backend) guide: `GET /api/chunks`, `GET /api/documents/:id` and `POST /api/agent-stream`.
+  **Never expose your Captide API key in frontend code!** The examples below call the backend proxy from the [Backend Integration](/integration/backend) guide: `POST /api/chunks`, `GET /api/documents/:id` and `POST /api/agent-stream`.
 </Note>
 
 ## React Integration
@@ -43,7 +43,11 @@ function ChunkExplorer() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/chunks?query=${encodeURIComponent(query)}`);
+      const response = await fetch('/api/chunks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
       const data = await response.json();
       setChunks(data.relevantChunks ?? []);
     } finally {

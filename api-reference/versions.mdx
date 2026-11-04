@@ -52,12 +52,12 @@ In November 2026 a few names were aligned across endpoints.
 |---|---|---|
 | `/companies/search` parameter | `query` | `q` |
 | `/companies/list` parameter | `permIds` | `permids` |
-| `/rag/chunks` parameter | `documentIds` | `document_ids` |
+| `/rag/chunks` request | `POST` with a JSON body: `query`, `documentIds` | `GET` with query parameters: `query`, `document_ids` |
 | Company responses | `permId` | `permid` |
 | `metadata` of documents and webhook payloads | `sourceUrl` | `sourceURL` |
 | `documentMetadata` of chunks and agent sources | `secFormType`, `companyTickers` | `formType`, `tickers` |
 
-The previous parameter names are still accepted, but use the current ones. Responses return only the current field names, except `GET /api/v1/documents/{id}`, which keeps its legacy fields.
+The previous parameter names are still accepted, but use the current ones. `/rag/chunks` only accepts `POST`: a `GET` returns `405`. Responses return only the current field names, except `GET /api/v1/documents/{id}`, which keeps its legacy fields.
 
 ## Pagination
 

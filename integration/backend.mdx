@@ -11,7 +11,7 @@ This guide explains how to call the Captide API from your backend, using Node.js
 
 The proxy below exposes three routes:
 
-1. `GET /api/chunks` returns the chunks relevant to a query.
+1. `POST /api/chunks` returns the chunks relevant to a query.
 2. `GET /api/documents/:id` returns a document in the shape the [Document Auditing SDK](/integration/frontend) expects.
 3. `POST /api/agent-stream` streams the agent's answer to the browser.
 
@@ -32,11 +32,12 @@ const CAPTIDE_BASE_URL = 'https://rest-api.captide.co';
 const captideHeaders = { 'X-API-Key': CAPTIDE_API_KEY };
 
 // 1. Chunks relevant to a natural language query
-app.get('/api/chunks', async (req, res) => {
-  const url = new URL('/api/v2/rag/chunks', CAPTIDE_BASE_URL);
-  url.searchParams.set('query', String(req.query.query ?? ''));
-
-  const response = await fetch(url, { headers: captideHeaders });
+app.post('/api/chunks', async (req, res) => {
+  const response = await fetch(`${CAPTIDE_BASE_URL}/api/v2/rag/chunks`, {
+    method: 'POST',
+    headers: { ...captideHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: String(req.body.query ?? '') })
+  });
   res.status(response.status).json(await response.json());
 });
 

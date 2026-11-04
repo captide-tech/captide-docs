@@ -107,11 +107,12 @@ curl --request GET \
   "companyTickers": ["STO.AX"],
   "originalFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/97ac0c55-7349-46ec-8670-92f8524f5294.pdf?se=2026-11-03T18%3A15%3A55Z&sp=r&sv=2025-07-05&sr=b&sig=…",
   "markdownFileUrl": "https://files.captide.co/markdown-docs/77848abe-a215-41b7-8950-86e89ea1fadc/97ac0c55-7349-46ec-8670-92f8524f5294.md?se=2026-11-03T18%3A15%3A55Z&sp=r&sv=2025-07-05&sr=b&sig=…",
+  "layoutJsonFileUrl": "https://files.captide.co/original-docs/77848abe-a215-41b7-8950-86e89ea1fadc/97ac0c55-7349-46ec-8670-92f8524f5294.json?se=2026-11-03T18%3A15%3A55Z&sp=r&sv=2025-07-05&sr=b&sig=…",
   "metadata": {}
 }
 ```
 
-`originalFileUrl` links to the original document and `markdownFileUrl` to its Markdown version, which is optimized for downstream analysis and LLM ingestion.
+`originalFileUrl` links to the original document and `markdownFileUrl` to its Markdown version, which is optimized for downstream analysis and LLM ingestion. For documents processed by Captide's OCR pipeline, `layoutJsonFileUrl` links to the document's layout as JSON: each page's text, tables and figures, with their position on the page. It's `null` for other documents.
 
 <Note>
   File links are signed and expire **one hour** after the request (the `se` parameter). Request the document again for fresh links instead of storing them.

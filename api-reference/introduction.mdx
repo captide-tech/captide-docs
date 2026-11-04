@@ -24,7 +24,7 @@ Base URL: `https://rest-api.captide.co`
   <Accordion title="Documents" icon="file-contract">
     Endpoints to access company disclosures in either their original format or LLM-optimized Markdown.
 
-    `GET /api/v1/documents/list`\
+    `GET /api/v2/documents/list`\
     Retrieves the documents that match your filters: document categories, SEC form types, company tickers or IDs, fiscal year and quarter, date range, or free text in the title and description. The response includes each document’s category, title, description, date, fiscal period, language, and the associated company. Results are sorted by `date`, newest first, by default; use `sortBy` (`date` or `name`) and `sortOrder` (`asc` or `desc`) to change it, and `limit` and `offset` to paginate.
 
     `GET /api/v2/documents/{id}`\

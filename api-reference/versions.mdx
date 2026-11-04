@@ -90,5 +90,5 @@ Use the `id` from `/documents/list`, from `documentMetadata.id` in chunks and ag
 ## Limits and credits
 
 - Requests over your organization's rate limit receive `429`. Wait and retry.
-- Each endpoint has a price per call in API credits; when your organization runs out of credits, requests receive `402`. Check usage in the [API Dashboard](https://app.captide.co/api-dashboard).
+- Each endpoint has a price per call in API credits; when your organization runs out of credits, requests receive `402`.
 - Requests that take longer than about 15 seconds are cut off with `504`. This mainly affects text searches (`query` on `/documents/list`) for very common words across all companies: add a filter such as `companyTickers` or `documentCategories`.

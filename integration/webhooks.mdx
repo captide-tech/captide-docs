@@ -83,6 +83,7 @@ Each request has these headers:
 - The category filter uses the document's category when it is added.
 - Documents are sent for every company. To follow specific companies, check `companyId` or `companyTickers` in the payload.
 - If Captide adds a new version of a document's file, you can receive it again, with a new `id`.
+- Webhooks only send new documents. To also hear about edited metadata, new file versions and removed documents, follow the [changes feed](/integration/sync).
 
 ## Responding and retries
 

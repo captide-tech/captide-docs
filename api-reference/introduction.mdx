@@ -30,6 +30,15 @@ Base URL: `https://rest-api.captide.co`
     `GET /api/v2/documents/{id}`\
     Fetches a document by its ID. The response includes the document’s metadata, the associated company, and temporary links to the original file and its Markdown version.
   </Accordion>
+  <Accordion title="Changes" icon="arrows-rotate">
+    Endpoints to keep your own copy of Captide's documents and companies up to date. See [Keep a copy in sync](/integration/sync).
+
+    `GET /api/v2/changes`\
+    Every change to the documents and companies the API shows, in order: new documents, edited metadata, new versions of files, and removals, and the same for companies. Page through it with `after` (the last change you processed).
+
+    `GET /api/v2/changes/snapshot`\
+    The starting copy for the feed: every document or company the feed covers, as it is now, with the feed position to follow from.
+  </Accordion>
   <Accordion title="Agentic RAG" icon="robot">
     Endpoints for leveraging Captide’s agentic AI workflows to programmatically extract insights and data from the document corpus.
 

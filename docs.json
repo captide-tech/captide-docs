@@ -32,7 +32,8 @@
               "integration/quickstart",
               "integration/backend",
               "integration/frontend",
-              "integration/webhooks"
+              "integration/webhooks",
+              "integration/sync"
             ]
           }
         ]
@@ -60,6 +61,13 @@
             "pages": [
               "api-reference/endpoint/documents",
               "api-reference/endpoint/get_document"
+            ]
+          },
+          {
+            "group": "Changes",
+            "pages": [
+              "api-reference/endpoint/changes",
+              "api-reference/endpoint/changes_snapshot"
             ]
           },
           {

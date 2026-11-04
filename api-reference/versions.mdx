@@ -24,8 +24,10 @@ The previous parameter names are still accepted, but use the current ones. `/rag
 | `/companies/list` | 1–1,000, default 100 | `offset` |
 | `/companies/search` | 1–50, default 20 | First page only (type-ahead). |
 | `/documents/list` | 1–1,000, default 100 | `offset` |
+| `/changes` | 1–1,000, default 100 | `after`: pass each response's `nextCursor` |
+| `/changes/snapshot` | 1–1,000, default 100 | `pageToken`: pass each response's `nextPageToken` until it is `null` |
 
-To read all results, request pages with the same filters and increasing `offset` (`0`, `limit`, `2 × limit`, …) until a page returns fewer than `limit` items. Results have a stable order: companies by name, documents by `date` (newest first by default), with ties broken by ID.
+For `/companies/list` and `/documents/list`, request pages with the same filters and increasing `offset` (`0`, `limit`, `2 × limit`, …) until a page returns fewer than `limit` items. Results have a stable order: companies by name, documents by `date` (newest first by default), with ties broken by ID.
 
 ## Tickers
 

@@ -3,16 +3,23 @@ title: "FAQs"
 icon: "circle-question"
 ---
 
-Explore our frequently asked questions below. If your question isn’t covered, our team is just a message away—feel free to get in touch.
+Explore our frequently asked questions below. If your question isn’t covered, our team is just a message away, so feel free to get in touch.
 
 ## Company Identification
 
 <AccordionGroup>
   <Accordion title="What defines a company in Captide?">
-    We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide—provided they refer to the same underlying corporation.
+    We define a company as a publicly listed entity that files its financial results independently. In cases where a company files with multiple market regulators or is traded on multiple exchanges, we consider all such filings and listings to belong to the same entity in Captide, provided they refer to the same underlying corporation.
   </Accordion>
   <Accordion title="Which company identifiers does Captide use?">
-    Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permId`) and, for SEC filers, their SEC Central Index Key (`cik`). Ticker symbols with their exchange suffix (for example `STO.AX`) identify a listing; a symbol without a suffix (`STO`) matches that symbol on every exchange. Retrieve each company’s `id`, `permId`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permIds` and `ciks` as filters.
+    Captide assigns a proprietary company identifier (`id`, called `companyId` on documents) to uniquely identify each entity. Companies also carry their Refinitiv PermID (`permId`) and, for SEC filers, their SEC Central Index Key (`cik`). Tickers are the exchange's own symbol followed by a Yahoo Finance style exchange suffix, for example `STO.AX` (ASX), `7203.T` (Tokyo), `NESN.SW` (SIX Swiss Exchange) or `00700.HK` (Hong Kong). US listings have no suffix (`AAPL`), and share classes use a hyphen (`BRK-B`). Retrieve each company’s `id`, `permId`, `cik` and `tickers` through the `/api/v2/companies/list` endpoint, which also accepts `permIds` and `ciks` as filters.
+  </Accordion>
+  <Accordion title="Which endpoint should I use to find companies?">
+    It depends on what you start from:
+
+    - **Identifiers or filters**: [Find Companies](/api-reference/endpoint/companies) matches tickers, PermIDs, CIKs, countries or SEC filing status. For example, `?permIds=4295857141` returns Santos Ltd.
+    - **Part of a name or ticker**: [Search Companies](/api-reference/endpoint/search_company) suggests matches as a user types. For example, `?query=santo` returns Santos Ltd. first.
+    - **A natural language question**: [Company Retrieval](/api-reference/endpoint/company_retrieval) uses Captide's proprietary AI company resolution agent to identify the companies it mentions. For example, "How did Estée Lauder and LVMH's margins compare?" returns both companies.
   </Accordion>
 </AccordionGroup>
 
@@ -28,7 +35,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
   <Accordion title="What do the document dates and fiscal fields mean?">
     Each document carries one date and its fiscal period:
 
-    - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published. When a document has no date of its own, Captide uses the date it was published online.
+    - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published.
     - `fiscalYear`: the fiscal year the document covers, as the company labels it. For most companies this is the calendar year in which the fiscal year ends (for a company whose year ends in March, April–June 2025 is Q1 of fiscal 2026).
     - `fiscalQuarter`: the fiscal quarter covered (1–4), or `null` for documents that cover a whole year or no specific period.
     - `fiscalPeriod`: the length of the period covered: `quarter`, `half-year`, `year`, `multi-year` or `month`, or `null` for documents that don't cover a specific period, such as current reports and transaction filings.
@@ -36,7 +43,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     Use `startDate` and `endDate` on `/documents/list` to filter by `date`, and `fiscalYear` and `fiscalQuarter` to filter by fiscal period.
   </Accordion>
   <Accordion title="What is the use case of Markdown versions of documents?">
-    Captide transforms original corporate disclosures into LLM-optimized Markdown files that preserve all information and data points from the source documents in a machine-readable format. This enables efficient and interpretable downstream analysis or AI applications, where documents must be chunked and ingested by large language models.
+    Captide processes corporate disclosures with an OCR pipeline built specifically for financial reports. It gathers the text, tables and images of each filing and structures them into clean Markdown optimized for LLMs, preserving the information and data points of the source document in a machine-readable format. This makes downstream analysis and AI applications efficient and interpretable, especially where documents must be chunked and ingested by large language models.
   </Accordion>
 </AccordionGroup>
 
@@ -47,7 +54,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     The only difference between the two endpoints is how they deliver AI-generated responses. The `agent-response` endpoint is optimized for use cases where the full response is only needed after generation is complete (e.g., data extraction or alert systems). In contrast, the `agent-response-stream` endpoint streams the response in real time via server-sent events, making it more suitable for chat interfaces and interactive applications.
   </Accordion>
   <Accordion title="What is the use case of the chunks endpoint?">
-    The `/rag/chunks` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts—without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
+    The `/rag/chunks` endpoint is designed for firms that want to retrieve relevant content from corporate disclosures in response to natural language prompts, without involving an LLM, or where greater control over AI-generated responses is required. This is particularly useful for applications that aggregate context from multiple sources, allowing Captide’s retrieved content to be combined with data from other providers or internal systems.
   </Accordion>
   <Accordion title="How can I verify the source of AI generated answers?">
     Every API response from the agentic RAG endpoints includes metadata about the sources and document excerpts used to generate the answer. The `agent-response` and `agent-response-stream` endpoints provide sentence-level attribution to excerpts from corporate disclosures. Clients can programmatically access these excerpts and metadata, or use the Captide SDK to easily display sources within a document viewer.

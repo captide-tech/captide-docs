@@ -1,48 +1,6 @@
 ---
-title: "Versions and Conventions"
+title: "Conventions"
 ---
-
-## Which version to use
-
-Each resource has one current endpoint. Older versions stay available, so existing integrations keep working.
-
-| Resource | Current endpoint | Older versions |
-|---|---|---|
-| Companies | `/api/v2/companies/list`, `/search`, `/{id}` | `/api/v1/companies/…` returns the same responses. |
-| Document list | `/api/v1/documents/list` | Only version. |
-| Document by ID | `/api/v2/documents/{id}` | `/api/v1/documents/{id}`: see below. |
-| Chunks | `/api/v2/rag/chunks` | `/api/v1/rag/chunks` returns the same responses. |
-| Company retrieval | `/api/v2/rag/company-retrieval` | `/api/v1/rag/agent-response` also identifies the companies in a query, formatted as an answer. |
-| Agent answers | `/api/v2/rag/agent-response`, `/api/v2/rag/agent-response-stream` | `/api/v1/rag/agent-response` now only identifies companies. Use v2 for answers. |
-| Webhooks | `/api/v2/webhooks` | `/api/v1/webhooks` behaves the same. |
-
-### v1 document by ID
-
-`GET /api/v1/documents/{id}` is kept for older integrations. Compared with v2, it:
-
-- returns `formType` and `tickers` instead of `secFormType` and `companyTickers`, and has no `fiscalPeriod`, `language` or `companyId`;
-- returns the source address as `metadata.sourceURL` (`metadata.sourceUrl` elsewhere), along with the document's other stored metadata;
-- returns **legacy category codes**: renamed categories map to their old code, and categories that didn't exist before are returned as `other`.
-
-| Category | Legacy code (v1 by ID) |
-|---|---|
-| `annual-financial-report` | `annual-report` |
-| `interim-financial-report` | `interim-report` |
-| `financial-attachments` | `supplemental-financial-information` |
-| `shareholder-meeting-circular` | `shareholder-meetings-notice` |
-| `earnings-presentation` | `earnings-call-slides` |
-| `investor-event-presentation` | `special-events-slides` |
-| `initial-offering-prospectus` | `initial-registration-statement` |
-| `follow-on-offering-prospectus` | `follow-on-registration-statement` |
-| `merger-offering-prospectus` | `merger-registration-statement` |
-| `employee-share-plan-prospectus` | `compensation-registration-statement` |
-| `tender-offer-disclosure` | `tender-offer-statement` |
-| `insider-share-transactions` | `insider-shares-transactions` |
-| `esg-report` | `sustainability-report` |
-| `earnings-release`, `current-report`, `earnings-call-transcript`, `other` | Unchanged |
-| Any other category | `other` |
-
-Every other endpoint returns the current codes listed in [Document Coverage](/coverage). The `documentCategories` filter accepts both current and legacy codes.
 
 ## Renamed parameters and fields
 

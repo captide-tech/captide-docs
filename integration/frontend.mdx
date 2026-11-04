@@ -255,7 +255,8 @@ export async function GET(request, { params }) {
     ...doc,
     formType: doc.secFormType,
     tickers: doc.companyTickers,
-    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html'
+    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html',
+    metadata: { ...doc.metadata, sourceURL: doc.metadata?.sourceUrl }
   });
 }
 ```

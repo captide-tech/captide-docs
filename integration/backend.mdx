@@ -57,7 +57,9 @@ app.get('/api/documents/:id', async (req, res) => {
     // Field names the SDK's Document type uses
     formType: doc.secFormType,
     tickers: doc.companyTickers,
-    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html'
+    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html',
+    // The viewer's Open button links to metadata.sourceURL, the document's original web address
+    metadata: { ...doc.metadata, sourceURL: doc.metadata?.sourceUrl }
   });
 });
 

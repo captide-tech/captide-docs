@@ -255,11 +255,8 @@ export async function GET(request, { params }) {
     ...doc,
     formType: doc.secFormType,
     tickers: doc.companyTickers,
-    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html'
+    fileType: new URL(doc.originalFileUrl).pathname.endsWith('.pdf') ? 'pdf' : 'html',
+    metadata: { ...doc.metadata, sourceURL: doc.metadata?.sourceUrl }
   });
 }
 ```
-
-<Info>
-  To see a live example of a user interface built with the Captide API and document viewer, visit [app.captide.co/chat](https://app.captide.co/chat).
-</Info>

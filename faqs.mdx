@@ -20,10 +20,10 @@ Explore our frequently asked questions below. If your question isn’t covered, 
 
 <AccordionGroup>
   <Accordion title="When are new documents available?">
-    New documents from US-listed companies are typically available within 1 minute of release. For non-US-listed companies, documents are available within 12 hours. Earnings call transcripts are generally published 6 to 12 hours after the call concludes.
+    SEC filings are typically available within 3 minutes of EDGAR publishing them. Documents from other sources, such as stock exchanges and company websites, are typically available within 4 hours of release. To be notified as documents are added, use [webhooks](/integration/webhooks).
   </Accordion>
   <Accordion title="Are all document types available for every company?">
-    Annual, interim, and current reports are available for all companies in Captide. Additional document types are provided for companies that have filed them at any point. Note that reporting practices vary by geography (for example, companies in the United States typically file quarterly interim reports, while those in Australia often file semi-annual reports). As a result, the availability and frequency of document types may vary by region, company, and regulatory requirements.
+    Annual and interim reports are available for most companies in Captide. Additional document types are provided for companies that have filed them at any point. Note that reporting practices vary by geography (for example, companies in the United States typically file quarterly interim reports, while those in Australia often file semi-annual reports). As a result, the availability and frequency of document types may vary by region, company, and regulatory requirements.
   </Accordion>
   <Accordion title="What do the document dates and fiscal fields mean?">
     Each document carries one date and its fiscal period:
@@ -31,7 +31,7 @@ Explore our frequently asked questions below. If your question isn’t covered, 
     - `date`: the date of the document. For SEC filings, this is the EDGAR filing date; for other documents, the date the document was issued or published. When a document has no date of its own, Captide uses the date it was published online.
     - `fiscalYear`: the fiscal year the document covers, as the company labels it. For most companies this is the calendar year in which the fiscal year ends (for a company whose year ends in March, April–June 2025 is Q1 of fiscal 2026).
     - `fiscalQuarter`: the fiscal quarter covered (1–4), or `null` for documents that cover a whole year or no specific period.
-    - `fiscalPeriod`: the length of the period covered: `quarter`, `half-year`, `year`, `multi-year` or `month`.
+    - `fiscalPeriod`: the length of the period covered: `quarter`, `half-year`, `year`, `multi-year` or `month`, or `null` for documents that don't cover a specific period, such as current reports and transaction filings.
 
     Use `startDate` and `endDate` on `/documents/list` to filter by `date`, and `fiscalYear` and `fiscalQuarter` to filter by fiscal period.
   </Accordion>

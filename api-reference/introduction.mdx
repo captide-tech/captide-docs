@@ -45,15 +45,6 @@ Base URL: `https://rest-api.captide.co`
     `POST /api/v2/rag/agent-response-stream`\
     Streams the same cited answer as Server-Sent Events, with progress updates while the agent works.
   </Accordion>
-  <Accordion title="Webhooks" icon="bell">
-    Endpoints to have new documents sent to your application as they are added. See the [Webhooks guide](/integration/webhooks).
-
-    `POST /api/v2/webhooks`\
-    Registers a URL to receive new documents, optionally only for some document categories.
-
-    `GET /api/v2/webhooks`, `GET /api/v2/webhooks/{id}`, `PATCH /api/v2/webhooks/{id}`, `DELETE /api/v2/webhooks/{id}`\
-    List, inspect, change, pause or delete your organization’s webhooks.
-  </Accordion>
   <Accordion title="Changes" icon="arrows-rotate">
     Endpoints to keep your own copy of Captide's documents and companies up to date. See [Keep a copy in sync](/integration/sync).
 
@@ -62,6 +53,15 @@ Base URL: `https://rest-api.captide.co`
 
     `GET /api/v2/changes/snapshot`\
     The starting copy for the feed: every document or company the feed covers, as it is now, with the feed position to follow from.
+  </Accordion>
+  <Accordion title="Webhooks" icon="bell">
+    Endpoints to have new documents sent to your application as they are added. See the [Webhooks guide](/integration/webhooks).
+
+    `POST /api/v2/webhooks`\
+    Registers a URL to receive new documents, optionally only for some document categories.
+
+    `GET /api/v2/webhooks`, `GET /api/v2/webhooks/{id}`, `PATCH /api/v2/webhooks/{id}`, `DELETE /api/v2/webhooks/{id}`\
+    List, inspect, change, pause or delete your organization’s webhooks.
   </Accordion>
 </AccordionGroup>
 

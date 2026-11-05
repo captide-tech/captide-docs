@@ -1,0 +1,116 @@
+---
+title: "Ownership (Form 13F)"
+icon: "building-columns"
+---
+
+The ownership dataset gives the positions that US institutional investment managers report on SEC Form 13F every quarter: who holds a company's securities, and what a manager holds. Every position links to the 13F filings it was read from, so you can open the exact line in the filing.
+
+| Endpoint | Use it to |
+|---|---|
+| [`GET /api/v2/datasets/ownership/holdings`](/api-reference/endpoint/ownership_holdings) | Get positions by security (who holds it) or by manager (what it holds) |
+| [`GET /api/v2/datasets/ownership`](/api-reference/endpoint/datasets_get) | Check the dataset's coverage, freshness and licence |
+
+## Coverage
+
+- **Filings:** Form 13F-HR and 13F-HR/A filed from 2020 onward, for the managers whose filings Captide collects. New filings appear within about 15 minutes of being processed.
+- **Securities:** what 13F covers: long positions in US-listed equities, some options and convertible debt. There are no short positions and no shares outstanding, so positions carry **no percentage of a company**.
+- **Withheld filings:** from 2023, a filing whose holdings don't add up to the total on its own cover page (about 4% a quarter) isn't published.
+- **13F-NT notices:** a manager that files a 13F-NT reports no holdings of its own; another entity files them. Vanguard Group, for example, has no positions of its own for 2026 Q2.
+
+## Who holds a company
+
+Filter by the security held: `companyIds`, `companyTickers` or `cusips`. Without `periodEnd`, you get the latest quarter end whose 45-day filing deadline has passed.
+
+```bash
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/datasets/ownership/holdings?companyTickers=AAPL&limit=3' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+Positions come largest market value first. For Apple at 30 June 2026 that's State Street (615,129,929 shares, $178.0bn), then Geode Capital Management and FMR.
+
+## What a manager holds
+
+Filter by the manager: `holderCompanyIds` (managers are companies in Captide, findable with [`/companies/search`](/api-reference/endpoint/search_company) or by `ciks` on [`/companies/list`](/api-reference/endpoint/companies)) or `holderCiks`.
+
+```bash
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/datasets/ownership/holdings?holderCiks=1067983&limit=1' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+```json
+{
+  "periodEnd": "2026-06-30",
+  "asOf": null,
+  "items": [{
+    "holder": { "companyId": "58703e09-9c45-4fde-92a1-ab22a06f28d7", "name": "Berkshire Hathaway Inc.", "cik": "1067983" },
+    "security": { "cusip": "037833100", "issuerName": "APPLE INC", "titleOfClass": "COM",
+                  "companyId": "91f6c6da-478f-4161-b451-aa5177cc7fb9", "ticker": "AAPL" },
+    "periodEnd": "2026-06-30",
+    "putCall": null,
+    "shares": 227917808,
+    "principalAmount": null,
+    "marketValue": 65950296923,
+    "votingAuthority": { "sole": 227917808, "shared": 0, "none": 0 },
+    "publishedAt": "2026-08-15T04:00:00Z",
+    "sources": [
+      { "documentId": "31932647-dea0-4c89-8fc1-3c3c5aec89d2", "accessionNumber": "0001193125-26-352200",
+        "lineNumber": 15, "pageNumber": 3, "excerpt": "037833100 200,237,120 692,000 SH DFND 4 692,000 0 0" },
+      ...
+    ]
+  }],
+  "nextPageToken": "…"
+}
+```
+
+## How positions are built
+
+- **A position** is a manager's holding of one security at a quarter end, summed over its 13F lines. A manager often reports one security on several lines (Berkshire reports Apple on 12, one per combination of its managers), and `sources` lists each of them.
+- **Amendments** are applied for you. A later 13F-HR, or a 13F-HR/A restatement, replaces what the manager filed before for that quarter. A NEW HOLDINGS amendment adds lines, so a position's `sources` can come from two filings.
+- **Values** are in US dollars. Filings before 2023 reported thousands, and these are converted.
+- **Options** (puts and calls) are left out unless you pass `include=options`. An option position has `optionUnderlyingShares`, and its `marketValue` is the market value of the underlying securities, as Form 13F reports it. It never adds to `shares`.
+- **`principalAmount`** is the face value of debt held, not shares.
+- **Securities** are identified by `cusip`, as the manager filed it. `security.companyId` and `ticker` are set when the CUSIP belongs to one Captide company, and are null for funds, unlisted securities and CUSIPs that aren't valid as filed.
+
+## Showing the source
+
+Each source names the filing (`documentId`), the line, and where the line sits in Captide's PDF of the filing (`pageNumber` and `excerpt`). Open it like any other source: fetch [`GET /api/v2/documents/{id}`](/api-reference/endpoint/get_document) through your backend, then call the viewer's `loadDocument(documentId, { page: pageNumber, snippet: excerpt })` (see the [Frontend guide](/integration/frontend)). A line that couldn't be located in the PDF has `pageNumber: null`; cite the filing.
+
+## Point in time
+
+Positions are current values. With `asOf`, you get what had been published by that time: a filing counts from the end of its filing date in New York. History is complete from January 2020.
+
+```bash
+curl --request GET \
+  --url 'https://rest-api.captide.co/api/v2/datasets/ownership/holdings?companyTickers=AAPL&periodEnd=2026-06-30&asOf=2026-08-01T00:00:00Z' \
+  --header 'X-API-Key: YOUR_API_KEY'
+```
+
+## Paging
+
+Pass each response's `nextPageToken` as `pageToken` until it's null. Pages hold up to 100 positions.
+
+If the holdings change while you page (a new or corrected filing is published), the next page returns `409`. Start again without `pageToken`. This keeps a read from mixing two versions of the data, which could skip or repeat positions. A read rarely spans a change, but around the 13F filing deadlines (mid February, May, August and November) long reads can.
+
+```typescript
+async function allHolders(ticker: string) {
+  for (;;) {
+    const positions = [];
+    let pageToken: string | null = null;
+    let restart = false;
+    do {
+      const url = new URL('https://rest-api.captide.co/api/v2/datasets/ownership/holdings');
+      url.searchParams.set('companyTickers', ticker);
+      url.searchParams.set('limit', '100');
+      if (pageToken) url.searchParams.set('pageToken', pageToken);
+      const response = await fetch(url, { headers: { 'X-API-Key': process.env.CAPTIDE_API_KEY! } });
+      if (response.status === 409) { restart = true; break; }
+      const page = await response.json();
+      positions.push(...page.items);
+      pageToken = page.nextPageToken;
+    } while (pageToken);
+    if (!restart) return positions;
+  }
+}
+```

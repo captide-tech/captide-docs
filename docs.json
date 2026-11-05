@@ -35,6 +35,12 @@
               "integration/webhooks",
               "integration/sync"
             ]
+          },
+          {
+            "group": "Datasets",
+            "pages": [
+              "datasets/ownership"
+            ]
           }
         ]
       },
@@ -87,6 +93,14 @@
               "api-reference/endpoint/webhook_get",
               "api-reference/endpoint/webhook_update",
               "api-reference/endpoint/webhook_delete"
+            ]
+          },
+          {
+            "group": "Datasets",
+            "pages": [
+              "api-reference/endpoint/datasets_list",
+              "api-reference/endpoint/datasets_get",
+              "api-reference/endpoint/ownership_holdings"
             ]
           }
         ]

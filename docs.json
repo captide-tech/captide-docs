@@ -70,6 +70,12 @@
             ]
           },
           {
+            "group": "Datasets",
+            "pages": [
+              "api-reference/endpoint/ownership_holdings"
+            ]
+          },
+          {
             "group": "Agentic RAG",
             "pages": [
               "api-reference/endpoint/company_retrieval",
@@ -93,12 +99,6 @@
               "api-reference/endpoint/webhook_get",
               "api-reference/endpoint/webhook_update",
               "api-reference/endpoint/webhook_delete"
-            ]
-          },
-          {
-            "group": "Datasets",
-            "pages": [
-              "api-reference/endpoint/ownership_holdings"
             ]
           }
         ]

@@ -30,6 +30,12 @@ Base URL: `https://rest-api.captide.co`
     `GET /api/v2/documents/{id}`\
     Fetches a document by its ID. The response includes the document’s metadata, the associated company, and temporary links to the original file and its Markdown version.
   </Accordion>
+  <Accordion title="Datasets" icon="database">
+    Data points Captide extracts from the documents it collects, each linked to the document it was read from. See the [Ownership guide](/datasets/ownership).
+
+    `GET /api/v2/datasets/ownership/holdings`\
+    Positions that US institutional managers report on Form 13F: who holds a company, or what a manager holds, at a quarter end.
+  </Accordion>
   <Accordion title="Agentic RAG" icon="robot">
     Endpoints for leveraging Captide’s agentic AI workflows to programmatically extract insights and data from the document corpus.
 
@@ -62,12 +68,6 @@ Base URL: `https://rest-api.captide.co`
 
     `GET /api/v2/webhooks`, `GET /api/v2/webhooks/{id}`, `PATCH /api/v2/webhooks/{id}`, `DELETE /api/v2/webhooks/{id}`\
     List, inspect, change, pause or delete your organization’s webhooks.
-  </Accordion>
-  <Accordion title="Datasets" icon="database">
-    Data points Captide extracts from the documents it collects, each linked to the document it was read from. See the [Ownership guide](/datasets/ownership).
-
-    `GET /api/v2/datasets/ownership/holdings`\
-    Positions that US institutional managers report on Form 13F: who holds a company, or what a manager holds, at a quarter end.
   </Accordion>
 </AccordionGroup>
 

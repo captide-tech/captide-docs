@@ -98,8 +98,6 @@
           {
             "group": "Datasets",
             "pages": [
-              "api-reference/endpoint/datasets_list",
-              "api-reference/endpoint/datasets_get",
               "api-reference/endpoint/ownership_holdings"
             ]
           }
